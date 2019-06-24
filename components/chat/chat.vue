@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="btn-chat" v-if="!toggleChat" @click="$store.commit('TOGGLE_CHAT')">
-      <button>Chat ngay</button>
+      <button>Chat ngay nhe</button>
     </div>
     <div class="container" v-if="toggleChat">
       <div class="container-chat-left">
