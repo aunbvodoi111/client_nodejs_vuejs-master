@@ -1,6 +1,6 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  const Product = sequelize.define('products', {
+  const Notification = sequelize.define('notifications', {
     name: DataTypes.STRING,
     keyword: DataTypes.STRING,
     description: DataTypes.STRING,
@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     updatedAt: 'updated_at',
     createdAt: 'created_at'
   });
-  Product.associate = function(models) {
+  Notification.associate = function(models) {
     // models.Product.belongsTo(models.Cate, {
     //   onDelete: "CASCADE",
     //   foreignKey: {
@@ -23,5 +23,5 @@ module.exports = (sequelize, DataTypes) => {
     //   }
     // });
   };
-  return Product;
+  return Notification;
 };

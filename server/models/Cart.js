@@ -1,21 +1,13 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  const Product = sequelize.define('products', {
-    name: DataTypes.STRING,
-    keyword: DataTypes.STRING,
-    description: DataTypes.STRING,
+  const Cart = sequelize.define('carts', {
     price: DataTypes.INTEGER,
     discount: DataTypes.INTEGER,
-    view: DataTypes.INTEGER,
-    mass: DataTypes.INTEGER,
-    khuyenmai: DataTypes.STRING,
-    qty: DataTypes.STRING,
-    image: DataTypes.STRING,
   }, {
     updatedAt: 'updated_at',
     createdAt: 'created_at'
   });
-  Product.associate = function(models) {
+  Cart.associate = function(models) {
     // models.Product.belongsTo(models.Cate, {
     //   onDelete: "CASCADE",
     //   foreignKey: {
@@ -23,5 +15,5 @@ module.exports = (sequelize, DataTypes) => {
     //   }
     // });
   };
-  return Product;
+  return Cart;
 };
