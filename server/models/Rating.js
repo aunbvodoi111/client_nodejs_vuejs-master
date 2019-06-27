@@ -1,22 +1,18 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  const Rating = sequelize.define('ratings', {
-    name: DataTypes.STRING,
+  var Rating = sequelize.define('ratings', {
+    title: DataTypes.STRING,
     content: DataTypes.STRING,
     star: DataTypes.INTEGER,
-    email: DataTypes.STRING,
     image: DataTypes.STRING,
+    ProductId: DataTypes.INTEGER,
+    UserId: DataTypes.INTEGER,
   }, {
     updatedAt: 'updated_at',
     createdAt: 'created_at'
   });
   Rating.associate = function(models) {
-    // models.Product.belongsTo(models.Cate, {
-    //   onDelete: "CASCADE",
-    //   foreignKey: {
-    //     allowNull: false
-    //   }
-    // });
+    Rating.belongsTo(models.products, {foreignKey: 'ProductId'});
   };
   return Rating;
 };

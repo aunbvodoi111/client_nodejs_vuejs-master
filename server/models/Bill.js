@@ -1,6 +1,6 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  const Product = sequelize.define('products', {
+  const Bill = sequelize.define('bills', {
     name: DataTypes.STRING,
     payment: DataTypes.INTEGER,
     date_order: DataTypes.DATE,
@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     updatedAt: 'updated_at',
     createdAt: 'created_at'
   });
-  Product.associate = function(models) {
+  Bill.associate = function(models) {
     // models.Product.belongsTo(models.Cate, {
     //   onDelete: "CASCADE",
     //   foreignKey: {
@@ -18,5 +18,5 @@ module.exports = (sequelize, DataTypes) => {
     //   }
     // });
   };
-  return Product;
+  return Bill;
 };

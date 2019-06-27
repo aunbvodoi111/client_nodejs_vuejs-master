@@ -2,14 +2,14 @@
   <div class="container">
     <h3>Khách hàng nhận xét</h3>
     <div class="rating-box">
-      <div class="rating-box-left">
+      <div class="rating-box-left" v-if="product.ratings.length > 0">
         <p>Đánh giá trung bình</p>
-        <p>4/5</p>
-        <i class="fas fa-star" v-for=" n in 5"></i>
-        <p class="total-rating">( 25 nhận xét )</p>
+        <p>{{ mediumstar.toFixed(1) }}/5</p>
+        <i class="fas fa-star" v-for=" n in Math.floor(mediumstar)" :key="n"></i><i class="far fa-star" v-for=" n in 5-Math.floor(mediumstar)" :key="n + 1"></i>
+        <p class="total-rating">( {{ this.product.ratings.length }} nhận xét )</p>
       </div>
-      <div class="rating-box-center">
-        <div class="pr-rating" v-for="n in 5">
+      <div class="rating-box-center" v-if="product.ratings.length > 0">
+        <div class="pr-rating">
           <div class="number-rating">
             <p>
               5
@@ -17,27 +17,79 @@
             </p>
           </div>
           <div class="tool-bar">
-            <div class="tool-bar-float"></div>
+            <div class="tool-bar-float" v-bind:style="{ width : (totalStarFive.length / product.ratings.length) *100  + '%' }"></div>
           </div>
-          <div class="rating-total">60%</div>
+          <div class="rating-total">{{ totalStarFive.length }}</div>
+        </div>
+        <div class="pr-rating">
+          <div class="number-rating">
+            <p>
+              4
+              <i class="fas fa-star"></i>
+            </p>
+          </div>
+          <div class="tool-bar">
+            <div class="tool-bar-float" v-bind:style="{ width : (totalStarFour.length / product.ratings.length) *100  + '%' }"></div>
+          </div>
+          <div class="rating-total">{{ totalStarFour.length }}</div>
+        </div>
+        <div class="pr-rating">
+          <div class="number-rating">
+            <p>
+              3
+              <i class="fas fa-star"></i>
+            </p>
+          </div>
+          <div class="tool-bar">
+            <div class="tool-bar-float" v-bind:style="{ width : (totalStarThree.length / product.ratings.length) *100  + '%' }"></div>
+          </div>
+          <div class="rating-total">{{ totalStarThree.length }}</div>
+        </div>
+        <div class="pr-rating">
+          <div class="number-rating">
+            <p>
+              2
+              <i class="fas fa-star"></i>
+            </p>
+          </div>
+          <div class="tool-bar">
+            <div class="tool-bar-float" v-bind:style="{ width : (totalStarTwo.length / product.ratings.length) *100  + '%' }" ></div>
+          </div>
+          <div class="rating-total">{{ totalStarTwo.length }}</div>
+        </div>
+        <div class="pr-rating">
+          <div class="number-rating">
+            <p>
+              1
+              <i class="fas fa-star"></i>
+            </p>
+          </div>
+          <div class="tool-bar">
+            <div class="tool-bar-float" v-bind:style="{ width : (totalStarOne.length / product.ratings.length) *100  + '%' }"></div>
+          </div>
+          <div class="rating-total">{{ totalStarOne.length }}</div>
         </div>
       </div>
       <div class="rating-box-right">
         <p>Chia sẻ nhận xét về sản phẩm</p>
-        <button @click="toggleCmt = !toggleCmt">{{ titleToggle }}</button>
+        <button @click="toggleCmtAc">{{ titleToggle }}</button>
       </div>
     </div>
     <div class="box-comment" v-if="toggleCmt">
       <div class="action-comment">
         <p class="title">GỬI NHẬN XÉT CỦA BẠN</p>
-        <p>1. Đánh giá của bạn về sản phẩm này:</p>
+
+        <p>
+          1. Đánh giá của bạn về sản phẩm này:
+          <star-rating v-model="rating.star" v-bind:star-size="20"></star-rating>
+        </p>
         <p>2. Tiêu đề của nhận xét:</p>
         <div>
-          <input type="text" class="txt-content">
+          <input type="text" class="txt-content" v-model="rating.title">
         </div>
         <p>3. Viết nhận xét của bạn vào bên dưới:</p>
         <div>
-          <textarea name id cols="30" rows="8" class="txt-content-main"></textarea>
+          <textarea name id cols="30" rows="8" class="txt-content-main" v-model="rating.content"></textarea>
         </div>
         <div>
           <span>Thêm hình sản phẩm nếu có (tối đa 5 hình):</span>
@@ -47,13 +99,13 @@
           </label>
         </div>
         <div class="btn-send-rating">
-          <button>Gửi nhận xét</button>
+          <button @click="sendRating">Gửi nhận xét</button>
         </div>
       </div>
       <div class="product-comment">
         <div class="img">
           <img
-            src="https://salt.tikicdn.com/cache/215x215/ts/product/ee/51/79/c662f779260f301a4c709d378208c6f0.jpg"
+            :src="product.image"
             alt
           >
         </div>
@@ -63,7 +115,7 @@
         <div class="price">Giá: 10.790.000 ₫</div>
       </div>
     </div>
-    <div class="box-customer-comment">
+    <div class="box-customer-comment" v-if="product.ratings.length > 0">
       <div class="filer-comment">
         <span>Chọn xem nhận xét</span>
         <select name id>
@@ -76,21 +128,22 @@
           <option value>Tất cả sao</option>
         </select>
       </div>
-      <div class="rating-cmt">
+      <div class="rating-cmt" v-for="item in product.ratings" :key="item.id">
         <div class="avatar">
           <div class="inclue-avatar">
             <div class="div-avatar"></div>
-            <div class="name-customer">Nguyen Nhung</div>
+            <div class="name-customer">{{ item.name }}</div>
             <div class="time">2 tháng trước</div>
           </div>
         </div>
         <div class="content-cmt">
           <div>
             <p>
-              <i class="fas fa-star" v-for="n in 5"></i> Cực Kì Hài Lòng
+              <i class="fas fa-star" v-for="n in item.star" :key=" n + 2"></i><i class="far fa-star" v-for="n in 5-item.star" :key=" n + 5"></i>  Cực Kì Hài Lòng
+              
             </p>
             <p class="buy-alredy">Đã mua sản phẩm này tại Tiki</p>
-            <p>Đóng gói kỹ, giao hàng đúng hẹn, máy hoạt động tốt.</p>
+            <p>{{ item.content }}</p>
           </div>
           <div class>
             <a href>Gui trả lời</a>
@@ -98,7 +151,7 @@
 
           <div class="img-cmt">
             <img
-              src="https://salt.tikicdn.com/cache/200x200/ts/product/b7/15/fa/892ce08c86b4bbe637710522f9489aae.jpg"
+              :src="product.image"
               alt
             >
           </div>
@@ -123,18 +176,74 @@
   </div>
 </template>
 <script>
+import StarRating from "vue-star-rating";
 export default {
-  data(){
-    return{
-      toggleCmt:false
+  components: {
+    StarRating
+  },
+  props: ["product"],
+  data() {
+    return {
+      toggleCmt: false,
+      rating: {
+        star: 0,
+        name:'',
+        title: "",
+        content: "",
+        image: ""
+      }
+    };
+  },
+  computed: {
+    totalStarFive(){
+      return this.product.ratings.filter(star => star.star === 5);
+    },
+    totalStarFour(){
+      return this.product.ratings.filter(star => star.star === 4);
+    },
+    totalStarThree(){
+      return this.product.ratings.filter(star => star.star === 3);
+    },
+    totalStarTwo(){
+      return this.product.ratings.filter(star => star.star === 2);
+    },
+    totalStarOne(){
+      return this.product.ratings.filter(star => star.star === 1);
+    },
+    titleToggle() {
+      return this.toggleCmt === true ? "Đóng" : "Viết nhận xét của bạn";
+    },
+    mediumstar() {
+      return (
+        (this.totalStarOne.length * 1 +
+          this.totalStarTwo.length * 2 +
+          this.totalStarThree.length * 3 +
+          this.totalStarFour.length * 4 +
+          this.totalStarFive.length * 5) /
+        this.product.ratings.length
+      );
     }
   },
-  computed:{
-    titleToggle(){
-      return this.toggleCmt === true ? 'Viết nhận xét của bạn' : 'Đóng'
+  methods: {
+    toggleCmtAc(){
+      if(!this.$store.state.authUser){
+        this.$store.commit('OPEN_REGISTER')
+      }else{
+        this.toggleCmt = !this.toggleCmt
+      }
+    },
+    sendRating() {
+      this.product.ratings.unshift({
+        name: this.$store.state.authUser.name,
+        title :this.rating.title,
+        star :this.rating.star,
+        image :this.rating.image,
+        content :this.rating.content,
+       })
+      this.$emit('totalRating', { total:this.product.ratings.length, mediumstar:this.mediumstar })
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>

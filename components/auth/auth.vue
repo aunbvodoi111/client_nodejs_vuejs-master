@@ -15,10 +15,10 @@
       </div>
       <div class="txt" v-if="!login">
         <div class="txt-form">
-          <input type="text" class="txt-control">
-          <input type="text" class="txt-control">
-          <button class="btn-login">Đăng nhập</button>
-          <div class="forget-pass">Quên mật khẩu ?</div>
+          <input type="text" class="txt-control" v-model="auth.email">
+          <input type="text" class="txt-control" v-model="auth.password">
+          <button class="btn-login" @click="loginAuth">Đăng nhập</button>
+          <div class="forget-pass" >Quên mật khẩu ?</div>
           <div class="option-login">Hoặc đăng nhập bằng</div>
           <button class="btn-login-facebook">Tiếp tục với Facebook</button>
           <button class="btn-login-facebook" @click="close">Đóng</button>
@@ -44,7 +44,12 @@
 <script>
 export default {
   data() {
-    return {};
+    return {
+      auth:{
+        email:'',
+        password:''
+      }
+    };
   },
   computed: {
     login() {
@@ -57,6 +62,16 @@ export default {
   methods: {
     close() {
       this.$store.commit("CLOSE_AUTH");
+    },
+    loginAuth(){
+      this.$axios.post('/api/product/login',{
+        email : this.auth.email,
+        password  : this.auth.password
+      }).then(response=>{
+        console.log(response.data)
+        this.$store.commit('SET_USER',response.data)
+        this.$store.commit('CLOSE_AUTH')
+      })
     }
   }
 };

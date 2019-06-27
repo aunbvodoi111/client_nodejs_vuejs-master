@@ -22,49 +22,50 @@
           </div>
         </div>
         <div class="content-right">
-          <h2>Nhập WAFAS22 hoàn 20k xu đơn 150k_ Áo Thun Tay lỡ FORM ĐẸP FREE SIZE 40 - 70KG VẢI THUN COTTON DÀY ATL030</h2>
+          <h2>{{ product.name }}</h2>
           <div class="rating-total-detail">
             <div class="total-rating">
-              5.0
-              <i class="fas fa-star" v-for="n in 5"></i>
+              {{ mediumstar }}
+              <i class="fas fa-star" v-for=" n in Math.floor(mediumstar)" :key=" n + 1"></i>
+              <i class="far fa-star" v-for=" n in 5-Math.floor(mediumstar)" :key=" n + 2"></i>
             </div>
-            <div class="number-rating">22 đánh giá</div>
+            <div class="number-rating">{{ total }} đánh giá</div>
             <div class="number-rating">45 đã bán</div>
           </div>
           <div class="price-detail">
-            <span class="payment">₫ 3.000.000</span>
-            <span class="discount">₫3.000.000</span>
+            <span class="payment">₫ {{ product.price }}</span>
+            <span class="discount">₫{{ product.discount }}</span>
           </div>
           <div class="qty-action">
             <span>Số Lượng</span>
             <div class="btn-txt">
-              <button>
+              <button @click="reduction">
                 <i class="fas fa-minus"></i>
               </button>
-              <input type="text" class="txt-qty">
+              <input type="text" class="txt-qty" v-model="qtyProduct" @keyup="changeQty">
 
-              <button>
+              <button @click="increment">
                 <i class="fas fa-plus"></i>
               </button>
             </div>
-            <span>25 sản phẩm có sẵn</span>
+            <span>{{ product.qty }} sản phẩm có sẵn</span>
           </div>
           <div class="btn-action-detail">
             <div class="btn-add-to-cart">
-              <button>
+              <button @click="addCart">
                 <i class="fas fa-shopping-cart"></i>
                 Thêm Vào Giỏ Hàng
               </button>
             </div>
-            <div class="btn-add-to-buy">
+            <div class="btn-add-to-buy" @click="buyProduct">
               <button>Mua Ngay</button>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <saler/>
-    <Rating/>
+    <saler :product=" product "/>
+    <Rating :product=" product " @totalRating="totalRating"/>
     <ProductRelate/>
   </div>
 </template>
@@ -81,12 +82,57 @@ export default {
     //   Vue.set(item, "contentcmt", "");
     // });
     console.log(data.data);
-    return { product : data.data}
+    return { product: data.data };
   },
   components: {
     Rating,
     ProductRelate,
     saler
+  },
+  data() {
+    return {
+      total: 0,
+      mediumstar: 0,
+      qtyProduct: 1
+    };
+  },
+  methods: {
+    addCart(){
+      if(!this.$store.state.authUser){
+        this.$store.commit('OPEN_REGISTER')
+      }
+    },
+    buyProduct(){
+      if(!this.$store.state.authUser){
+        this.$store.commit('OPEN_REGISTER')
+      }
+    },
+    changeQty() {
+      if (this.qtyProduct > this.product.qty) {
+        this.qtyProduct = this.product.qty;
+      } else {
+        this.qtyProduct = this.qtyProduct
+      }
+    },
+    totalRating(e) {
+      this.total = e.total;
+      this.mediumstar = e.mediumstar;
+      console.log(e);
+    },
+    increment() {
+      if (this.qtyProduct > this.product.qty) {
+        this.qtyProduct = this.product.qty;
+      } else {
+        this.qtyProduct = this.qtyProduct + 1;
+      }
+    },
+    reduction() {
+      if (this.qtyProduct == 1) {
+        this.qtyProduct = 1;
+      } else {
+        this.qtyProduct = this.qtyProduct - 1;
+      }
+    }
   }
 };
 </script>

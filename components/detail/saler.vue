@@ -6,9 +6,9 @@
           <img src="https://cf.shopee.vn/file/c241a1c7f04749a0b9b55b53b5619425_tn" alt>
         </div>
         <div class="chat-saler">
-          <p class="name-saler">energizer_official_store</p>
+          <p class="name-saler">{{ product.user.name }}</p>
           <p class="online">Online 5 Giờ Trước</p>
-          <button>Xem ngay</button>
+          <button @click="showDivChat">Chat ngay</button>
           <button>Xem shop</button>
         </div>
       </div>
@@ -35,6 +35,26 @@
     </div>
   </div>
 </template>
+<script>
+export default {
+  props:["product"],
+  data(){
+    return{
+
+    }
+  },
+  methods:{
+    showDivChat(){
+      if(!this.$store.state.authUser){
+        this.$store.commit('OPEN_REGISTER')
+      }else{
+        this.$store.commit('TOGGLE_CHAT')
+      }
+    }
+  }
+}
+</script>
+
 <style lang="scss" scoped>
 ul li {
   list-style-type: none;

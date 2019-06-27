@@ -33,7 +33,7 @@
       </div>
       <div class="product-content">
         <div class="product" v-for="item in products">
-          <div class="product-div">
+          <div class="product-div" @click="submit(item)">
             <nuxt-link :to="`/${item.id}`">
               <div class="img">
                 <img :src=" item.image " alt>
@@ -65,14 +65,30 @@ export default {
   },
   async asyncData({ $axios }) {
     var data = await $axios.get("/api/product");
-    
+
     return { products: data.data };
+  },
+  data(){
+    return{
+      local: []
+    }
   },
   created() {
     this.fetchProduct();
   },
   methods: {
-    fetchProduct() {}
+    fetchProduct() {},
+    submit(item) {
+      if (localStorage && localStorage.getItem("products")) {
+        this.local = JSON.parse(localStorage.getItem("products"));
+        var anhquy = this.local.filter(product => product._id !== item._id);
+        anhquy.unshift(item);
+        localStorage.setItem("products", JSON.stringify(anhquy));
+      } else {
+        this.local.push(item);
+        localStorage.setItem("products", JSON.stringify(this.local));
+      }
+    }
   },
   mounted() {
     // eslint-disable-next-line no-unused-vars

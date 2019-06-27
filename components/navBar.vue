@@ -5,7 +5,7 @@
         <div class="navtop-right">
           <ul>
             <li>
-              <a href>Kênh người bán</a>
+              <a href='http://localhost:8000/' target="_blank">Kênh người bán</a>
             </li>
             <li>
               <a href>Tải ứng dụng</a>
@@ -17,14 +17,17 @@
             <li>
               <a href>Kênh người bán</a>
             </li>
-            <li>
-              <a href>Tải ứng dụng</a>
+            <li v-if="$store.state.authUser">
+              <a href>Chao , {{ $store.state.authUser.email}}</a>
             </li>
-            <li @click="loginAuth">
+            <li @click="loginAuth" v-if="!$store.state.authUser">
               <a>Đăng kí</a>
             </li>
-            <li @click="registerAuth">
+            <li @click="registerAuth" v-if="!$store.state.authUser">
               <a>Đăng nhập</a>
+            </li>
+            <li @click="registerAuth" v-if="$store.state.authUser">
+              <a>Logout</a>
             </li>
           </ul>
         </div>
@@ -34,28 +37,30 @@
           <nuxt-link to="/"><img src="https://phongvu.vn/media/wysiwyg/logo-PV-new_2.png" alt></nuxt-link>
         </div>
         <div class="search">
-          <input type="text" name id class="txt-search" v-model="keyword">
+          <input type="text" name id class="txt-search" v-model="keyword" placeholder="Nhập từ khóa tìm kiếm" @keyup="searchProduct">
           <button><i class="fas fa-search"></i></button>
           <div class="pop-search" v-if="keyword">
-            <div class="product-search" v-for="n in 5">
+            <div class="product-search" v-for="item in products" :key="item.id">
               <div class="img-product">
                 <img
-                  src="https://cdn.tgdd.vn/Products/Images/42/199041/vivo-v15-quanghai-400x460.png"
+                  :src="item.image"
                   alt
                 >
               </div>
               <div class="detail-product">
-                <a>Pham duc quy</a>
-                <p>500.000</p>
+                <a>{{ item.name }}</a>
+                <p>{{ item.price }}</p>
               </div>
             </div>
+             <h4 v-if="products.length == ''" style="text-align:center;">Không tìm thấy sản phẩm với từ khóa "<span style="color:red;">{{ keyword }}</span>"</h4>
           </div>
+         
         </div>
         <div class="cart-icon">
-          <i class="fas fa-shopping-cart" @mouseover="hover = true" @mouseleave="hover = false">
-            <div class="qty-cart">10</div>
-            <div class="pop-cart" v-if="hover">
-              <div class="product-cart" v-for="n in 5">
+          <i class="fas fa-shopping-cart" @mouseover="hover = true" @mouseleave="hover = false" @click="checkAuth"> 
+            <div class="qty-cart" v-if=" $store.state.authUser">10</div>
+            <div class="pop-cart" v-if="hover && $store.state.authUser">
+              <div class="product-cart" v-for="n in 5" :key="n">
                 <div class="image-pop-cart">
                   <img
                     src="https://cdn.tgdd.vn/Products/Images/42/199041/vivo-v15-quanghai-400x460.png"
@@ -85,15 +90,31 @@ export default {
   data() {
     return {
       keyword: "",
-      hover: false
+      hover: false,
+      products:[]
     };
   },
   methods:{
+    checkAuth(){
+      if(!this.$store.state.authUser){
+        this.$store.commit('OPEN_REGISTER')
+      }else{
+        this.toggleCmt = !this.toggleCmt
+      }
+    },
     loginAuth(){
       this.$store.commit('OPEN_LOGIN')
     },
     registerAuth(){
       this.$store.commit('OPEN_REGISTER')
+    },
+    searchProduct(){
+      this.$axios.post('/api/product/search',{
+        keyword : this.keyword
+      }).then( response =>{
+        this.products = response.data
+        console.log(response.data)
+      })
     }
   }
 };
