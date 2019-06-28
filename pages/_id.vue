@@ -16,8 +16,13 @@
               <i class="fab fa-google-plus"></i>
               <i class="fab fa-twitter"></i>
             </span>
-            <span>
-              <i class="fas fa-heart"></i> Đã thích (12412)
+            <span @click="addWishe(product)" v-if="checkWishe != undefined ">
+              <i class="fas fa-heart"></i>
+              Đã thích ({{ count.length }})
+            </span>
+            <span @click="addWishe(product)" v-if="checkWishe == undefined">
+              <i class="far fa-heart"></i>
+              Chưa thích ({{ count.length }})
             </span>
           </div>
         </div>
@@ -26,7 +31,11 @@
           <div class="rating-total-detail">
             <div class="total-rating">
               {{ mediumstar }}
-              <i class="fas fa-star" v-for=" n in Math.floor(mediumstar)" :key=" n + 1"></i>
+              <i
+                class="fas fa-star"
+                v-for=" n in Math.floor(mediumstar)"
+                :key=" n + 1"
+              ></i>
               <i class="far fa-star" v-for=" n in 5-Math.floor(mediumstar)" :key=" n + 2"></i>
             </div>
             <div class="number-rating">{{ total }} đánh giá</div>
@@ -58,13 +67,13 @@
               </button>
             </div>
             <div class="btn-add-to-buy" @click="buyProduct">
-              <button>Mua Ngay</button>
+              <button>Mua ngay</button>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <saler :product=" product "/>
+    <saler :product="product " :follows ="follows"/>
     <Rating :product=" product " @totalRating="totalRating"/>
     <ProductRelate/>
   </div>
@@ -82,7 +91,7 @@ export default {
     //   Vue.set(item, "contentcmt", "");
     // });
     console.log(data.data);
-    return { product: data.data };
+    return { product: data.data.products, count: data.data.count , follows : data.data.follows }
   },
   components: {
     Rating,
@@ -93,31 +102,55 @@ export default {
     return {
       total: 0,
       mediumstar: 0,
-      qtyProduct: 1
+      qtyProduct: 1,
+      index: undefined
     };
   },
   methods: {
-    addCart(){
-      if(!this.$store.state.authUser){
-        this.$store.commit('OPEN_REGISTER')
+    addWishe(product) {
+      if (this.checkWishe == undefined) {
+        console.log('1')
+        this.checkWishe = 1;
+      } else if (this.checkWishe != undefined) {
+         console.log('2')
+        this.checkWishe = undefined;
+      }
+      if (!this.$store.state.authUser) {
+        this.$store.commit("OPEN_REGISTER");
+      } else {
+        this.$axios
+          .post("/api/wishe/add", { ProductId: this.product.id })
+          .then(response => {
+            console.log(response);
+          });
       }
     },
-    buyProduct(){
-      if(!this.$store.state.authUser){
-        this.$store.commit('OPEN_REGISTER')
+    addCart() {
+      if (!this.$store.state.authUser) {
+        this.$store.commit("OPEN_REGISTER");
+      } else {
+        this.$axios
+          .post("/api/cart/add", { ProductId: this.product.id })
+          .then(response => {
+            console.log(response);
+          });
+      }
+    },
+    buyProduct() {
+      if (!this.$store.state.authUser) {
+        this.$store.commit("OPEN_REGISTER");
       }
     },
     changeQty() {
       if (this.qtyProduct > this.product.qty) {
         this.qtyProduct = this.product.qty;
       } else {
-        this.qtyProduct = this.qtyProduct
+        this.qtyProduct = this.qtyProduct;
       }
     },
     totalRating(e) {
       this.total = e.total;
       this.mediumstar = e.mediumstar;
-      console.log(e);
     },
     increment() {
       if (this.qtyProduct > this.product.qty) {
@@ -133,7 +166,29 @@ export default {
         this.qtyProduct = this.qtyProduct - 1;
       }
     }
-  }
+  },
+  computed: {
+    checkWishe: {
+      get: function() {
+        this.index;
+        if (this.$store.state.authUser && this.count.length > 0) {
+          this.index = this.count.find(
+            count => count.UserId === this.$store.state.authUser.id
+          );
+          // index = count.length
+        }
+        console.log(this.index);
+
+        return this.index;
+      },
+      set: function(newValue) {
+        // this.checkWishe = newValue
+        console.log(newValue)
+        this.index = newValue
+      }
+    }
+  },
+  
 };
 </script>
 

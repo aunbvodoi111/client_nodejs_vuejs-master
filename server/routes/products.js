@@ -20,6 +20,28 @@ router.get('/', async (req, res) => {
     return res.json(products)
 })
 
+router.get('/shop/:id', async (req, res) => {
+    console.log(req.user)
+    var { id } = req.params
+    var products = await models.products.findAll({  
+        where:{ UserId : id },
+        include: [{
+          model: models.users,
+          as:'users'
+        }]
+    })
+    return res.json(products)
+})
+
+router.get('/search/:keyword', async (req, res) => {
+    console.log(req.body.keyword)  
+    var { keyword } =  req.params
+    var products = await models.products.findAll({
+         where: { name: { [Op.like]: '%' + keyword + '%' }},limit: 5
+    })
+    return res.status(200).json(products)
+})
+
 router.post('/search', async (req, res) => {
     console.log(req.body.keyword)  
     var { keyword } =  req.body
@@ -31,10 +53,25 @@ router.post('/search', async (req, res) => {
 
 router.post('/login',
     passport.authenticate('local'),
-    function (req, res) {
-        // If this function gets called, authentication was successful.
-        console.log(req.user)
-        return res.send(req.user)
+    async (req, res) => {
+        const allOrders = await models.users.findAll({
+            where:{id : req.user.id },
+            // Make sure to include the products
+            include: [{
+                model: models.products,
+                as: 'products',
+                required: false,
+                // Pass in the Product attributes that you want to retrieve
+                attributes: ['id', 'name','price','image'],
+                through: {
+                    // This block of code allows you to retrieve the properties of the join table
+                    model: models.carts,
+                    as: 'carts',
+                }
+            }]
+        });
+        console.log(allOrders)
+        return res.send({ user:req.user, carts : allOrders })
     });
 
 
@@ -73,7 +110,14 @@ router.get('/detailPr/:id', async (req, res) => {
         },{model: models.users}],
         
     })
-    return res.json(products)
+    var count = await models.wishes.findAll({
+        where: { ProductId : id },
+    });
+    var follows = await models.follows.findAll({
+        where: { ProductId : id },
+    });
+    console.log(count)
+    return res.send({ products: products, count: count ,follows : follows })
 })
 // router.post('/login', async (req, res) => {
 //     console.log(req.body)

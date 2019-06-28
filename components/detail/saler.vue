@@ -9,7 +9,10 @@
           <p class="name-saler">{{ product.user.name }}</p>
           <p class="online">Online 5 Giờ Trước</p>
           <button @click="showDivChat">Chat ngay</button>
-          <button>Xem shop</button>
+          <button @click="followSaler">{{ checkFollow === undefined ? 'Follow' : 'Đã Follow' }}</button>
+          <nuxt-link :to="`/shop/${product.user.id}`">
+            <button>Xem shop</button>
+          </nuxt-link>
         </div>
       </div>
       <div class="saler-right">
@@ -37,13 +40,51 @@
 </template>
 <script>
 export default {
-  props:["product"],
+  props:["product","follows"],
   data(){
     return{
 
     }
   },
+  computed:{
+    checkFollow: {
+      get: function() {
+        var  index;
+        if (this.$store.state.authUser && this.follows.length > 0) {
+          index = this.follows.find(
+            follow => follow.UserId === this.$store.state.authUser.id
+          );
+          // index = count.length
+        }
+
+        return index;
+      },
+      set: function(newValue) {
+        // this.checkWishe = newValue
+        console.log(newValue)
+        this.index = newValue
+      }
+    }
+  },
   methods:{
+    followSaler(product) {
+      if (this.checkWishe == undefined) {
+        console.log('1')
+        this.checkWishe = 1;
+      } else if (this.checkWishe != undefined) {
+         console.log('2')
+        this.checkWishe = undefined;
+      }
+      if (!this.$store.state.authUser) {
+        this.$store.commit("OPEN_REGISTER");
+      } else {
+        this.$axios
+          .post("/api/follow/add", { ProductId: this.product.id })
+          .then(response => {
+            console.log(response);
+          });
+      }
+    },
     showDivChat(){
       if(!this.$store.state.authUser){
         this.$store.commit('OPEN_REGISTER')

@@ -14,7 +14,7 @@
         <div class="money">Số Tiền</div>
         <div class="action">Thao Tác</div>
       </div>
-      <div class="cart-product" v-for="n in 5">
+      <div class="cart-product" v-for="item in carts " :key="item.id">
         <div class="saler-cart">
           <label class="container">
             <i class="fas fa-close"></i>Phamquy
@@ -22,7 +22,7 @@
             <span class="checkmark"></span>
           </label>
         </div>
-        <div class="cart-main">
+        <div class="cart-main" >
           <div class="pr-cart">
             <label class="container">
               <i class="fas fa-close"></i>
@@ -30,20 +30,20 @@
               <span class="checkmark"></span>
             </label>
             <div class="img">
-              <img
-                src="https://cdn.tgdd.vn/Products/Images/42/199041/vivo-v15-red-200-180x125.png"
+              <img width="42%"
+                :src="item.image"
                 alt
               >
             </div>
             <div class="name">
-              <p>Điện thoại Samsung Galaxy S10+ (512GB)</p>
+              <p>{{ item.name }}</p>
             </div>
           </div>
           <div class="price">
-            <p>₫190.000₫ 99.000</p>
+            <p>₫190.000 ₫ {{ item.price }}</p>
           </div>
           <div class="price">
-            <p>₫190.000₫ 99.000</p>
+            <p>{{ item.qty }}</p>
           </div>
           <div class="price-sum">
             <p>₫396.000</p>
@@ -69,7 +69,13 @@
   </div>
 </template>
 <script>
-export default {};
+export default {
+  async asyncData({ $axios }) {
+    var data = await $axios.get('/api/cart/')
+    console.log(data.data)
+    return { carts : data.data }
+  },
+};
 </script>
 <style lang="scss" scoped>
 .container-fruid {

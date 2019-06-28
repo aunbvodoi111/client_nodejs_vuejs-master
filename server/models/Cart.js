@@ -1,19 +1,16 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const Cart = sequelize.define('carts', {
-    price: DataTypes.INTEGER,
-    discount: DataTypes.INTEGER,
+    ProductId: DataTypes.UUID,
+    UserId: DataTypes.UUID,
   }, {
     updatedAt: 'updated_at',
     createdAt: 'created_at'
   });
   Cart.associate = function(models) {
-    // models.Product.belongsTo(models.Cate, {
-    //   onDelete: "CASCADE",
-    //   foreignKey: {
-    //     allowNull: false
-    //   }
-    // });
+    Cart.belongsTo(models.products,{foreignKey: 'ProductId'})
+    Cart.belongsTo(models.users, {foreignKey: 'UserId'});
+    
   };
   return Cart;
 };

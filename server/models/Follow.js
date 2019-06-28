@@ -1,8 +1,8 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const Follow = sequelize.define('follows', {
-    price: DataTypes.INTEGER,
-    discount: DataTypes.INTEGER,
+    ProductId: DataTypes.UUID,
+    UserId: DataTypes.UUID,
   }, {
     updatedAt: 'updated_at',
     createdAt: 'created_at'

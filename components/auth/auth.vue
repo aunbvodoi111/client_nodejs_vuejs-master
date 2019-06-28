@@ -69,7 +69,7 @@ export default {
         password  : this.auth.password
       }).then(response=>{
         console.log(response.data)
-        this.$store.commit('SET_USER',response.data)
+        this.$store.commit('SET_USER',response.data.user)
         this.$store.commit('CLOSE_AUTH')
       })
     }

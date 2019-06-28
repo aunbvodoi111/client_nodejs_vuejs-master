@@ -17,6 +17,9 @@ app.use(passport.session());
 
 const http = require('http');
 const productApi = require('./routes/products')
+const cartApi = require('./routes/cart')
+const wisheApi = require('./routes/wishe')
+const followApi = require('./routes/follow')
 // Import and Set Nuxt.js options
 let config = require('../nuxt.config.js')
 config.dev = !(process.env.NODE_ENV === 'production')
@@ -25,6 +28,9 @@ app.use(bodyParser.json())
 // app.use(expressValidator())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use('/api/product',productApi)
+app.use('/api/cart',cartApi)
+app.use('/api/wishe',wisheApi)
+app.use('/api/follow',followApi)
 app.use(express.static('public'))
 async function start() {
   // Init Nuxt.js

@@ -157,17 +157,17 @@
           </div>
           <div class="txt-reply">
             <div class>
-              <textarea></textarea>
+              <textarea v-model="contentRepRating"></textarea>
               <div class="btn-send-rep">
-                <button>Gửi câu trả lời</button>
+                <button @click="send_reprating(item)">Gửi câu trả lời</button>
                 <button>Hủy bỏ</button>
               </div>
             </div>
           </div>
-          <div class="rep-rating">
+          <div class="rep-rating" v-for="prod in item.rep_ratings">
             <div class="avatar-rep"></div>
             <div class="content-rep">
-              <p>Chào bạn, Tiki đã nhận được thông tin đánh giá/nhận xét từ bạn. Qua kiểm tra hiện tại đơn hàng của bạn Tiki trước đó đã trễ cam kết lắp đặt so với thời gian dự kiến đưa ra, Tiki đang liên hệ bộ phận lắp đặt tiến hành xử lý gấp. Tiki rất xin lỗi vì sự bất tiện trong lần mua sắm này, Tiki hiểu được điều này gây ảnh hưởng đến nhu cầu sử dụng sản phẩm và thời gian của quý khách, Tiki xin phép ghi nhận góp ý và cố gắng cải thiện rất mong quý khách hàng có thể thông cảm cho Tiki. Hy vọng sẽ phục vụ bạn tốt hơn trong đơn hàng tiếp theo. Tiki rất mong nhận được phản hồi mới, khách quan chi tiết hơn từ bạn về ưu và khuyết điểm của sản phẩm sau khi hỗ trợ xong. Một lần nữa, Tiki rất xin lỗi bạn vì những bất tiện vừa qua. Trường hợp cần hỗ trợ thêm, bạn có thể liên hệ với Tiki qua hòm thư hotro@tiki.vn hoặc hotline 1900-6035. Trân trọng</p>
+              <p>{{ prod.content }}</p>
             </div>
           </div>
         </div>
@@ -187,11 +187,13 @@ export default {
       toggleCmt: false,
       rating: {
         star: 0,
+        id : 1,
         name:'',
         title: "",
         content: "",
         image: ""
-      }
+      },
+      contentRepRating:''
     };
   },
   computed: {
@@ -232,13 +234,21 @@ export default {
         this.toggleCmt = !this.toggleCmt
       }
     },
+    send_reprating(item){
+      var rating = this.product.ratings.find(star => star.id === item.id);
+      console.log(rating)
+      rating.rep_ratings.push({ content : this.contentRepRating })
+    },
     sendRating() {
+      this.rating.id = this.rating.id + 1
       this.product.ratings.unshift({
+        id : this.rating.id,
         name: this.$store.state.authUser.name,
         title :this.rating.title,
         star :this.rating.star,
         image :this.rating.image,
         content :this.rating.content,
+        rep_ratings : []
        })
       this.$emit('totalRating', { total:this.product.ratings.length, mediumstar:this.mediumstar })
     }

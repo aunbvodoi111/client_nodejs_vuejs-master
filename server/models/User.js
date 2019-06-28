@@ -9,12 +9,22 @@ module.exports = (sequelize, DataTypes) => {
     createdAt: 'created_at'
   });
   User.associate = function(models) {
-    // models.Product.belongsTo(models.Cate, {
-    //   onDelete: "CASCADE",
-    //   foreignKey: {
-    //     allowNull: false
-    //   }
-    // });
+    // User.hasMany(models.carts,{ as: 'carts', foreignKey: 'UserId'})
+    User.hasMany(models.products,{ as: 'productss', foreignKey: 'UserId'})
+    User.belongsToMany(models.products, {  
+      as: 'products',
+      through: 'carts', 
+      otherKey: 'UserId',
+      foreignKey: 'ProductId',
+    });
+    // User.belongsToMany(models.products, {
+    //   through: 'carts',
+    //   as: 'products',
+    //   foreignKey: 'UserId',
+    //   otherKey: 'ProductId'
+    // });ProductId
+    // User.belongsToMany(models.products, { as: 'products', through: 'carts', foreignKey: 'UserId', otherKey: 'ProductId'})
+    // User.belongsToMany(models.products, { through: 'carts' })
   };
   return User;
 };

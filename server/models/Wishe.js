@@ -1,8 +1,8 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const Wishe = sequelize.define('wishes', {
-    view: DataTypes.INTEGER,
-    mass: DataTypes.INTEGER,
+    ProductId: DataTypes.UUID,
+    UserId: DataTypes.UUID,
   }, {
     updatedAt: 'updated_at',
     createdAt: 'created_at'

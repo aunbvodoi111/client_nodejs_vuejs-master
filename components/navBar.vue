@@ -38,7 +38,8 @@
         </div>
         <div class="search">
           <input type="text" name id class="txt-search" v-model="keyword" placeholder="Nhập từ khóa tìm kiếm" @keyup="searchProduct">
-          <button><i class="fas fa-search"></i></button>
+          
+          <nuxt-link :to="`/search/${keyword}`"><button><i class="fas fa-search"></i></button></nuxt-link>
           <div class="pop-search" v-if="keyword">
             <div class="product-search" v-for="item in products" :key="item.id">
               <div class="img-product">
@@ -57,7 +58,9 @@
          
         </div>
         <div class="cart-icon">
-          <i class="fas fa-shopping-cart" @mouseover="hover = true" @mouseleave="hover = false" @click="checkAuth"> 
+          <nuxt-link to='cart'>
+            <i class="fas fa-shopping-cart" @mouseover="hover = true" @mouseleave="hover = false" @click="checkAuth"> 
+          
             <div class="qty-cart" v-if=" $store.state.authUser">10</div>
             <div class="pop-cart" v-if="hover && $store.state.authUser">
               <div class="product-cart" v-for="n in 5" :key="n">
@@ -80,6 +83,7 @@
               <button class="btn-to-cart">Vào giỏ hàng</button>
             </div>
           </i>
+          </nuxt-link>
         </div>
       </div>
     </div>

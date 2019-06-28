@@ -6,7 +6,6 @@ module.exports = (sequelize, DataTypes) => {
     description: DataTypes.STRING,
     price: DataTypes.INTEGER,
     discount: DataTypes.INTEGER,
-    
     view: DataTypes.INTEGER,
     mass: DataTypes.INTEGER,
     khuyenmai: DataTypes.STRING,
@@ -19,6 +18,13 @@ module.exports = (sequelize, DataTypes) => {
   Product.associate = function (models) {
     Product.hasMany(models.ratings,{ as: 'ratings', foreignKey: 'ProductId'})
     Product.belongsTo(models.users, {foreignKey: 'UserId'});
+    Product.belongsToMany(models.users, {  
+      as: 'users',
+      through: 'carts',
+      foreignKey: 'ProductId',
+      otherKey: 'UserId'
+    });
+    // User.belongsToMany(models.products, { as: 'products', through: 'carts', foreignKey: 'UserId', otherKey: 'ProductId'})
   };
   return Product;
 };

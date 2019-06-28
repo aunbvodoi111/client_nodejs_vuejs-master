@@ -45,6 +45,9 @@
       </div>
     </div>
     <div class="content-right">
+        <h3 style="margin-bottom : 30px;">Kết quả tìm kiếm cho từ khoá '<span style="color : red;">{{$route.params.id}}</span>'
+           <span style="color : grey; margin-left : 3px;"> : {{ products.length }}  kết quả</span>
+        </h3>
       <div class="title-filter-product">
         <div>
           <ul>
@@ -83,7 +86,8 @@
 <script>
 export default {
   async asyncData({ $axios, params }) {
-    var products = await $axios.get("/api/product/shop/" + params.id);
+      console.log(params)
+    var products = await $axios.get("/api/product/search/" + params.id);
     console.log(products)
     return { products: products.data };
   }

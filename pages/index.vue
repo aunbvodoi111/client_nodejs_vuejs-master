@@ -32,11 +32,11 @@
         <h4>Sản phẩm nổi bật</h4>
       </div>
       <div class="product-content">
-        <div class="product" v-for="item in products">
+        <div class="product" v-for="item in products" :key="item.id">
           <div class="product-div" @click="submit(item)">
             <nuxt-link :to="`/${item.id}`">
               <div class="img">
-                <img :src=" item.image " alt>
+                <img :src=" `${item.image} `" alt>
               </div>
             </nuxt-link>
             <div class="name">
@@ -79,9 +79,10 @@ export default {
   methods: {
     fetchProduct() {},
     submit(item) {
+      var anhquy = []
       if (localStorage && localStorage.getItem("products")) {
         this.local = JSON.parse(localStorage.getItem("products"));
-        var anhquy = this.local.filter(product => product._id !== item._id);
+        anhquy = this.local.filter(product => product.id !== item.id);
         anhquy.unshift(item);
         localStorage.setItem("products", JSON.stringify(anhquy));
       } else {
