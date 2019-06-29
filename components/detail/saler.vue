@@ -40,16 +40,21 @@
 </template>
 <script>
 export default {
-  props:["product","follows"],
-  data(){
-    return{
-
-    }
+  props: ["product", "follows"],
+  data() {
+    return {
+      rooms : []
+    };
   },
-  computed:{
+  async asyncData({ $axios }) {
+    alert("dsadasdas");
+    var data = await $axios.get("/api/room/");
+    console.log(data);
+  },
+  computed: {
     checkFollow: {
       get: function() {
-        var  index;
+        var index;
         if (this.$store.state.authUser && this.follows.length > 0) {
           index = this.follows.find(
             follow => follow.UserId === this.$store.state.authUser.id
@@ -61,27 +66,29 @@ export default {
       },
       set: function(newValue) {
         // this.checkWishe = newValue
-        console.log(newValue)
-        this.index = newValue
+        console.log(newValue);
+        this.index = newValue;
       }
     }
   },
-  methods:{
+  methods: {
     followSaler(product) {
-      var find =  this.follows.find( follow => follow.UserId === this.$store.state.authUser.id)
-      console.log(find)
-      var index = this.follows.indexOf(find)
-      console.log(index)
-      if( find ){
-         this.follows.splice(index,1)
-        console.log(this.follows)
-      }else{
-        var anhquy ={
-          UserId : this.$store.state.authUser.id,
-          ProductId : product.id
-        }
-        this.follows.push(anhquy)
-        console.log(this.follows)
+      var find = this.follows.find(
+        follow => follow.UserId === this.$store.state.authUser.id
+      );
+      console.log(find);
+      var index = this.follows.indexOf(find);
+      console.log(index);
+      if (find) {
+        this.follows.splice(index, 1);
+        console.log(this.follows);
+      } else {
+        var anhquy = {
+          UserId: this.$store.state.authUser.id,
+          ProductId: product.id
+        };
+        this.follows.push(anhquy);
+        console.log(this.follows);
       }
       if (!this.$store.state.authUser) {
         this.$store.commit("OPEN_REGISTER");
@@ -93,15 +100,28 @@ export default {
           });
       }
     },
-    showDivChat(){
-      if(!this.$store.state.authUser){
-        this.$store.commit('OPEN_REGISTER')
-      }else{
-        this.$store.commit('TOGGLE_CHAT')
+    showDivChat() {
+      if (!this.$store.state.authUser) {
+        this.$store.commit("OPEN_REGISTER");
+      } else {
+        this.$axios
+          .post("/api/room/add", {
+            user: this.product.user
+          })
+          .then(response => {
+      
+            console.log(response)
+            this.rooms = response.data
+            this.$store.commit("ROOMS",response.data);
+          });
+        // this.$axios.$get("/api/room/").then(response => {
+        //   console.log(response);
+        // });
+        this.$store.commit("TOGGLE_CHAT");
       }
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -219,7 +239,7 @@ ul li {
       .saler-right {
         width: 65%;
         display: none;
-        
+
         ul {
           width: 100%;
           li {

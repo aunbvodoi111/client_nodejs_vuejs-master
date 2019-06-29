@@ -5,7 +5,8 @@ export const state = () => ({
   login: false,
   register: true,
   closeAuth: false,
-  toggleChat:false
+  toggleChat:false,
+  rooms:[]
 })
 
 export const mutations = {
@@ -26,6 +27,9 @@ export const mutations = {
   },
   TOGGLE_CHAT: function (state) {
     state.toggleChat = !state.toggleChat
+  },
+  ROOMS: function (state ,rooms) {
+    state.rooms = rooms
   },
 }
 

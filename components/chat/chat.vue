@@ -11,7 +11,7 @@
         <div class="input-chat">
           <input type="text" class="txt-filter" placeholder="Tìm người chat">
         </div>
-        <div class="people-pm">
+        <div class="people-pm" v-for="item in rooms " :key="item.id" @click="chatUser(item)">
           <div class="avatar">
             <img
               src="https://media3.scdn.vn/img3/2019/5_14/nEZOmN_simg_ab1f47_250x250_maxb.jpg"
@@ -27,11 +27,11 @@
         <div class="title-chat-right">
           <i class="fas fa-minus" @click="$store.commit('TOGGLE_CHAT')"></i>
         </div>
-        <div class="content-chat">
+        <div class="content-chat" style="overflow-y: scroll; height : 300px;">
           <div class="messager">
-            <div class="saler">
+            <div class="saler" v-for="item in messages">
               <div class="div-left">
-                <p>bạn cần tìm hiểu gì thêm về sản phẩm k ah</p>
+                <p>{{ item.content }}</p>
                 <img src="https://cf.shopee.vn/file/aaa24a79e7015ab1d6c73392b4b54c93_tn" alt>
               </div>
             </div>
@@ -43,24 +43,73 @@
             </div>
           </div>
         </div>
+        <div class="bottom-chat-right">
+          <input type="text" class="txt-input-chat" v-model="message">
+          <div>
+            <button @click="sendMessages">Gui</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 <script>
+import socket from "~/plugins/socket.io.js";
 export default {
   data(){
     return{
-
+      message:'',
+      roomname:'',
+      idUserSend : '',
+      messages:[]
     }
   },
   computed:{
     toggleChat(){
       return this.$store.state.toggleChat
+    },
+    rooms(){
+       return this.$store.state.rooms;
     }
   },
-  methods:{
+  beforeMount() {
+    socket.on("new-message", (room,message) => {
+      // alert(message);
+      console.log(message)
+      console.log(room)
+      var audio = new Audio('/Iphone.mp3') // path to file
+      audio.play()
+       this.messages.push(message)
 
+      // var audio = new Audio('/Iphone.mp3') // path to file
+      // audio.play() 
+      // var anhquy = this.messages.messages
+      // if(this.messages._id == room){
+      //   anhquy.push(message)
+      //    console.log(anhquy)
+      // }
+    
+      // this.$store.commit("ADD_MESS", message);
+    });
+  },
+  methods:{
+    chatUser(item){
+      this.roomname = item.name
+      if(item.UserId1 == this.$store.state.authUser.id){
+        this.idUserSend = item.UserId2
+      }else if(item.UserId2 == this.$store.state.authUser.id){
+        this.idUserSend = item.UserId1
+      }
+    },
+    sendMessages(){
+      var message = {
+        content: this.message,
+        nameuser: this.idUserSend,
+        roomid: this.roomname
+      };
+      socket.emit('send-message',message)
+      
+    }
   }
 }
 </script>
@@ -147,6 +196,7 @@ export default {
     }
     .content-chat {
       width: 100%;
+      height: 320px;
       .messager {
         width: 100%;
         .saler {
@@ -197,6 +247,18 @@ export default {
             }
           }
         }
+      }
+    }
+    .bottom-chat-right{
+      width: 100%;
+      display: flex;
+      .txt-input-chat{
+        width: 80%;
+        height: 30px;
+      }
+      button{
+        width:50px;
+        height: 30px;
       }
     }
   }

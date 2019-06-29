@@ -42,6 +42,7 @@
   </div>
 </template>
 <script>
+import socket from "~/plugins/socket.io.js";
 export default {
   data() {
     return {
@@ -57,7 +58,8 @@ export default {
     },
     closeAuth() {
       return this.$store.state.closeAuth;
-    }
+    },
+    
   },
   methods: {
     close() {
@@ -71,6 +73,14 @@ export default {
         console.log(response.data)
         this.$store.commit('SET_USER',response.data.user)
         this.$store.commit('CLOSE_AUTH')
+        if(response){
+          socket.emit("joinRoom", response.data.user.id);
+          // console.log(res.user.username)
+          // this.$store.commit('SET_USER' ,res.user )
+          // this.$store.commit('CLOSE_MODEL' )
+          // socket.emit('userOnline',res)
+          // this.$store.commit("ROOM_LIST", res.listroom);
+        }
       })
     }
   }

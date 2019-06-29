@@ -90,7 +90,7 @@ export default {
     //   Vue.set(item, "is_rating", false);
     //   Vue.set(item, "contentcmt", "");
     // });
-    console.log(data.data);
+    // console.log(data.data);
     return { product: data.data.products, count: data.data.count , follows : data.data.follows }
   },
   components: {
