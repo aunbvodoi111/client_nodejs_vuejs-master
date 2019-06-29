@@ -1,9 +1,11 @@
 <template>
   <div class="container">
+    <h4 style="padding : 20px 0px;">SẢN PHẨM BẠN VỪA XEM</h4>
     <div class>
+      
       <div class="swiper-container">
         <div class="swiper-wrapper">
-          <div class="swiper-slide" v-for="item in local" :key="item + 1">
+          <div class="swiper-slide" v-for="item in local" :key="item.id">
             <div class="product-div">
               <nuxt-link :to="`/${item.id}`">
                 <div class="img">

@@ -68,12 +68,20 @@ export default {
   },
   methods:{
     followSaler(product) {
-      if (this.checkWishe == undefined) {
-        console.log('1')
-        this.checkWishe = 1;
-      } else if (this.checkWishe != undefined) {
-         console.log('2')
-        this.checkWishe = undefined;
+      var find =  this.follows.find( follow => follow.UserId === this.$store.state.authUser.id)
+      console.log(find)
+      var index = this.follows.indexOf(find)
+      console.log(index)
+      if( find ){
+         this.follows.splice(index,1)
+        console.log(this.follows)
+      }else{
+        var anhquy ={
+          UserId : this.$store.state.authUser.id,
+          ProductId : product.id
+        }
+        this.follows.push(anhquy)
+        console.log(this.follows)
       }
       if (!this.$store.state.authUser) {
         this.$store.commit("OPEN_REGISTER");

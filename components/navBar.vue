@@ -39,8 +39,8 @@
         <div class="search">
           <input type="text" name id class="txt-search" v-model="keyword" placeholder="Nhập từ khóa tìm kiếm" @keyup="searchProduct">
           
-          <nuxt-link :to="`/search/${keyword}`"><button><i class="fas fa-search"></i></button></nuxt-link>
-          <div class="pop-search" v-if="keyword">
+          <nuxt-link :to="`/search/${keyword}`"><button @click="closePopSearch = false"><i class="fas fa-search"></i></button></nuxt-link>
+          <div class="pop-search" v-if="keyword && closePopSearch">
             <div class="product-search" v-for="item in products" :key="item.id">
               <div class="img-product">
                 <img
@@ -95,7 +95,8 @@ export default {
     return {
       keyword: "",
       hover: false,
-      products:[]
+      products:[],
+      closePopSearch:false
     };
   },
   methods:{
@@ -113,6 +114,7 @@ export default {
       this.$store.commit('OPEN_REGISTER')
     },
     searchProduct(){
+      this.closePopSearch = true
       this.$axios.post('/api/product/search',{
         keyword : this.keyword
       }).then( response =>{
@@ -196,6 +198,7 @@ a:hover {
         .pop-search {
           position: absolute;
           width: 80%;
+          z-index: 9;
           background: white;
           padding: 5px;
           -webkit-box-shadow: 3px 4px 29px -10px rgba(0, 0, 0, 0.75);

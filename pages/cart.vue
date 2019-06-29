@@ -22,7 +22,7 @@
             <span class="checkmark"></span>
           </label>
         </div>
-        <div class="cart-main" >
+        <div class="cart-main">
           <div class="pr-cart">
             <label class="container">
               <i class="fas fa-close"></i>
@@ -30,10 +30,7 @@
               <span class="checkmark"></span>
             </label>
             <div class="img">
-              <img width="42%"
-                :src="item.image"
-                alt
-              >
+              <img width="42%" :src="item.image" alt>
             </div>
             <div class="name">
               <p>{{ item.name }}</p>
@@ -43,7 +40,20 @@
             <p>₫190.000 ₫ {{ item.price }}</p>
           </div>
           <div class="price">
-            <p>{{ item.qty }}</p>
+            <!-- <p></p> -->
+            <div class="qty-action">
+              <span>Số Lượng</span>
+              <div class="btn-txt">
+                <button @click="reduction(item)">
+                  <i class="fas fa-minus"></i>
+                </button>
+                <input type="text" class="txt-qty" :value=" item.users[0].carts.qty ">
+
+                <button @click="increment(item)">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
+            </div>
           </div>
           <div class="price-sum">
             <p>₫396.000</p>
@@ -61,7 +71,7 @@
             <span class="checkmark"></span>
           </label>
           <div>
-            <p>Tổng tiền hàng (8 sản phẩm): ₫2.333.000</p>
+            <p>Tổng tiền hàng ({{ sumQtyCart }} sản phẩm): ₫{{sumMoneyCart}}</p>
           </div>
         </div>
       </div>
@@ -71,13 +81,63 @@
 <script>
 export default {
   async asyncData({ $axios }) {
-    var data = await $axios.get('/api/cart/')
-    console.log(data.data)
-    return { carts : data.data }
+    var data = await $axios.get("/api/cart/");
+    console.log(data.data);
+    var carts = data.data.filter(data => data.users.length !== 0);
+    return { carts: carts };
   },
+  methods: {
+    reduction(item) {
+      // if (this.qtyProduct > this.product.qty) {
+      //   this.qtyProduct = this.product.qty;
+      // } else {
+      //   this.qtyProduct = this.qtyProduct + 1;
+      // }
+      item.users[0].carts.qty = item.users[0].carts.qty + 1;
+    },
+    increment(item) {
+      item.users[0].carts.qty = item.users[0].carts.qty - 1;
+    }
+  },
+  computed: {
+    sumQtyCart() {
+      var sum = 0;
+      for (var i = 0; i < this.carts.length; i++) {
+        var sum = sum + this.carts[i].users[0].carts.qty;
+      }
+      return sum;
+    },
+    sumMoneyCart() {
+      var sum = 0;
+      for (var i = 0; i < this.carts.length; i++) {
+        var sum = sum + this.carts[i].price * this.carts[i].users[0].carts.qty;
+        console.log(this.carts[i].price * this.carts[i].users[0].carts.qty);
+      }
+      return sum;
+    }
+  }
 };
 </script>
 <style lang="scss" scoped>
+.qty-action {
+  display: flex;
+  margin: 4% 0%;
+  .btn-txt {
+    margin: 0px 20px;
+  }
+  button {
+    background: white;
+    border: none;
+    height: 100%;
+    outline: none;
+    border: 1px solid grey;
+    cursor: pointer;
+  }
+  .txt-qty {
+    width: 30px;
+    padding: 3px 0px;
+  }
+}
 .container-fruid {
   width: 100%;
   background: #f5f5f5;

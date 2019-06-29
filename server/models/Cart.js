@@ -3,6 +3,7 @@ module.exports = (sequelize, DataTypes) => {
   const Cart = sequelize.define('carts', {
     ProductId: DataTypes.UUID,
     UserId: DataTypes.UUID,
+    qty: DataTypes.INTEGER,
   }, {
     updatedAt: 'updated_at',
     createdAt: 'created_at'

@@ -8,9 +8,23 @@ const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 var models = require('../models');
 router.post('/add', async (req, res) => {
-    var { ProductId } = req.body
-    var cart = await models.carts.create({ ProductId: ProductId, UserId: req.user.id });
-    cart.save()
+    var { ProductId, qty } = req.body
+    // var cart = await models.carts.create({ ProductId: ProductId, UserId: req.user.id });
+    // cart.save()
+    console.log('sdaaaaaaaaaaaaa')
+    console.log(qty)
+    const wishesFind = await models.carts.findOne({
+        where: { UserId: req.user.id, ProductId: ProductId }
+    })
+    if (wishesFind) {
+        var qtyBd = wishesFind.qty
+        wishesFind.update({
+            qty: qtyBd + qty
+        })
+    } else {
+        var cart = await models.carts.create({ ProductId: ProductId, UserId: req.user.id, qty: qty });
+        cart.save()
+    }
 })
 router.get('/', async (req, res) => {
     // const allOrders = await models.products.findAll({
@@ -30,12 +44,12 @@ router.get('/', async (req, res) => {
     //     }]
     var carts
     if (req.user) {
-         carts = await models.products.findAll({
-            include: [{
+        carts = await models.products.findAll({
+            include: {
                 model: models.users,
                 as: 'users',
                 required: false,
-                where:{ id : req.user.id },
+                where: { id: req.user.id },
                 // Pass in the Product attributes that you want to retrieve
                 attributes: ['id', 'name'],
                 through: {
@@ -43,9 +57,9 @@ router.get('/', async (req, res) => {
                     model: models.carts,
                     as: 'carts',
                 }
-            }]
+            }
         })
-    }else{
+    } else {
         carts = []
     }
     return res.json(carts)
@@ -53,13 +67,11 @@ router.get('/', async (req, res) => {
 
 router.get('/anhquy', async (req, res) => {
     const allOrders = await models.products.findAll({
-
-        // Make sure to include the products
         include: [{
             model: models.users,
             as: 'users',
             required: false,
-            where:{ id : 2},
+            where: { id: 2 },
             // Pass in the Product attributes that you want to retrieve
             attributes: ['id', 'name'],
             through: {
