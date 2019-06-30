@@ -40,6 +40,7 @@ app.use('/api/follow',followApi)
 app.use('/api/room',roomApi)
 app.use(express.static('public'))
 
+const { ADD_MESSAGE } = require('./socket/socket') 
 const port = process.env.PORT || 3000
 const isProd = process.env.NODE_ENV === 'production'
 
@@ -48,7 +49,7 @@ const config = require('../nuxt.config.js')
 config.dev = !isProd
 
 const nuxt = new Nuxt(config)
-// Start build process in dev mode
+// Start build process in dev modess
 if (config.dev) {
   const builder = new Builder(nuxt)
   builder.build()
@@ -57,7 +58,7 @@ app.use(nuxt.render)
 
 // Listen the server
 server.listen(port, '0.0.0.0')
-console.log('Server listening on localhost:' + port) // eslint-disable-line no-console
+console.log('Server listening on localhost:' + port) // eslint-disable-line no-console.
 const messages = []
 const userOnline = []
 const tata = []
@@ -74,7 +75,7 @@ io.on('connection', (socket) => {
     console.log(people)
   });
   socket.on('send-message', async (message) => {
-    console.log('send')
+    console.log(people)
     console.log(message)
     var name = message.nameuser
     var receiverSocketId = findUserById(name);
@@ -83,18 +84,29 @@ io.on('connection', (socket) => {
       var room = message.roomid;
       socket.join(room);
       io.sockets.connected[receiverSocketId].join(room);
-      //notify the client of this
+      //notify the client of thisss
       socket.broadcast.to(room).emit('new-message',room,message);
-      // await ADD_MESSAGE({ datas : message})
+      await ADD_MESSAGE({ data : message})
     }else{
       console.log('vao day')
+      var room = message.roomid;
+      socket.broadcast.to(room).emit('new-message',room,message);
       await ADD_MESSAGE({ data : message})
     }
     
   })
-  socket.on('anhquy',async (message)=>{
-    io.emit('anhquy',message)
-  })
+  socket.on('userTyping', data => {
+    var anhquy = 'Đang trả lời '
+    socket
+      .to(data.room)
+      .emit('receivedUserTyping', anhquy);
+  });
+  socket.on('removeUserTyping', data => {
+    var anhquy = ''
+    socket
+      .to(data.room)
+      .emit('receivedUserTyping', anhquy);
+  });
   function findUserById(name){
     console.log(people)
     for(socketId in people){

@@ -17,13 +17,13 @@ router.post('/add', async (req, res) => {
                 {
 
                     [Op.and]:
-                        [{ UserId1: req.user.id }, { UserId2: user.id }]
+                        [{ UserName2: req.user.name }, { UserName1: user.name }]
 
                 },
                 {
 
                     [Op.and]:
-                        [{ UserId2: req.user.id }, { UserId1: user.id }]
+                        [{ UserName1: req.user.name }, { UserName2: user.name }]
 
                 }
             ]
@@ -32,18 +32,22 @@ router.post('/add', async (req, res) => {
     console.log(roomfind)
     if (!roomfind) {
         console.log('dấdsas')
-        var room = await models.rooms.create({ name: req.user.name + user.name, UserId1: req.user.id, UserId2: user.id });
+        var room = await models.rooms.create({ name: req.user.name + user.name, UserName1: req.user.name, UserName2: user.name });
         room.save()
         var rooms  = await models.rooms.findAll({
+            where:{ [Op.or]: [ { UserName1: req.user.name }, { UserName2: req.user.name }] },
             include: [{
-                model: models.users,
+                model: models.messagers,
+                as: 'messagers',
             }]
         })
         return res.json(rooms)
     }
     var rooms  = await models.rooms.findAll({
+        where:{ [Op.or]: [ { UserName1: req.user.name }, { UserName2: req.user.name }] },
         include: [{
-            model: models.users,
+            model: models.messagers,
+            as: 'messagers',
         }]
     })
     return res.json(rooms)

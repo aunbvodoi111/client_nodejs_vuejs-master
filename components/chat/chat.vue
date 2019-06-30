@@ -19,7 +19,8 @@
             >
           </div>
           <div class="name-buyer">
-            <p>Phạm Đức Qúy</p>
+            <p v-if="item.UserName1 != $store.state.authUser.name">{{ item.UserName1 }} {{ count }}</p>
+            <p v-if="item.UserName2 != $store.state.authUser.name">{{ item.UserName2 }} {{ count }}</p>
           </div>
         </div>
       </div>
@@ -27,24 +28,25 @@
         <div class="title-chat-right">
           <i class="fas fa-minus" @click="$store.commit('TOGGLE_CHAT')"></i>
         </div>
-        <div class="content-chat" style="overflow-y: scroll; height : 300px;">
-          <div class="messager">
-            <div class="saler" v-for="item in messages">
+        <div class="content-chat" style="overflow-y: scroll; height : 360px;" ref="messages">
+          <div class="messager" v-for="item in room.messagers">
+            <div class="saler" >
               <div class="div-left">
                 <p>{{ item.content }}</p>
                 <img src="https://cf.shopee.vn/file/aaa24a79e7015ab1d6c73392b4b54c93_tn" alt>
               </div>
             </div>
-            <div class="buyer">
+            <!-- <div class="buyer" v-if="item.nameuser == $store.state.authUser.name">
               <div class="div-right">
                 <img src="https://cf.shopee.vn/file/aaa24a79e7015ab1d6c73392b4b54c93_tn" alt>
-                <p>Mình muốn tìm hiểu thêm về sản phẩm</p>
+                <p>{{ item.content }}</p>
               </div>
-            </div>
+            </div> -->
           </div>
+          {{ typing }}
         </div>
         <div class="bottom-chat-right">
-          <input type="text" class="txt-input-chat" v-model="message">
+          <input type="text" class="txt-input-chat" v-model="message" @keyup="triggerMessageSend">
           <div>
             <button @click="sendMessages">Gui</button>
           </div>
@@ -61,7 +63,10 @@ export default {
       message:'',
       roomname:'',
       idUserSend : '',
-      messages:[]
+      messages:[],
+      typing:'',
+      room :{},
+      count:''
     }
   },
   computed:{
@@ -72,33 +77,75 @@ export default {
        return this.$store.state.rooms;
     }
   },
+  mounted() {
+    this.scrollMessages();
+  },
+  updated() {
+    this.scrollMessages();
+  },
   beforeMount() {
     socket.on("new-message", (room,message) => {
       // alert(message);
       console.log(message)
       console.log(room)
-      var audio = new Audio('/Iphone.mp3') // path to file
+      var audio = new Audio('/Iphone.mp3') // path to filesssdsaaaaaaaaaaaa
       audio.play()
-       this.messages.push(message)
-
+      console.log(this.$store.state.rooms)    
+            
+      // this.room = this.rooms.find( room => room.id === room)
+      console.log()
+      // this.room.messagers.push(message)
       // var audio = new Audio('/Iphone.mp3') // path to file
       // audio.play() 
       // var anhquy = this.messages.messages
-      // if(this.messages._id == room){
-      //   anhquy.push(message)
-      //    console.log(anhquy)
-      // }
+      if(this.room.id == room){
+        this.room.messagers.push(message)
+      }else{
+        this.room = this.$store.state.rooms.find( room => room.id === room)
+        this.count = this.count + 1
+        this.room.messagers.push(message)
+      }
     
       // this.$store.commit("ADD_MESS", message);
+    });
+    socket.on("receivedUserTyping", message => {
+       console.log(message);
+      this.typing = message
     });
   },
   methods:{
     chatUser(item){
-      this.roomname = item.name
-      if(item.UserId1 == this.$store.state.authUser.id){
-        this.idUserSend = item.UserId2
-      }else if(item.UserId2 == this.$store.state.authUser.id){
-        this.idUserSend = item.UserId1
+      this.roomname = item.id
+      this.room = this.rooms.find( room => room.id === item.id)
+      this.count = ''
+      if(item.UserName1 == this.$store.state.authUser.name){
+        this.idUserSend = item.UserName2
+      }else if(item.UserName2 == this.$store.state.authUser.name){
+        this.idUserSend = item.UserName1
+      }
+    },
+    sendUserTyping() {
+      socket.emit("userTyping", {
+        room: this.roomname,
+      });
+    },
+    sendUserNotTyping() {
+      socket.emit("removeUserTyping", {
+        room: this.roomname,
+      });
+    },
+    triggerMessageSend(e) {
+      e.preventDefault();
+      if (e.keyCode === 13 && !e.shiftKey) {
+        this.sendMessage();
+        
+      } else {
+        if (this.message !== "") {
+          console.log('dsaasd')
+          this.sendUserTyping();
+        } else {
+          this.sendUserNotTyping();
+        }
       }
     },
     sendMessages(){
@@ -107,9 +154,15 @@ export default {
         nameuser: this.idUserSend,
         roomid: this.roomname
       };
+      this.room.messagers.push(message)
       socket.emit('send-message',message)
-      
-    }
+      this.message = ""
+      this.sendUserNotTyping();
+    },
+     scrollMessages() {
+      var container = this.$refs.messages;
+      // container.scrollTop = container.scrollHeight;
+    },
   }
 }
 </script>

@@ -1,7 +1,9 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  const Messages = sequelize.define('messages', {
+  const Messages = sequelize.define('messagers', {
     content: DataTypes.STRING,
+    RoomId: DataTypes.UUID,
+    avatar: DataTypes.STRING,
   }, {
     updatedAt: 'updated_at',
     createdAt: 'created_at'

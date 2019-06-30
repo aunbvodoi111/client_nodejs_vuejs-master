@@ -2,8 +2,8 @@
 module.exports = (sequelize, DataTypes) => {
   const Room = sequelize.define('rooms', {
     name: DataTypes.STRING,
-    UserId1: DataTypes.UUID,
-    UserId2: DataTypes.UUID,
+    UserName1: DataTypes.STRING,
+    UserName2: DataTypes.STRING,
   }, {
     updatedAt: 'updated_at',
     createdAt: 'created_at'
@@ -15,8 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     //     allowNull: false
     //   }
     // });
-    Room.belongsTo(models.users, {foreignKey: 'UserId1'});
-    Room.belongsTo(models.users, {foreignKey: 'UserId2'});
+    Room.hasMany(models.messagers,{ as: 'messagers', foreignKey: 'RoomId'})
   };
   return Room;
 };

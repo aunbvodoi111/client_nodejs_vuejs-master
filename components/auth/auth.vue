@@ -74,7 +74,7 @@ export default {
         this.$store.commit('SET_USER',response.data.user)
         this.$store.commit('CLOSE_AUTH')
         if(response){
-          socket.emit("joinRoom", response.data.user.id);
+          socket.emit("joinRoom", response.data.user.name);
           // console.log(res.user.username)
           // this.$store.commit('SET_USER' ,res.user )
           // this.$store.commit('CLOSE_MODEL' )
