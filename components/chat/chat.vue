@@ -73,6 +73,9 @@ export default {
     toggleChat(){
       return this.$store.state.toggleChat
     },
+    // rooms(){
+    //    return this.$store.state.rooms;
+    // }
     rooms(){
        return this.$store.state.rooms;
     }
@@ -90,7 +93,7 @@ export default {
       console.log(room)
       var audio = new Audio('/Iphone.mp3') // path to filesssdsaaaaaaaaaaaa
       audio.play()
-      console.log(this.$store.state.rooms)    
+       
             
       // this.room = this.rooms.find( room => room.id === room)
       console.log()
@@ -98,10 +101,14 @@ export default {
       // var audio = new Audio('/Iphone.mp3') // path to file
       // audio.play() 
       // var anhquy = this.messages.messages
+      console.log(this.room)  
       if(this.room.id == room){
         this.room.messagers.push(message)
       }else{
+         console.log(this.$store.state.rooms)  
+          console.log(room)  
         this.room = this.$store.state.rooms.find( room => room.id === room)
+        console.log(this.room)
         this.count = this.count + 1
         this.room.messagers.push(message)
       }

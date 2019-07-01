@@ -1,5 +1,7 @@
 <template>
+<transition name="bounce" leave-active-class="animated bounceOutRight">
   <div class="container" v-if="closeAuth">
+    
     <div class="pop-up">
       <div class="title-auth">
         <div
@@ -39,7 +41,9 @@
         </div>
       </div>
     </div>
+    
   </div>
+  </transition>
 </template>
 <script>
 import socket from "~/plugins/socket.io.js";
@@ -48,8 +52,10 @@ export default {
     return {
       auth:{
         email:'',
-        password:''
-      }
+        password:'',
+        
+      },
+      show: true
     };
   },
   computed: {
@@ -87,6 +93,49 @@ export default {
 };
 </script>
 <style scoped lang="scss">
+.bounce-enter-active {
+  animation: bounce-in .5s;
+}
+.bounce-leave-active {
+  animation: bounce-in .5s reverse;
+}
+@keyframes bounce-in {
+  from,
+  60%,
+  75%,
+  90%,
+  to {
+    -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+
+  0% {
+    opacity: 0;
+    -webkit-transform: translate3d(-3000px, 0, 0);
+    transform: translate3d(-3000px, 0, 0);
+  }
+
+  60% {
+    opacity: 1;
+    -webkit-transform: translate3d(25px, 0, 0);
+    transform: translate3d(25px, 0, 0);
+  }
+
+  75% {
+    -webkit-transform: translate3d(-10px, 0, 0);
+    transform: translate3d(-10px, 0, 0);
+  }
+
+  90% {
+    -webkit-transform: translate3d(5px, 0, 0);
+    transform: translate3d(5px, 0, 0);
+  }
+
+  to {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+}
 @media only screen and (min-width: 1200px) {
   .container {
     overflow: hidden;

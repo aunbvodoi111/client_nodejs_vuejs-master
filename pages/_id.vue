@@ -1,13 +1,43 @@
 <template>
   <div class="container-detail">
     <div class="container">
+      <transition name="bounce" leave-active-class="animated bounceOutRight">
+        <div
+          class="add-cart-notification"
+          v-show="showNofication"
+          v-if="$store.state.authUser "
+        >
+          <p>Bạn vừa thêm sản phẩm :</p>
+          <div class="product-add-cart">
+            <div class="img">
+              <img :src="product.image" alt />
+            </div>
+            <div class="infor-product-cart" >
+              <p>{{ product.name }}</p>
+              <!-- <div class="qty">
+                số lượng sp trong giỏ hàng :
+                <span
+                  style="color : red ; font-weight : bold;"
+                >{{ pr}}</span>
+              </div> -->
+              <div class="qty">
+                <!-- thành tiền : -->
+                <span
+                  style="color : red ; font-weight : bold;"
+                >{{ product.discount }}</span>
+              </div>
+            </div>
+          </div>
+          <p>Vào giỏ hàng</p>
+        </div>
+      </transition>
       <div class="title-content">
         <h4>Trang chủ > Năm sinh</h4>
       </div>
       <div class="content-detail-pr">
         <div class="content-left">
           <div class="img">
-            <img :src="product.image" alt>
+            <img :src="product.image" alt />
           </div>
           <div class="icon-share">
             <span>
@@ -51,7 +81,7 @@
               <button @click="reduction">
                 <i class="fas fa-minus"></i>
               </button>
-              <input type="text" class="txt-qty" v-model="qtyProduct" @keyup="changeQty">
+              <input type="text" class="txt-qty" v-model="qtyProduct" @keyup="changeQty" />
 
               <button @click="increment">
                 <i class="fas fa-plus"></i>
@@ -67,15 +97,17 @@
               </button>
             </div>
             <div class="btn-add-to-buy" @click="buyProduct">
-              <button>Mua ngay</button>
+              <nuxt-link to="/cart">
+                <button>Mua ngay</button>
+              </nuxt-link>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <saler :product="product " :follows ="follows"/>
-    <Rating :product=" product " @totalRating="totalRating"/>
-    <ProductRelate/>
+    <saler :product="product " :follows="follows" />
+    <Rating :product=" product " @totalRating="totalRating" />
+    <ProductRelate />
   </div>
 </template>
 <script>
@@ -83,15 +115,20 @@ import Rating from "./../components/detail/rating";
 import ProductRelate from "./../components/detail/productRelate";
 import saler from "./../components/detail/saler";
 export default {
+  transition: "bounceok",
   async asyncData({ params, $axios, req }) {
     const data = await $axios.get("/api/product/detailPr/" + params.id);
-    // var rating1 = [];
-    // data.data.rating.forEach(item => {
-    //   Vue.set(item, "is_rating", false);
-    //   Vue.set(item, "contentcmt", "");
-    // });
-    // console.log(data.data);
-    return { product: data.data.products, count: data.data.count , follows : data.data.follows }
+    var rating1 = [];
+    data.data.products.ratings.forEach(item => {
+      Vue.set(item, "is_rating", false);
+      Vue.set(item, "contentcmt", "");
+    });
+    console.log(data.data);
+    return {
+      product: data.data.products,
+      count: data.data.count,
+      follows: data.data.follows,
+    };
   },
   components: {
     Rating,
@@ -103,7 +140,8 @@ export default {
       total: 0,
       mediumstar: 0,
       qtyProduct: 1,
-      index: undefined
+      index: undefined,
+      showNofication: false
     };
   },
   methods: {
@@ -115,44 +153,63 @@ export default {
       //    console.log('2')
       //   this.checkWishe = undefined;
       // }
-      
+
       if (!this.$store.state.authUser) {
         this.$store.commit("OPEN_REGISTER");
       } else {
-        var find =  this.count.find( count => count.UserId === this.$store.state.authUser.id)
-      console.log(find)
-      var index = this.count.indexOf(find)
-      console.log(index)
-      if( find ){
-         this.count.splice(index,1)
-         if(this.count.length == 0){
-           this.count = []
-         }
-        console.log(this.count)
-      }else{
-        var anhquy ={
-          UserId : this.$store.state.authUser.id,
-          ProductId : product.id
+        var find = this.count.find(
+          count => count.UserId === this.$store.state.authUser.id
+        );
+        console.log(find);
+        var index = this.count.indexOf(find);
+        console.log(index);
+        if (find) {
+          this.count.splice(index, 1);
+          if (this.count.length == 0) {
+            this.count = [];
+          }
+          console.log(this.count);
+        } else {
+          var anhquy = {
+            UserId: this.$store.state.authUser.id,
+            ProductId: product.id
+          };
+          this.count.push(anhquy);
+          console.log(this.count);
         }
-        this.count.push(anhquy)
-        console.log(this.count)
-      }
         this.$axios
-          .post("/api/wishe/add", { 
+          .post("/api/wishe/add", {
             ProductId: this.product.id,
-            qty : this.qtyProduct })
+            qty: this.qtyProduct
+          })
           .then(response => {
             console.log(response);
           });
       }
     },
     addCart() {
+      // if (this.cart.users[0].carts) {
+      //   this.cart.users[0].carts.qty =
+      //     this.cart.users[0].carts.qty + this.qtyProduct;
+      // } else {
+      //   this.cart.users[0].carts = {};
+      //   this.cart.users[0].carts.push({
+      //     ProductId: this.product.id,
+      //     qty: this.qtyProduct
+      //   });
+      // }
       if (!this.$store.state.authUser) {
         this.$store.commit("OPEN_REGISTER");
       } else {
-        
+        this.showNofication = true;
+        setTimeout(() => {
+          this.showNofication = false;
+        }, 3000);
         this.$axios
-          .post("/api/cart/add", { ProductId: this.product.id , qty  : this.qtyProduct })
+          .post("/api/cart/add", {
+            ProductId: this.product.id,
+            qty: this.qtyProduct
+          })
           .then(response => {
             console.log(response);
           });
@@ -205,22 +262,109 @@ export default {
       },
       set: function(newValue) {
         // this.checkWishe = newValue
-        console.log(newValue)
-        this.index = newValue
+        console.log(newValue);
+        this.index = newValue;
       }
     }
-  },
-  
+  }
 };
 </script>
 
 <style lang="scss" scoped>
+button {
+  cursor: pointer;
+}
+.bounce-enter-active {
+  animation: bounce-in 0.5s;
+}
+.bounce-leave-active {
+  animation: bounce-in 0.5s reverse;
+}
+@keyframes bounce-in {
+  from,
+  20%,
+  40%,
+  60%,
+  80%,
+  to {
+    -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+
+  0% {
+    opacity: 0;
+    -webkit-transform: scale3d(0.3, 0.3, 0.3);
+    transform: scale3d(0.3, 0.3, 0.3);
+  }
+
+  20% {
+    -webkit-transform: scale3d(1.1, 1.1, 1.1);
+    transform: scale3d(1.1, 1.1, 1.1);
+  }
+
+  40% {
+    -webkit-transform: scale3d(0.9, 0.9, 0.9);
+    transform: scale3d(0.9, 0.9, 0.9);
+  }
+
+  60% {
+    opacity: 1;
+    -webkit-transform: scale3d(1.03, 1.03, 1.03);
+    transform: scale3d(1.03, 1.03, 1.03);
+  }
+
+  80% {
+    -webkit-transform: scale3d(0.97, 0.97, 0.97);
+    transform: scale3d(0.97, 0.97, 0.97);
+  }
+
+  to {
+    opacity: 1;
+    -webkit-transform: scale3d(1, 1, 1);
+    transform: scale3d(1, 1, 1);
+  }
+}
 .container-detail {
   background: #f0f0f0;
 }
 .container {
   background: white;
   margin-top: 100px;
+}
+.add-cart-notification {
+  position: fixed;
+  z-index: 20;
+  top: 20%;
+  width: 24%;
+  left: 36%;
+  right: 0;
+  padding: 10px;
+  background: white;
+  height: 300px;
+  text-align: center;
+  border-radius: 10px;
+  -webkit-box-shadow: 3px 4px 29px -10px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 3px 4px 29px -10px rgba(0, 0, 0, 0.75);
+  box-shadow: 3px 4px 29px -10px rgba(0, 0, 0, 0.75);
+  p {
+    color: black;
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 20px;
+  }
+  .product-add-cart {
+    display: flex;
+    text-align: center;
+    .img {
+      width: 40%;
+      img {
+        width: 100%;
+      }
+    }
+    .qty {
+      margin-top: 10px;
+    }
+  }
 }
 @media only screen and (min-width: 1200px) {
   .container-detail {

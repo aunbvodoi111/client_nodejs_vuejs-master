@@ -1,6 +1,6 @@
 <template>
   <div class="container-fruid">
-    <div class="container-cart">
+    <div class="container-cart" v-if='carts.length'>
       <div class="title-cart">
         <div class="check">
           <label class="container">
@@ -48,7 +48,6 @@
                   <i class="fas fa-minus"></i>
                 </button>
                 <input type="text" class="txt-qty" :value=" item.users[0].carts.qty ">
-
                 <button @click="increment(item)">
                   <i class="fas fa-plus"></i>
                 </button>
@@ -76,6 +75,9 @@
         </div>
       </div>
     </div>
+    <div v-if='!carts.length'>
+      <img src="/img/cart_blank.png" alt="">
+    </div>
   </div>
 </template>
 <script>
@@ -93,10 +95,19 @@ export default {
       // } else {
       //   this.qtyProduct = this.qtyProduct + 1;
       // }
-      item.users[0].carts.qty = item.users[0].carts.qty + 1;
+      if(item.users[0].carts.qty == 1  ){
+        item.users[0].carts.qty = 1
+      }else{
+        item.users[0].carts.qty = item.users[0].carts.qty - 1
+      }
     },
     increment(item) {
-      item.users[0].carts.qty = item.users[0].carts.qty - 1;
+      console.log(item)
+      if(item.users[0].carts.qty < item.qty ){
+        item.users[0].carts.qty = item.users[0].carts.qty + 1;
+      }else{
+        item.users[0].carts.qty = item.qty
+      }
     }
   },
   computed: {

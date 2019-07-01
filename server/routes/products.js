@@ -116,8 +116,49 @@ router.get('/detailPr/:id', async (req, res) => {
     var follows = await models.follows.findAll({
         where: { ProductId : id },
     });
+    var carts
+    if (req.user) {
+        carts = await models.products.findAll({
+            include: {
+                model: models.users,
+                as: 'users',
+                required: false,
+                where: { id: req.user.id },
+                // Pass in the Product attributes that you want to retrieve
+                attributes: ['id', 'name'],
+                through: {
+                    // This block of code allows you to retrieve the properties of the join table
+                    model: models.carts,
+                    as: 'carts',
+                }
+            }
+        })
+    } else {
+        carts = []
+    }
+    var cart
+    // if (req.user) {
+    //     cart = await models.products.findOne({
+    //         where:{ id : id },
+    //         include: {
+    //             model: models.users,
+    //             as: 'users',
+    //             required: false,
+    //             where: { id: req.user.id },
+    //             // Pass in the Product attributes that you want to retrieve
+    //             attributes: ['id', 'name'],
+    //             through: {
+    //                 // This block of code allows you to retrieve the properties of the join table
+    //                 model: models.carts,
+    //                 as: 'carts',
+    //             }
+    //         }
+    //     })
+    // } else {
+    //     cart.users[0].carts = {}
+    // }
     console.log(count)
-    return res.send({ products: products, count: count ,follows : follows })
+    return res.send({ products: products, count: count ,follows : follows , carts : carts })
 })
 // router.post('/login', async (req, res) => {
 //     console.log(req.body)
