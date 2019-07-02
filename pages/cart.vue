@@ -1,11 +1,11 @@
 <template>
   <div class="container-fruid">
-    <div class="container-cart" v-if='carts.length'>
+    <div class="container-cart" v-if="carts.length">
       <div class="title-cart">
         <div class="check">
           <label class="container">
             sản phẩm
-            <input type="checkbox" checked="checked">
+            <input type="checkbox" checked="checked" />
             <span class="checkmark"></span>
           </label>
         </div>
@@ -18,7 +18,7 @@
         <div class="saler-cart">
           <label class="container">
             <i class="fas fa-close"></i>Phamquy
-            <input type="checkbox" checked="checked">
+            <input type="checkbox" checked="checked" />
             <span class="checkmark"></span>
           </label>
         </div>
@@ -26,11 +26,11 @@
           <div class="pr-cart">
             <label class="container">
               <i class="fas fa-close"></i>
-              <input type="checkbox" checked="checked">
+              <input type="checkbox" checked="checked" />
               <span class="checkmark"></span>
             </label>
             <div class="img">
-              <img width="42%" :src="item.image" alt>
+              <img width="42%" :src="item.image" alt />
             </div>
             <div class="name">
               <p>{{ item.name }}</p>
@@ -47,7 +47,7 @@
                 <button @click="reduction(item)">
                   <i class="fas fa-minus"></i>
                 </button>
-                <input type="text" class="txt-qty" :value=" item.users[0].carts.qty ">
+                <input type="text" class="txt-qty" :value=" item.users[0].carts.qty " />
                 <button @click="increment(item)">
                   <i class="fas fa-plus"></i>
                 </button>
@@ -58,7 +58,7 @@
             <p>₫396.000</p>
           </div>
           <div class="action">
-            <p>Xóa</p>
+            <p @click="deleteCart(item)">Xóa</p>
           </div>
         </div>
       </div>
@@ -66,7 +66,7 @@
         <div class="total-cart">
           <label class="container">
             Chọn tất cả (8)
-            <input type="checkbox" checked="checked">
+            <input type="checkbox" checked="checked" />
             <span class="checkmark"></span>
           </label>
           <div>
@@ -75,8 +75,8 @@
         </div>
       </div>
     </div>
-    <div v-if='!carts.length'>
-      <img src="/img/cart_blank.png" alt="">
+    <div v-if="!carts.length">
+      <img src="/img/cart_blank.png" alt />
     </div>
   </div>
 </template>
@@ -95,19 +95,40 @@ export default {
       // } else {
       //   this.qtyProduct = this.qtyProduct + 1;
       // }
-      if(item.users[0].carts.qty == 1  ){
-        item.users[0].carts.qty = 1
-      }else{
-        item.users[0].carts.qty = item.users[0].carts.qty - 1
+      if (item.users[0].carts.qty == 1) {
+        item.users[0].carts.qty = 1;
+      } else {
+        item.users[0].carts.qty = item.users[0].carts.qty - 1;
+        this.$axios
+          .post("/api/cart/changeQty", {
+            ProductId: item.id,
+            qty: item.users[0].carts.qty
+          })
+          .then(response => {
+            console.log(response);
+          });
       }
     },
     increment(item) {
-      console.log(item)
-      if(item.users[0].carts.qty < item.qty ){
+      console.log(item);
+      if (item.users[0].carts.qty < item.qty) {
         item.users[0].carts.qty = item.users[0].carts.qty + 1;
-      }else{
-        item.users[0].carts.qty = item.qty
+        this.$axios.post("/api/cart/changeQty", {
+          ProductId: item.id,
+          qty: item.users[0].carts.qty
+        });
+      } else {
+        item.users[0].carts.qty = item.qty;
       }
+    },
+    deleteCart(item) {
+      console.log(item);
+      var index = this.carts.indexOf(item)
+      this.carts.splice(index ,1 )
+      this.$axios.post("/api/cart/deleteCart", {
+        ProductId: item.id,
+        qty: item.users[0].carts.qty
+      });
     }
   },
   computed: {

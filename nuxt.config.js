@@ -1,3 +1,4 @@
+const pkg = require('./package')
 module.exports = {
     mode: 'universal',
     /*
@@ -24,6 +25,10 @@ module.exports = {
     /*
      ** Global CSS
      */
+    // server: {
+    //     port: 6000, // default: 3000
+    //     host: '0.0.0.0', // default: localhost
+    // },
     css: ['~/assets/main.css'],
     /*
      ** Plugins to load before mounting the App

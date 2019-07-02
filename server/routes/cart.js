@@ -25,7 +25,44 @@ router.post('/add', async (req, res) => {
         var cart = await models.carts.create({ ProductId: ProductId, UserId: req.user.id, qty: qty });
         cart.save()
     }
+    return res.status(200).json('ok')
 })
+
+router.post('/changeQty', async (req, res) => {
+    var { ProductId, qty } = req.body
+    // var cart = await models.carts.create({ ProductId: ProductId, UserId: req.user.id });
+    // cart.save()
+    console.log('sdaaaaaaaaaaaaa')
+    console.log(qty)
+    const wishesFind = await models.carts.findOne({
+        where: { UserId: req.user.id, ProductId: ProductId }
+    })
+    if (wishesFind) {
+        wishesFind.update({
+            qty: qty
+        })
+    } else {
+        var cart = await models.carts.create({ ProductId: ProductId, UserId: req.user.id, qty: qty });
+        cart.save()
+    }
+    return res.status(200).json('ok')
+})
+
+router.post('/deleteCart', async (req, res) => {
+    var { ProductId, qty } = req.body
+    // var cart = await models.carts.create({ ProductId: ProductId, UserId: req.user.id });
+    // cart.save()
+    console.log('sdaaaaaaaaaaaaa')
+    console.log(qty)
+    const wishesFind = await models.carts.findOne({
+        where: { UserId: req.user.id, ProductId: ProductId }
+    })
+    if (wishesFind) {
+        wishesFind.destroy({}) 
+    }
+    return res.status(200).json('ok')
+})
+
 router.get('/', async (req, res) => {
     // const allOrders = await models.products.findAll({
 

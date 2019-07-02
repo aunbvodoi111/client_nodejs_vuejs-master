@@ -18,7 +18,7 @@ router.post('/add', async (req, res) => {
         var wishe = await models.wishes.create({ ProductId: ProductId, UserId: req.user.id });
         wishe.save()
     }
-
+    return res.status(200).json('ok')
 })
 router.get('/', async (req, res) => {
     // const allOrders = await models.products.findAll({

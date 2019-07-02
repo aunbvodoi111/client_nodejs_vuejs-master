@@ -18,7 +18,7 @@ router.post('/add', async (req, res) => {
         var follows = await models.follows.create({ ProductId: ProductId, UserId: req.user.id });
         follows.save()
     }
-
+    return res.status(200).json('ok')
 })
 router.get('/', async (req, res) => {
     // const allOrders = await models.products.findAll({

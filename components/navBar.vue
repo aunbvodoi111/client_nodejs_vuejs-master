@@ -61,7 +61,7 @@
           <nuxt-link to='cart'>
             <i class="fas fa-shopping-cart" @mouseover="hover = true" @mouseleave="hover = false" @click="checkAuth"> 
           
-            <div class="qty-cart" v-if=" $store.state.authUser">10</div>
+            <div class="qty-cart" v-if=" $store.state.authUser && carts ">10</div>
             <div class="pop-cart" v-if="hover && $store.state.authUser">
               <div class="product-cart" v-for="n in 5" :key="n">
                 <div class="image-pop-cart">
@@ -96,10 +96,21 @@ export default {
       keyword: "",
       hover: false,
       products:[],
-      closePopSearch:false
+      closePopSearch:false,
+      carts:[]
     };
   },
+  created(){
+    this.fetchCart()
+  },
+  
   methods:{
+    fetchCart(){
+      this.$axios.$get("/api/cart/").then (response =>{
+        this.carts = response
+        console.log(this.carts)
+      })
+    },
     checkAuth(){
       if(!this.$store.state.authUser){
         this.$store.commit('OPEN_REGISTER')
@@ -122,7 +133,20 @@ export default {
         console.log(response.data)
       })
     }
-  }
+  },
+  computed:{
+    sumQtyCart() {
+      console.log('anhquy')
+      var sum = 0;
+      if( this.carts ){
+        for (var i = 0; i < this.carts.length; i++) {
+        var sum = sum + this.carts[i].users[0].carts.qty;
+      }
+      return sum;
+      }
+      return 0;
+    },
+  },
 };
 </script>
 

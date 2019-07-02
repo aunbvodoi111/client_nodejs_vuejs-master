@@ -34,7 +34,6 @@ router.get('/shop/:id', async (req, res) => {
 })
 
 router.get('/search/:keyword', async (req, res) => {
-    console.log(req.body.keyword)  
     var { keyword } =  req.params
     var products = await models.products.findAll({
          where: { name: { [Op.like]: '%' + keyword + '%' }},limit: 5
@@ -43,7 +42,6 @@ router.get('/search/:keyword', async (req, res) => {
 })
 
 router.post('/search', async (req, res) => {
-    console.log(req.body.keyword)  
     var { keyword } =  req.body
     var products = await models.products.findAll({
          where: { name: { [Op.like]: '%' + keyword + '%' }},limit: 5
@@ -70,7 +68,6 @@ router.post('/login',
                 }
             }]
         });
-        console.log(allOrders)
         return res.send({ user:req.user, carts : allOrders })
     });
 
@@ -87,7 +84,6 @@ passport.use(new LocalStrategy({
             bcrypt.compare(password, username.password, function (err, user) {
                 if (err) throw err;
                 if (user) {
-                    console.log('ok')
                     return done(null, username);
                 } else {
                     return done(null, false, { message: 'Tài Khoảng Không Đúng' });
@@ -101,7 +97,6 @@ passport.use(new LocalStrategy({
 
 router.get('/detailPr/:id', async (req, res) => {
     var id = req.params.id
-    console.log(req.params.id)
     var products = await models.products.findOne({
         where: { id: id },
         include: [{
@@ -157,7 +152,6 @@ router.get('/detailPr/:id', async (req, res) => {
     // } else {
     //     cart.users[0].carts = {}
     // }
-    console.log(count)
     return res.send({ products: products, count: count ,follows : follows , carts : carts })
 })
 // router.post('/login', async (req, res) => {
@@ -183,7 +177,6 @@ router.get('/add', (req, res) => res.render('add'));
 
 // Add a gig
 router.post('/add', (req, res) => {
-    console.log(req.body)
     let { title, technologies, budget, description, contact_email } = req.body;
     let errors = [];
 
@@ -259,9 +252,7 @@ passport.serializeUser(function (email, done) {
 
 
 passport.deserializeUser(function (id, done) {
-    console.log(id);
     models.users.findOne({ where: { id: id }}).then((users) => {
-        console.log(users);
         return done(null, users);
     });
 })
