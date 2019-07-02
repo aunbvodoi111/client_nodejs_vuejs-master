@@ -1,5 +1,35 @@
 <template>
   <div class="container-fruid">
+    <transition name="bounce" leave-active-class="animated bounceOutRight">
+        <div
+          class="add-cart-notification"
+          v-if="toggleComfirmCart"
+        >
+          <p>Bạn muốn xóa sản phẩm :</p>
+          <div class="product-add-cart">
+            <div class="img">
+              <img :src="cart.image" alt />
+            </div>
+            <div class="infor-product-cart" >
+              <p>{{ cart.name }}</p>
+              <!-- <div class="qty">
+                số lượng sp trong giỏ hàng :
+                <span
+                  style="color : red ; font-weight : bold;"
+                >{{ pr}}</span>
+              </div> -->
+              <div class="qty">
+                <!-- thành tiền : -->
+                <span
+                  style="color : red ; font-weight : bold;"
+                >{{ cart.discount }}</span>
+              </div>
+            </div>
+          </div>
+          <p @click="deleteCart(cart)">Có</p>
+          <p @click="toggleComfirmCart = false">Không</p>
+        </div>
+      </transition>
     <div class="container-cart" v-if="carts.length">
       <div class="title-cart">
         <div class="check">
@@ -42,7 +72,6 @@
           <div class="price">
             <!-- <p></p> -->
             <div class="qty-action">
-              <span>Số Lượng</span>
               <div class="btn-txt">
                 <button @click="reduction(item)">
                   <i class="fas fa-minus"></i>
@@ -58,7 +87,7 @@
             <p>₫396.000</p>
           </div>
           <div class="action">
-            <p @click="deleteCart(item)">Xóa</p>
+            <p @click="showPopCart(item)">Xóa</p>
           </div>
         </div>
       </div>
@@ -75,7 +104,7 @@
         </div>
       </div>
     </div>
-    <div v-if="!carts.length">
+    <div v-if="!carts.length" class="container-cart">
       <img src="/img/cart_blank.png" alt />
     </div>
   </div>
@@ -87,6 +116,12 @@ export default {
     console.log(data.data);
     var carts = data.data.filter(data => data.users.length !== 0);
     return { carts: carts };
+  },
+  data(){
+    return{
+      cart :{},
+      toggleComfirmCart : false
+    }
   },
   methods: {
     reduction(item) {
@@ -121,8 +156,14 @@ export default {
         item.users[0].carts.qty = item.qty;
       }
     },
+    showPopCart(item){
+      this.cart = item
+      this.toggleComfirmCart = true
+    },
     deleteCart(item) {
       console.log(item);
+      this.cart = {}
+      this.toggleComfirmCart = false
       var index = this.carts.indexOf(item)
       this.carts.splice(index ,1 )
       this.$axios.post("/api/cart/deleteCart", {
@@ -151,6 +192,101 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+button {
+  cursor: pointer;
+}
+.bounce-enter-active {
+  animation: bounce-in 0.5s;
+}
+.bounce-leave-active {
+  animation: bounce-in 0.5s reverse;
+}
+@keyframes bounce-in {
+  from,
+  20%,
+  40%,
+  60%,
+  80%,
+  to {
+    -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+
+  0% {
+    opacity: 0;
+    -webkit-transform: scale3d(0.3, 0.3, 0.3);
+    transform: scale3d(0.3, 0.3, 0.3);
+  }
+
+  20% {
+    -webkit-transform: scale3d(1.1, 1.1, 1.1);
+    transform: scale3d(1.1, 1.1, 1.1);
+  }
+
+  40% {
+    -webkit-transform: scale3d(0.9, 0.9, 0.9);
+    transform: scale3d(0.9, 0.9, 0.9);
+  }
+
+  60% {
+    opacity: 1;
+    -webkit-transform: scale3d(1.03, 1.03, 1.03);
+    transform: scale3d(1.03, 1.03, 1.03);
+  }
+
+  80% {
+    -webkit-transform: scale3d(0.97, 0.97, 0.97);
+    transform: scale3d(0.97, 0.97, 0.97);
+  }
+
+  to {
+    opacity: 1;
+    -webkit-transform: scale3d(1, 1, 1);
+    transform: scale3d(1, 1, 1);
+  }
+}
+.container-detail {
+  background: #f0f0f0;
+}
+.container {
+  background: white;
+  margin-top: 100px;
+}
+.add-cart-notification {
+  position: fixed;
+  z-index: 20;
+  top: 20%;
+  width: 24%;
+  left: 36%;
+  right: 0;
+  padding: 10px;
+  background: white;
+  height: 300px;
+  text-align: center;
+  border-radius: 10px;
+  -webkit-box-shadow: 3px 4px 29px -10px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 3px 4px 29px -10px rgba(0, 0, 0, 0.75);
+  box-shadow: 3px 4px 29px -10px rgba(0, 0, 0, 0.75);
+  p {
+    color: black;
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 20px;
+  }
+  .product-add-cart {
+    display: flex;
+    text-align: center;
+    .img {
+      width: 40%;
+      img {
+        width: 100%;
+      }
+    }
+    .qty {
+      margin-top: 10px;
+    }
+  }
+}
 .qty-action {
   display: flex;
   margin: 4% 0%;
@@ -219,6 +355,16 @@ export default {
           width: 45%;
           display: flex;
           .img {
+            width: 30%;
+            img{
+              width: 80%;
+            }
+          }
+          .name{
+            width: 70%;
+            p{
+              font-weight: bold;
+            }
           }
         }
         .price-sum {

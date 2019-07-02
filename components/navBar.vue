@@ -5,7 +5,7 @@
         <div class="navtop-right">
           <ul>
             <li>
-              <a href='http://localhost:8000/' target="_blank">Kênh người bán</a>
+              <a href="http://localhost:8000/" target="_blank">Kênh người bán</a>
             </li>
             <li>
               <a href>Tải ứng dụng</a>
@@ -34,55 +34,77 @@
       </div>
       <div class="navcenter">
         <div class="logo">
-          <nuxt-link to="/"><img src="https://phongvu.vn/media/wysiwyg/logo-PV-new_2.png" alt></nuxt-link>
+          <nuxt-link to="/">
+            <img src="https://phongvu.vn/media/wysiwyg/logo-PV-new_2.png" alt />
+          </nuxt-link>
         </div>
         <div class="search">
-          <input type="text" name id class="txt-search" v-model="keyword" placeholder="Nhập từ khóa tìm kiếm" @keyup="searchProduct">
-          
-          <nuxt-link :to="`/search/${keyword}`"><button @click="closePopSearch = false"><i class="fas fa-search"></i></button></nuxt-link>
+          <input
+            type="text"
+            name
+            id
+            class="txt-search"
+            v-model="keyword"
+            placeholder="Nhập từ khóa tìm kiếm"
+            @keyup="searchProduct"
+          />
+
+          <nuxt-link :to="`/search/${keyword}`">
+            <button @click="closePopSearch = false">
+              <i class="fas fa-search"></i>
+            </button>
+          </nuxt-link>
           <div class="pop-search" v-if="keyword && closePopSearch">
             <div class="product-search" v-for="item in products" :key="item.id">
               <div class="img-product">
-                <img
-                  :src="item.image"
-                  alt
-                >
+                <img :src="item.image" alt />
               </div>
               <div class="detail-product">
                 <a>{{ item.name }}</a>
                 <p>{{ item.price }}</p>
               </div>
             </div>
-             <h4 v-if="products.length == ''" style="text-align:center;">Không tìm thấy sản phẩm với từ khóa "<span style="color:red;">{{ keyword }}</span>"</h4>
+            <h4 v-if="products.length == ''" style="text-align:center;">
+              Không tìm thấy sản phẩm với từ khóa "
+              <span style="color:red;">{{ keyword }}</span>"
+            </h4>
           </div>
-         
         </div>
         <div class="cart-icon">
-          <nuxt-link to='cart'>
-            <i class="fas fa-shopping-cart" @mouseover="hover = true" @mouseleave="hover = false" @click="checkAuth"> 
-          
-            <div class="qty-cart" v-if=" $store.state.authUser && carts ">10</div>
-            <div class="pop-cart" v-if="hover && $store.state.authUser">
-              <div class="product-cart" v-for="n in 5" :key="n">
-                <div class="image-pop-cart">
-                  <img
-                    src="https://cdn.tgdd.vn/Products/Images/42/199041/vivo-v15-quanghai-400x460.png"
-                    alt
-                  >
+          <nuxt-link to="cart">
+            <i
+              class="fas fa-shopping-cart"
+              @mouseover="hover = true"
+              @mouseleave="hover = false"
+              @click="checkAuth"
+            >
+              <!-- <template v-if="carts.length">
+                <div class="qty-cart" v-if=" $store.state.authUser">{{ sumQtyCart }}</div>
+              </template> -->
+              <template >
+                <div class="qty-cart" v-if=" $store.state.authUser">10</div>
+              </template>
+              <div class="pop-cart" v-if="hover && $store.state.authUser">
+                <div class="product-cart" v-for="n in 5" :key="n">
+                  <div class="image-pop-cart">
+                    <img
+                      src="https://cdn.tgdd.vn/Products/Images/42/199041/vivo-v15-quanghai-400x460.png"
+                      alt
+                    />
+                  </div>
+                  <div class="name-pop-cart">
+                    <a
+                      href
+                    >[ RẺ VÔ CỰC ] Kính Cường Lực Full Màn 10D - 15D Dành Cho Iphone - Kính Đẹp, Siêu Mỏng</a>
+                  </div>
+                  <div class="action-pop-cart">
+                    <p>3600.000đ</p>
+                    <a href>Xóa</a>
+                  </div>
                 </div>
-                <div class="name-pop-cart">
-                  <a
-                    href
-                  >[ RẺ VÔ CỰC ] Kính Cường Lực Full Màn 10D - 15D Dành Cho Iphone - Kính Đẹp, Siêu Mỏng</a>
-                </div>
-                <div class="action-pop-cart">
-                  <p>3600.000đ</p>
-                  <a href>Xóa</a>
-                </div>
+                <button class="btn-to-cart">Vào giỏ hàng</button>
               </div>
-              <button class="btn-to-cart">Vào giỏ hàng</button>
-            </div>
-          </i>
+            </i>
           </nuxt-link>
         </div>
       </div>
@@ -93,60 +115,57 @@
 export default {
   data() {
     return {
-      keyword: "",
+      keyword: "dsa",
       hover: false,
-      products:[],
-      closePopSearch:false,
-      carts:[]
+      products: [],
+      closePopSearch: false,
+      carts: []
     };
   },
-  created(){
-    this.fetchCart()
+  created() {
+    this.$axios.$get("/api/cart/").then(response => {
+      this.carts = response;
+      console.log(this.carts);
+    });
   },
-  
-  methods:{
-    fetchCart(){
-      this.$axios.$get("/api/cart/").then (response =>{
-        this.carts = response
-        console.log(this.carts)
-      })
-    },
-    checkAuth(){
-      if(!this.$store.state.authUser){
-        this.$store.commit('OPEN_REGISTER')
-      }else{
-        this.toggleCmt = !this.toggleCmt
-      }
-    },
-    loginAuth(){
-      this.$store.commit('OPEN_LOGIN')
-    },
-    registerAuth(){
-      this.$store.commit('OPEN_REGISTER')
-    },
-    searchProduct(){
-      this.closePopSearch = true
-      this.$axios.post('/api/product/search',{
-        keyword : this.keyword
-      }).then( response =>{
-        this.products = response.data
-        console.log(response.data)
-      })
-    }
-  },
-  computed:{
+  computed: {
     sumQtyCart() {
-      console.log('anhquy')
       var sum = 0;
-      if( this.carts ){
+      if (this.carts.length > 0 && this.carts) {
         for (var i = 0; i < this.carts.length; i++) {
-        var sum = sum + this.carts[i].users[0].carts.qty;
+          var sum = sum + this.carts[i].users[0].carts.qty;
+        }
+        return sum;
       }
       return sum;
-      }
-      return 0;
-    },
+    }
   },
+  methods: {
+    checkAuth() {
+      if (!this.$store.state.authUser) {
+        this.$store.commit("OPEN_REGISTER");
+      } else {
+        this.toggleCmt = !this.toggleCmt;
+      }
+    },
+    loginAuth() {
+      this.$store.commit("OPEN_LOGIN");
+    },
+    registerAuth() {
+      this.$store.commit("OPEN_REGISTER");
+    },
+    searchProduct() {
+      this.closePopSearch = true;
+      this.$axios
+        .post("/api/product/search", {
+          keyword: this.keyword
+        })
+        .then(response => {
+          this.products = response.data;
+          console.log(response.data);
+        });
+    }
+  }
 };
 </script>
 
@@ -398,14 +417,14 @@ a:hover {
     }
     .navcenter {
       display: flex;
-      width: 100%;      
+      width: 100%;
       .logo {
         width: 20%;
         img {
           height: 30px;
           width: 30px;
           margin-left: 32%;
-          margin-top: 5px; 
+          margin-top: 5px;
         }
       }
       .search {
@@ -591,14 +610,14 @@ a:hover {
     .navcenter {
       display: flex;
       width: 100%;
-      
+
       .logo {
         width: 20%;
         img {
           height: 30px;
           width: 30px;
           margin-left: 32%;
-          margin-top: 5px; 
+          margin-top: 5px;
         }
       }
       .search {
@@ -786,14 +805,14 @@ a:hover {
     .navcenter {
       display: flex;
       width: 100%;
-      
+
       .logo {
         width: 20%;
         img {
           height: 30px;
           width: 30px;
           margin-left: 32%;
-          margin-top: 5px; 
+          margin-top: 5px;
         }
       }
       .search {
@@ -932,7 +951,6 @@ a:hover {
     }
   }
 }
-
 
 // Large devices (desktops, 992px and up)
 @media (min-width: 992px) and (max-width: 1199px) {

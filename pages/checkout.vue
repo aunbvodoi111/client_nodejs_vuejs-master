@@ -1,0 +1,353 @@
+<template>
+  <div class="container-checkout">
+    <div class="container">
+      <div class="popup-infor-customer" v-if="showPopInforCustom">
+        <div class="pop">
+          <div class="title">
+            <h3>Thêm 1 địa chỉ mới</h3>
+          </div>
+          <div class="form">
+            <p>Để đặt hàng, vui lòng thêm địa chỉ nhận hàng</p>
+            <div class="from-control">
+              <input
+                type="text"
+                class="form-input"
+                @mousedown="handleItemClick"
+                @mouseover="pointer"
+                v-model="name"
+              />
+            </div>
+            <span v-show="errorName">{{ errorName }}</span>
+            <div class="from-control">
+              <input type="text" class="form-input" />
+            </div>
+            <div class="from-control">
+              <select name id class="form-input">
+                <option value>anhquy</option>
+              </select>
+            </div>
+            <div class="from-control">
+              <select name id class="form-input">
+                <option value>anhquy</option>
+              </select>
+            </div>
+            <div class="from-control">
+              <input type="text" class="form-input" />
+            </div>
+            <div class="from-control">
+              <input type="text" class="form-input" />
+            </div>
+          </div>
+          <div class="btn-action">
+            <button @click="showPopInforCustom = false">Trở lại</button>
+            <button>Hoàn thành</button>
+          </div>
+        </div>
+      </div>
+      <div class="infor-customer">
+        <p>Địa Chỉ Nhận Hàng</p>
+        <p>
+          <strong>quy (+84) 365373705</strong> 123-Cửu Việt 2 , Thị Trấn Trâu Quỳ, Huyện Gia Lâm, Hà Nội
+        </p>
+      </div>
+      <div class="product-checkout">
+        <div class="product">
+          <div class="name">
+            <div class="name-shop">
+              <h4>Sản phẩm</h4>
+              <p>
+                <span>pham quy</span>
+                <span>Chat ngay</span>
+              </p>
+            </div>
+            <div class="img-name-pr">
+              <div class="img">
+                <img src="https://cf.shopee.vn/file/bbb3c55539312f2ce9e22ba9361692a9_tn" alt />
+              </div>
+              <div class="name-pr">
+                <a>Đồng Hồ Nữ ULZZANG 7100 Dây Kim Loại Chính Hãng</a>
+              </div>
+            </div>
+          </div>
+          <div class="price">
+            <p>Đơn giá</p>
+            <div class="infor">
+              <p>₫79.000</p>
+            </div>
+          </div>
+          <div class="qty">
+            <p>Số lượng</p>
+            <div class="infor">
+              <p>₫79.000</p>
+            </div>
+          </div>
+          <div class="total-money">
+            <p>Thành tiền</p>
+            <div class="infor">
+              <p>₫79.000</p>
+            </div>
+          </div>
+        </div>
+        <div class="send-saler">
+          <span>Lời nhắn:</span>
+          <input type="text" />
+        </div>
+        <div class="total-money-product">
+          <p>Tổng số tiền (3 sản phẩm): <span style="color :red "> ₫299.920</span></p>
+        </div>
+      </div>
+      <div class="check-out">
+        <div class="title">
+          <div class="title-pay">
+            <p>Phương thức thanh toán</p>
+          </div>
+          <div class="title-choose-pay">
+            <p>Thanh toán khi nhận hàng</p>
+          </div>
+          <div class="change-pay">
+            <p>Thay dổi</p>
+          </div>
+        </div>
+        <div class="check-end">
+          <div class="div-right">
+            <div class="div">
+              <div>Tổng tiền hàng</div>
+              <div>₫237.000</div>
+            </div>
+            <div class="div">
+              <div>Tổng tiền hàng</div>
+              <div>₫62.920</div>
+            </div>
+            <div class="div">
+              <div>Tổng tiền hàng</div>
+              <div class="money-sum">₫299.920</div>
+            </div>
+          </div>
+          <div style="clear:bold;"></div>
+        </div>
+        <div class="button">
+          <div class="btn-action">
+            <button>Đặt hàng</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+export default {
+  data() {
+    return {
+      showPopInforCustom: false,
+      name: "",
+      errorName: ""
+    };
+  },
+  methods: {
+    handleItemClick() {
+      console.log("vao");
+    },
+    pointer() {
+      if (this.name == "") {
+        console.log("chu nhap giuw lieu");
+        this.errorName = "Vui lòng điền Tên";
+      } else {
+        this.errorName = " ";
+      }
+    }
+  }
+};
+</script>
+
+<style lang="scss" scoped>
+button {
+  cursor: pointer;
+}
+.container-checkout {
+  width: 100%;
+  height: 1000px;
+  background: #f5f5f5;
+  .container {
+    width: 1200px;
+    margin: auto;
+    .check-out {
+      width: 100%;
+      height: 300px;
+      padding: 20px 10px;
+      margin: 20px 0px;
+      background: white;
+      .title {
+        display: flex;
+        .title-pay {
+          width: 60%;
+        }
+        .title-choose-pay {
+          width: 25%;
+        }
+        .change-pay {
+          width: 15%;
+        }
+      }
+      .check-end {
+        width: 100%;
+        .div-right {
+          width: 40%;
+          margin-left: 72%;
+        }
+        .div {
+          margin: 30px 0px;
+          width: 100%;
+          display: flex;
+          div {
+            margin-left: 40px;
+            font-size: 0.875rem;
+            color: rgba(0, 0, 0, 0.54);
+            .money-sum {
+              height: 3.125rem;
+              font-size: 1.75rem;
+              color: #ee4d2d;
+            }
+          }
+        }
+      }
+      .button {
+        width: 100%;
+        .btn-action {
+          width: 30%;
+          margin-left: 82%;
+          button {
+            width: 50%;
+            background-color: #2b3278;
+            height: 40px;
+            text-transform: uppercase;
+            color: white;
+            border: none;
+          }
+        }
+      }
+    }
+    .product-checkout {
+      width: 100%;
+      height: 300px;
+      padding: 20px 10px;
+      margin: 20px 0px;
+      background: white;
+
+      .product {
+        display: flex;
+      }
+      .send-saler{
+          margin-top: 30px; 
+      }
+      .total-money-product{
+          width: 30%;
+          margin-left: 75% 
+      }
+      .name {
+        width: 40%;
+        .name-shop {
+          margin-bottom: 30px;
+          p {
+            margin-top: 20px;
+          }
+        }
+        .img-name-pr {
+          display: flex;
+          .img {
+            width: 30%;
+            img {
+              width: 100%;
+            }
+          }
+        }
+        .name-pr {
+          padding-left: 15px;
+        }
+      }
+      .price {
+        width: 20%;
+        padding-left: 25px;
+        .infor {
+          margin-top: 80px;
+        }
+      }
+      .qty {
+        width: 20%;
+        padding-left: 25px;
+        .infor {
+          margin-top: 80px;
+        }
+      }
+      .total-money {
+        padding-left: 25px;
+        width: 20%;
+        .infor {
+          margin-top: 80px;
+        }
+      }
+    }
+    .infor-customer {
+      background: white;
+      padding: 20px 10px;
+      p:nth-child(1) {
+        color: red;
+        margin-bottom: 20px;
+      }
+    }
+    .popup-infor-customer {
+      position: fixed;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1001;
+      left: 0;
+      top: 0;
+      background-color: rgba(0, 0, 0, 0.14);
+      .pop {
+        width: 27%;
+        background: white;
+        height: auto;
+        margin: 10% auto;
+        padding: 20px 15px;
+        .title {
+          margin: 10px 0px;
+        }
+        .form {
+          p {
+            font-size: 14px;
+            margin-top: 30px;
+          }
+          width: 100%;
+          .from-control {
+            width: 100%;
+            .form-input {
+              border: 1px solid rgba(0, 0, 0, 0.14);
+              width: 100%;
+              height: 40px;
+              margin: 6px 0px;
+              padding: 10px;
+            }
+          }
+        }
+        .btn-action {
+          display: flex;
+          margin-top: 30px;
+          button {
+            width: 140px;
+            text-transform: uppercase;
+            padding: 10px;
+          }
+          button:nth-child(1) {
+            background: white;
+            border: none;
+          }
+          button:nth-child(2) {
+            background-color: #2b3278;
+            color: white;
+            border: none;
+          }
+        }
+      }
+    }
+  }
+}
+</style>
