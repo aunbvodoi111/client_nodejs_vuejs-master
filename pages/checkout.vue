@@ -50,7 +50,7 @@
           <strong>quy (+84) 365373705</strong> 123-Cửu Việt 2 , Thị Trấn Trâu Quỳ, Huyện Gia Lâm, Hà Nội
         </p>
       </div>
-      <div class="product-checkout">
+      <div class="product-checkout" v-for="item in carts" :key="item.id">
         <div class="product">
           <div class="name">
             <div class="name-shop">
@@ -62,29 +62,29 @@
             </div>
             <div class="img-name-pr">
               <div class="img">
-                <img src="https://cf.shopee.vn/file/bbb3c55539312f2ce9e22ba9361692a9_tn" alt />
+                <img :src="item.image" alt />
               </div>
               <div class="name-pr">
-                <a>Đồng Hồ Nữ ULZZANG 7100 Dây Kim Loại Chính Hãng</a>
+                <a>{{ item.name }}</a>
               </div>
             </div>
           </div>
           <div class="price">
             <p>Đơn giá</p>
             <div class="infor">
-              <p>₫79.000</p>
+              <p>₫{{ item.discount }}</p>
             </div>
           </div>
           <div class="qty">
             <p>Số lượng</p>
             <div class="infor">
-              <p>₫79.000</p>
+              <p>{{ item.users[0].carts.qty }}</p>
             </div>
           </div>
           <div class="total-money">
             <p>Thành tiền</p>
             <div class="infor">
-              <p>₫79.000</p>
+              <p>₫{{ item.users[0].carts.qty * item.discount }}</p>
             </div>
           </div>
         </div>
@@ -93,7 +93,12 @@
           <input type="text" />
         </div>
         <div class="total-money-product">
-          <p>Tổng số tiền (3 sản phẩm): <span style="color :red "> ₫299.920</span></p>
+          <p>
+            Tổng số tiền ({{ item.users[0].carts.qty }} sản phẩm):
+            <span
+              style="color :red "
+            >₫{{ item.users[0].carts.qty * item.discount }}</span>
+          </p>
         </div>
       </div>
       <div class="check-out">
@@ -112,11 +117,11 @@
           <div class="div-right">
             <div class="div">
               <div>Tổng tiền hàng</div>
-              <div>₫237.000</div>
+              <div>₫{{ sumMoneyCart }}</div>
             </div>
             <div class="div">
-              <div>Tổng tiền hàng</div>
-              <div>₫62.920</div>
+              <div>Phí vận chuyển</div>
+              <div>₫0</div>
             </div>
             <div class="div">
               <div>Tổng tiền hàng</div>
@@ -136,12 +141,28 @@
 </template>
 <script>
 export default {
+  async asyncData({ $axios }) {
+    var data = await $axios.get("/api/cart/checkout");
+    console.log(data.data);
+    var carts = data.data.filter(data => data.users.length !== 0);
+    return { carts: carts };
+  },
   data() {
     return {
       showPopInforCustom: false,
       name: "",
       errorName: ""
     };
+  },
+  computed: {
+    sumMoneyCart() {
+      var sum = 0;
+      for (var i = 0; i < this.carts.length; i++) {
+        var sum = sum + this.carts[i].discount * this.carts[i].users[0].carts.qty;
+        console.log(this.carts[i].price * this.carts[i].users[0].carts.qty);
+      }
+      return sum;
+    }
   },
   methods: {
     handleItemClick() {
@@ -236,12 +257,12 @@ button {
       .product {
         display: flex;
       }
-      .send-saler{
-          margin-top: 30px; 
+      .send-saler {
+        margin-top: 30px;
       }
-      .total-money-product{
-          width: 30%;
-          margin-left: 75% 
+      .total-money-product {
+        width: 30%;
+        margin-left: 75%;
       }
       .name {
         width: 40%;

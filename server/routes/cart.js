@@ -102,6 +102,30 @@ router.get('/', async (req, res) => {
     return res.json(carts)
 })
 
+router.get('/checkout', async (req, res) => {
+    if (req.user) {
+        carts = await models.products.findAll({
+            include: {
+                model: models.users,
+                as: 'users',
+                required: false,
+                where: { id: req.user.id },
+                // Pass in the Product attributes that you want to retrieve
+                attributes: ['id', 'name'],
+                through: {
+                    // This block of code allows you to retrieve the properties of the join table
+                    where: { checkBuy: 1 },
+                    model: models.carts,
+                    as: 'carts',
+                }
+            }
+        })
+    } else {
+        carts = []
+    }
+    return res.json(carts)
+})
+
 router.get('/anhquy', async (req, res) => {
     const allOrders = await models.products.findAll({
         include: [{

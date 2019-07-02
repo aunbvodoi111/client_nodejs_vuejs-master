@@ -101,6 +101,11 @@
           <div>
             <p>Tổng tiền hàng ({{ sumQtyCart }} sản phẩm): ₫{{sumMoneyCart}}</p>
           </div>
+          <div class="btn-action">
+            <nuxt-link to='/checkout'>
+              <button>Thanh toán</button>
+            </nuxt-link>
+          </div>
         </div>
       </div>
     </div>
