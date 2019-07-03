@@ -5,15 +5,26 @@ module.exports = (sequelize, DataTypes) => {
     email: DataTypes.STRING,
     password: DataTypes.STRING,
   }, {
-    updatedAt: 'updated_at',
-    createdAt: 'created_at'
-  });
-  User.associate = function(models) {
+      updatedAt: 'updated_at',
+      createdAt: 'created_at'
+    });
+  User.associate = function (models) {
     // User.hasMany(models.carts,{ as: 'carts', foreignKey: 'UserId'})
-    User.hasMany(models.products,{ as: 'productss', foreignKey: 'UserId'})
-    User.belongsToMany(models.products, {  
+    // User.hasMany(models.customer);
+    User.hasMany(models.customers);
+  
+    User.hasMany(models.customers, {
+      as: "sd",
+
+    });
+    // User.hasMany(models.customers, {
+    //   as: "customers",
+    //   foreignKey: 'UserIdBuyer',
+    // });
+    User.hasMany(models.products, { as: 'productss', foreignKey: 'UserId' })
+    User.belongsToMany(models.products, {
       as: 'products',
-      through: 'carts', 
+      through: 'carts',
       otherKey: 'UserId',
       foreignKey: 'ProductId',
     });

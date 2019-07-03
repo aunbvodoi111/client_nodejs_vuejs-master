@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="btn-chat" v-if="!toggleChat" @click="$store.commit('TOGGLE_CHAT')">
+    <div class="btn-chat" v-if="!toggleChat" @click="showDivChat">
       <button>Chat ngay nhe</button>
     </div>
     <div class="container" v-if="toggleChat">
@@ -121,6 +121,25 @@ export default {
     });
   },
   methods:{
+    showDivChat() {
+      if (!this.$store.state.authUser) {
+        this.$store.commit("OPEN_REGISTER");
+      } else {
+        this.$axios
+          .post("/api/room/add", {
+            user: this.product.user
+          })
+          .then(response => {
+            console.log(response);
+            this.rooms = response.data;
+            this.$store.commit("ROOMS", response.data);
+          });
+        // this.$axios.$get("/api/room/").then(response => {
+        //   console.log(response);
+        // });
+        this.$store.commit("TOGGLE_CHAT");
+      }
+    },
     chatUser(item){
       this.roomname = item.id
       this.room = this.rooms.find( room => room.id === item.id)

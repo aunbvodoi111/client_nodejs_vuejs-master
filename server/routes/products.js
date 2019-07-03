@@ -17,7 +17,8 @@ router.get('/', async (req, res) => {
         //   as: 'products'
         // }]
     })
-    return res.json(products)
+    var cates = await models.cates.findAll({})
+    return res.send({ products : products , cates : cates})
 })
 
 router.get('/shop/:id', async (req, res) => {

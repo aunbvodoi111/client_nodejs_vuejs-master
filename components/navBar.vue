@@ -101,7 +101,7 @@
                   </div>
                   <div class="action-pop-cart">
                     <p>{{ n.discount }}đ</p>
-                    <a href>Xóa</a>
+                    <a @click="deleteCart(n)">Xóa</a>
                   </div>
                 </div>
                 <button class="btn-to-cart">Vào giỏ hàng</button>
@@ -149,6 +149,17 @@ export default {
     }
   },
   methods: {
+    deleteCart(item) {
+      // console.log(item);
+      // this.cart = {}
+      // this.toggleComfirmCart = false
+      var index = this.carts.indexOf(item)
+      this.carts.splice(index ,1 )
+      this.$axios.post("/api/cart/deleteCart", {
+        ProductId: item.id,
+        qty: item.users[0].carts.qty
+      });
+    },
     checkAuth() {
       if (!this.$store.state.authUser) {
         this.$store.commit("OPEN_REGISTER");

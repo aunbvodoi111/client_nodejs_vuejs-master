@@ -57,7 +57,7 @@
               <h4>Sản phẩm</h4>
               <p>
                 <span>{{ item.user.name }}</span>
-                <span>Chat ngay</span>
+                <span @click="showDivChat(item)">Chat ngay</span>
               </p>
             </div>
             <div class="img-name-pr">
@@ -132,7 +132,7 @@
         </div>
         <div class="button">
           <div class="btn-action">
-            <button>Đặt hàng</button>
+            <button @click="checkoutCart">Đặt hàng</button>
           </div>
         </div>
       </div>
@@ -161,9 +161,29 @@ export default {
         var sum = sum + this.carts[i].discount * this.carts[i].users[0].carts.qty;
       }
       return sum;
-    }
+    },
+    
   },
   methods: {
+    showDivChat(item) {
+      if (!this.$store.state.authUser) {
+        this.$store.commit("OPEN_REGISTER");
+      } else {
+        this.$axios
+          .post("/api/room/add", {
+            user: item.user.name
+          })
+          .then(response => {
+            console.log(response);
+            this.rooms = response.data;
+            this.$store.commit("ROOMS", response.data);
+          });
+        // this.$axios.$get("/api/room/").then(response => {
+        //   console.log(response);
+        // });
+        this.$store.commit("TOGGLE_CHAT");
+      }
+    },
     handleItemClick() {
       console.log("vao");
     },
@@ -174,6 +194,12 @@ export default {
       } else {
         this.errorName = " ";
       }
+    },
+    checkoutCart(){
+      this.$axios.post('/api/cart/addCartCustomer',{ carts : this.carts})
+      .then( response =>{
+        console.log(response)
+      })
     }
   }
 };

@@ -33,15 +33,20 @@ export const mutations = {
     state.toggleChat = !state.toggleChat
   },
   ADD_CART: function (state ,cart) {
-    console.log(cart)
-    console.log(state.carts)
     var index = -1;
-    state.carts.forEach((subcate, index) => {
-        if (subcate.id === cart.id) {
-          subcate.users[0].carts.qty + 1 
+    state.carts.forEach((subcate, index) => {  
+      if(subcate.users[0]){
+        if (subcate.users[0].carts.ProductId === cart.ProductId) {
+          console.log('sdadas')
+          subcate.users.splice(index,1)
+          console.log(subcate.users.splice(index,1))
+          subcate.users[0].carts.push(cart)
           index = index;
         }
+      }
+        
     });
+    console.log(state.carts)
   },
   ROOMS: function (state ,rooms) {
     state.rooms = rooms

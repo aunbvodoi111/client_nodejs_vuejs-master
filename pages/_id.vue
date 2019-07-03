@@ -114,6 +114,7 @@
 import Rating from "./../components/detail/rating";
 import ProductRelate from "./../components/detail/productRelate";
 import saler from "./../components/detail/saler";
+import socket from "~/plugins/socket.io.js"
 export default {
   transition: "bounceok",
   async asyncData({ params, $axios, req , store }) {
@@ -123,6 +124,9 @@ export default {
       Vue.set(item, "is_rating", false);
       Vue.set(item, "contentcmt", "");
     });
+    if(store.state.authUser){
+      socket.emit("joinRoom", store.state.authUser.name);
+    }
     var carts = data.data.carts
     console.log(data.data);
     
@@ -192,20 +196,11 @@ export default {
       }
     },
     addCart() {
-      // if (this.cart.users[0].carts) {
-      //   this.cart.users[0].carts.qty =
-      //     this.cart.users[0].carts.qty + this.qtyProduct;
-      // } else {
-      //   this.cart.users[0].carts = {};
-      //   this.cart.users[0].carts.push({
-      //     ProductId: this.product.id,
-      //     qty: this.qtyProduct
-      //   });
-      // }
+
       if (!this.$store.state.authUser) {
         this.$store.commit("OPEN_REGISTER");
       } else {
-        this.$store.commit('ADD_CART', this.product )
+        
         this.showNofication = true;
         setTimeout(() => {
           this.showNofication = false;
@@ -217,6 +212,7 @@ export default {
           })
           .then(response => {
             console.log(response);
+            this.$store.commit('ADD_CART', response.data )
           });
       }
     },

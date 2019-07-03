@@ -3,6 +3,7 @@ module.exports = (sequelize, DataTypes) => {
   const Cate = sequelize.define('cates', {
     name: DataTypes.STRING,
     keyword: DataTypes.STRING,
+    image: DataTypes.STRING,
   }, {
     updatedAt: 'updated_at',
     createdAt: 'created_at'

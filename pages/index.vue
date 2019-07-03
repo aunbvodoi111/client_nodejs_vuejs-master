@@ -29,6 +29,21 @@
         <div class="swiper-button-prev"></div>
       </div>
       <div class="title-content">
+        <h4>Danh mục</h4>
+      </div>
+      <div class="product-content">
+        <div class="product" v-for="item in cates" :key="item.id">
+          <div class="product-div" @click="submit(item)">
+            <nuxt-link :to="`/${item.id}`">
+              <div class="img">
+                <img :src=" `${item.image} `" alt>
+              </div>
+            </nuxt-link>
+          </div>
+        </div>
+        <div style=" clear:both;"></div>
+      </div>
+      <div class="title-content">
         <h4>Sản phẩm nổi bật</h4>
       </div>
       <div class="product-content">
@@ -58,15 +73,19 @@ import Logo from "~/components/Logo.vue";
 import NavBar from "./../components/navBar";
 import Swiper from "swiper";
 import "swiper/dist/css/swiper.min.css";
+import socket from "~/plugins/socket.io.js"
 export default {
   components: {
     Logo,
     NavBar
   },
-  async asyncData({ $axios }) {
+  async asyncData({ $axios ,store }) {
     var data = await $axios.get("/api/product");
-
-    return { products: data.data };
+    if(store.state.authUser){
+      socket.emit("joinRoom", store.state.authUser.name);
+    }
+    console.log(data.data.cates)
+    return { products: data.data.products ,  cates: data.data.cates};
   },
   data(){
     return{
