@@ -18,7 +18,7 @@
               <a href>Kênh người bán</a>
             </li>
             <li v-if="$store.state.authUser">
-              <a href>Chao , {{ $store.state.authUser.email}}</a>
+              <nuxt-link to='/user/account/profile'>Chao , {{ $store.state.authUser.email}}</nuxt-link>
             </li>
             <li @click="loginAuth" v-if="!$store.state.authUser">
               <a>Đăng kí</a>

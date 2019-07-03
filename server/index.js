@@ -27,6 +27,7 @@ const cartApi = require('./routes/cart')
 const roomApi = require('./routes/room')
 const wisheApi = require('./routes/wishe')
 const followApi = require('./routes/follow')
+const userApi = require('./routes/user')
 // Import and Set Nuxt.js options
 
 // app.use(cors())
@@ -37,6 +38,7 @@ app.use('/api/product',productApi)
 app.use('/api/cart',cartApi)
 app.use('/api/wishe',wisheApi)
 app.use('/api/follow',followApi)
+app.use('/api/user',userApi)
 app.use('/api/room',roomApi)
 app.use(express.static('public'))
 

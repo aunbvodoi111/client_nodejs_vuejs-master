@@ -6,18 +6,18 @@
       </div>
       <div class="swiper-container">
         <div class="swiper-wrapper">
-          <div class="swiper-slide" v-for="n in 10" :key="n + 1">
+          <div class="swiper-slide" v-for="item in products" :key="item.id">
             <div class="product-div">
               <div class="img">
-                <img src="https://cf.shopee.vn/file/5f2a854d5372f380eac9430b23023013_tn" alt>
+                <img :src="item.image" alt>
               </div>
               <div class="name">
                 <a
                   href
-                >Kính cường lực UV dành cho S7 Edge/S8/S8 Plus/S9 /S9 Plus/S10/S10 Plus/Note FE/Note 8/Note 9 (Kính Full không tai thỏ)</a>
+                >{{ item.name }}</a>
               </div>
               <div class="price">
-                <p>3.600.000 đ</p>
+                <p>{{ item.discount }} đ</p>
               </div>
             </div>
           </div>
