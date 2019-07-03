@@ -116,15 +116,19 @@ import ProductRelate from "./../components/detail/productRelate";
 import saler from "./../components/detail/saler";
 export default {
   transition: "bounceok",
-  async asyncData({ params, $axios, req }) {
+  async asyncData({ params, $axios, req , store }) {
     const data = await $axios.get("/api/product/detailPr/" + params.id);
     var rating1 = [];
     data.data.products.ratings.forEach(item => {
       Vue.set(item, "is_rating", false);
       Vue.set(item, "contentcmt", "");
     });
+    var carts = data.data.carts
     console.log(data.data);
+    
+    store.commit('LIST_CART', carts )
     return {
+      carts : data.data.carts,
       product: data.data.products,
       count: data.data.count,
       follows: data.data.follows,
@@ -201,6 +205,7 @@ export default {
       if (!this.$store.state.authUser) {
         this.$store.commit("OPEN_REGISTER");
       } else {
+        this.$store.commit('ADD_CART', this.product )
         this.showNofication = true;
         setTimeout(() => {
           this.showNofication = false;

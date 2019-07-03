@@ -56,7 +56,7 @@
             <div class="name-shop">
               <h4>Sản phẩm</h4>
               <p>
-                <span>pham quy</span>
+                <span>{{ item.user.name }}</span>
                 <span>Chat ngay</span>
               </p>
             </div>
@@ -159,7 +159,6 @@ export default {
       var sum = 0;
       for (var i = 0; i < this.carts.length; i++) {
         var sum = sum + this.carts[i].discount * this.carts[i].users[0].carts.qty;
-        console.log(this.carts[i].price * this.carts[i].users[0].carts.qty);
       }
       return sum;
     }
@@ -186,7 +185,7 @@ button {
 }
 .container-checkout {
   width: 100%;
-  height: 1000px;
+  height: auto;
   background: #f5f5f5;
   .container {
     width: 1200px;

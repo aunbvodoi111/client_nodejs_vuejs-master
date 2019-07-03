@@ -3,7 +3,7 @@
     <div class="saler">
       <div class="saler-left">
         <div class="img">
-          <img src="https://cf.shopee.vn/file/c241a1c7f04749a0b9b55b53b5619425_tn" alt>
+          <img src="https://cf.shopee.vn/file/c241a1c7f04749a0b9b55b53b5619425_tn" alt />
         </div>
         <div class="chat-saler">
           <p class="name-saler">{{ product.user.name }}</p>
@@ -43,7 +43,7 @@ export default {
   props: ["product", "follows"],
   data() {
     return {
-      rooms : []
+      rooms: []
     };
   },
   async asyncData({ $axios }) {
@@ -65,38 +65,32 @@ export default {
         return index;
       },
       set: function(newValue) {
-        // this.checkWishe = newValue
-        console.log(newValue);
         this.index = newValue;
       }
     }
   },
   methods: {
     followSaler(product) {
-      var find = this.follows.find(
-        follow => follow.UserId === this.$store.state.authUser.id
-      );
-      console.log(find);
-      var index = this.follows.indexOf(find);
-      console.log(index);
-      if (find) {
-        this.follows.splice(index, 1);
-        console.log(this.follows);
-      } else {
-        var anhquy = {
-          UserId: this.$store.state.authUser.id,
-          ProductId: product.id
-        };
-        this.follows.push(anhquy);
-        console.log(this.follows);
-      }
       if (!this.$store.state.authUser) {
         this.$store.commit("OPEN_REGISTER");
       } else {
+        var find = this.follows.find(
+          follow => follow.UserId === this.$store.state.authUser.id
+        );
+        var index = this.follows.indexOf(find);
+        if (find) {
+          this.follows.splice(index, 1);
+
+        } else {
+          var anhquy = {
+            UserId: this.$store.state.authUser.id,
+            ProductId: product.id
+          };
+          this.follows.push(anhquy);
+        }
         this.$axios
           .post("/api/follow/add", { ProductId: this.product.id })
           .then(response => {
-            console.log(response);
           });
       }
     },
@@ -109,10 +103,9 @@ export default {
             user: this.product.user
           })
           .then(response => {
-      
-            console.log(response)
-            this.rooms = response.data
-            this.$store.commit("ROOMS",response.data);
+            console.log(response);
+            this.rooms = response.data;
+            this.$store.commit("ROOMS", response.data);
           });
         // this.$axios.$get("/api/room/").then(response => {
         //   console.log(response);

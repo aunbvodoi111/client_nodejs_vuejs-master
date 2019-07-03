@@ -55,12 +55,14 @@
             </button>
           </nuxt-link>
           <div class="pop-search" v-if="keyword && closePopSearch">
-            <div class="product-search" v-for="item in products" :key="item.id">
+            <div class="product-search" v-for="item in products" :key="item.id" @click="closePopSearch = false">
               <div class="img-product">
-                <img :src="item.image" alt />
+                <nuxt-link :to="`/${item.id}`">
+                  <img :src="item.image" alt />
+                </nuxt-link>
               </div>
               <div class="detail-product">
-                <a>{{ item.name }}</a>
+                <nuxt-link :to="`/${item.id}`">{{ item.name }}</nuxt-link>
                 <p>{{ item.price }}</p>
               </div>
             </div>
@@ -80,25 +82,25 @@
             >
               <!-- <template v-if="carts.length">
                 <div class="qty-cart" v-if=" $store.state.authUser">{{ sumQtyCart }}</div>
-              </template> -->
-              <template >
-                <div class="qty-cart" v-if=" $store.state.authUser">10</div>
+              </template>-->
+              <template>
+                <div class="qty-cart" v-if=" $store.state.authUser">{{sumQtyCart }}</div>
               </template>
               <div class="pop-cart" v-if="hover && $store.state.authUser">
-                <div class="product-cart" v-for="n in 5" :key="n">
+                <div class="product-cart" v-for="n in carts" :key="n.id">
                   <div class="image-pop-cart">
                     <img
-                      src="https://cdn.tgdd.vn/Products/Images/42/199041/vivo-v15-quanghai-400x460.png"
+                      :src="n.image"
                       alt
                     />
                   </div>
                   <div class="name-pop-cart">
                     <a
                       href
-                    >[ RẺ VÔ CỰC ] Kính Cường Lực Full Màn 10D - 15D Dành Cho Iphone - Kính Đẹp, Siêu Mỏng</a>
+                    >{{ n.name }}</a>
                   </div>
                   <div class="action-pop-cart">
-                    <p>3600.000đ</p>
+                    <p>{{ n.discount }}đ</p>
                     <a href>Xóa</a>
                   </div>
                 </div>
@@ -115,25 +117,31 @@
 export default {
   data() {
     return {
-      keyword: "dsa",
+      keyword: "",
       hover: false,
       products: [],
       closePopSearch: false,
-      carts: []
     };
   },
   created() {
-    this.$axios.$get("/api/cart/").then(response => {
-      this.carts = response;
-      console.log(this.carts);
-    });
+    // this.$axios.$get("/api/cart/").then(response => {
+    //   this.carts = response;
+    //   console.log(this.carts);
+    // });
   },
   computed: {
+    carts(){
+      var carts =  this.$store.state.carts.filter(data => data.users.length !== 0);
+      return carts
+    },
     sumQtyCart() {
       var sum = 0;
-      if (this.carts.length > 0 && this.carts) {
-        for (var i = 0; i < this.carts.length; i++) {
-          var sum = sum + this.carts[i].users[0].carts.qty;
+      if (this.$store.state.carts.length ) {
+        for (var i = 0; i < this.$store.state.carts.length; i++) {
+          if( this.$store.state.carts[i].users.length ){
+             var sum = sum + this.$store.state.carts[i].users[0].carts.qty;
+             console.log('da')
+          }
         }
         return sum;
       }
@@ -304,6 +312,7 @@ a:hover {
             position: absolute;
             font-size: 12px;
             top: 0;
+            z-index: 30;
             right: 55%;
             width: 20px;
             height: 20px;
@@ -315,8 +324,9 @@ a:hover {
           }
           .pop-cart {
             padding-bottom: 2%;
-            z-index: 9;
-            width: 300%;
+            position: absolute;
+            z-index: 30;
+            width: 250%;
             background: white;
             color: black;
             height: auto;

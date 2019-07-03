@@ -82,7 +82,7 @@ router.get('/', async (req, res) => {
     var carts
     if (req.user) {
         carts = await models.products.findAll({
-            include: {
+            include: [{
                 model: models.users,
                 as: 'users',
                 required: false,
@@ -94,7 +94,7 @@ router.get('/', async (req, res) => {
                     model: models.carts,
                     as: 'carts',
                 }
-            }
+            },{model: models.users}]
         })
     } else {
         carts = []
@@ -103,9 +103,10 @@ router.get('/', async (req, res) => {
 })
 
 router.get('/checkout', async (req, res) => {
+    var carts
     if (req.user) {
         carts = await models.products.findAll({
-            include: {
+            include: [{
                 model: models.users,
                 as: 'users',
                 required: false,
@@ -114,11 +115,10 @@ router.get('/checkout', async (req, res) => {
                 attributes: ['id', 'name'],
                 through: {
                     // This block of code allows you to retrieve the properties of the join table
-                    where: { checkBuy: 1 },
                     model: models.carts,
                     as: 'carts',
                 }
-            }
+            },{model: models.users}]
         })
     } else {
         carts = []

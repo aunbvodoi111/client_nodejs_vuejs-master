@@ -6,7 +6,8 @@ export const state = () => ({
   register: true,
   closeAuth: false,
   toggleChat:false,
-  rooms:[]
+  rooms:[],
+  carts : []
 })
 
 export const mutations = {
@@ -25,8 +26,22 @@ export const mutations = {
     state.closeAuth = true
     state.login = false
   },
+  LIST_CART: function (state ,carts) {
+    state.carts = carts
+  },
   TOGGLE_CHAT: function (state) {
     state.toggleChat = !state.toggleChat
+  },
+  ADD_CART: function (state ,cart) {
+    console.log(cart)
+    console.log(state.carts)
+    var index = -1;
+    state.carts.forEach((subcate, index) => {
+        if (subcate.id === cart.id) {
+          subcate.users[0].carts.qty + 1 
+          index = index;
+        }
+    });
   },
   ROOMS: function (state ,rooms) {
     state.rooms = rooms

@@ -116,10 +116,11 @@
 </template>
 <script>
 export default {
-  async asyncData({ $axios }) {
+  async asyncData({ $axios , store}) {
     var data = await $axios.get("/api/cart/");
     console.log(data.data);
     var carts = data.data.filter(data => data.users.length !== 0);
+    store.commit('LIST_CART', carts )
     return { carts: carts };
   },
   data(){
