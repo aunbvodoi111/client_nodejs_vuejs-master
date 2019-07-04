@@ -66,9 +66,9 @@
                 v-for=" n in Math.floor(mediumstar)"
                 :key=" n + 1"
               ></i>
-              <i class="far fa-star" v-for=" n in 5-Math.floor(mediumstar)" :key=" n + 2"></i>
+              <i class="far fa-star" v-for=" n in 5-Math.floor(mediumstar)" :key=" n + 200"></i>
             </div>
-            <div class="number-rating">{{ total }} đánh giá</div>
+            <div class="number-rating">{{ product.ratings.length }} đánh giá</div>
             <div class="number-rating">45 đã bán</div>
           </div>
           <div class="price-detail">
@@ -115,6 +115,7 @@ import Rating from "./../components/detail/rating";
 import ProductRelate from "./../components/detail/productRelate";
 import saler from "./../components/detail/saler";
 import socket from "~/plugins/socket.io.js"
+import Vue from "vue";
 export default {
   transition: "bounceok",
   async asyncData({ params, $axios, req , store }) {

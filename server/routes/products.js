@@ -102,7 +102,11 @@ router.get('/detailPr/:id', async (req, res) => {
         where: { id: id },
         include: [{
           model: models.ratings,
-          as: 'ratings'
+          as: 'ratings',
+          include: [{
+            model: models.rep_ratings,
+            as: 'rep_ratings',
+          }],
         },{model: models.users}],
         
     })

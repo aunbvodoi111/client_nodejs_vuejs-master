@@ -140,7 +140,6 @@
           <div>
             <p>
               <i class="fas fa-star" v-for="n in item.star" :key=" n + 2"></i><i class="far fa-star" v-for="n in 5-item.star" :key=" n + 5"></i>  Cực Kì Hài Lòng
-              
             </p>
             <p class="buy-alredy">Đã mua sản phẩm này tại Tiki</p>
             <p>{{ item.content }}</p>
@@ -150,21 +149,21 @@
           </div>
 
           <div class="img-cmt">
-            <img
+            <!-- <img
               :src="product.image"
               alt
-            >
+            > -->
           </div>
           <div class="txt-reply">
             <div class>
-              <textarea v-model="contentRepRating"></textarea>
+              <textarea v-model="item.contentcmt"></textarea>
               <div class="btn-send-rep">
                 <button @click="send_reprating(item)">Gửi câu trả lời</button>
                 <button>Hủy bỏ</button>
               </div>
             </div>
           </div>
-          <div class="rep-rating" v-for="prod in item.rep_ratings">
+          <div class="rep-rating" v-for="prod in item.rep_ratings" :key="prod.id">
             <div class="avatar-rep"></div>
             <div class="content-rep">
               <p>{{ prod.content }}</p>
@@ -235,9 +234,17 @@ export default {
       }
     },
     send_reprating(item){
+      console.log(item)
       var rating = this.product.ratings.find(star => star.id === item.id);
       console.log(rating)
-      rating.rep_ratings.push({ content : this.contentRepRating })
+      rating.rep_ratings.push({ content : item.contentcmt })
+      this.$axios.post('/api/rating/add_reprating',{
+        image : '',
+        content :item.contentcmt,
+        RatingId : item.id
+      }).then(response =>{
+        console.log('ok')
+      })
     },
     sendRating() {
       this.rating.id = this.rating.id + 1
@@ -251,6 +258,15 @@ export default {
         rep_ratings : []
        })
       this.$emit('totalRating', { total:this.product.ratings.length, mediumstar:this.mediumstar })
+      this.$axios.post('/api/rating/add',{
+        title :this.rating.title,
+        star :this.rating.star,
+        image :this.rating.image,
+        content :this.rating.content,
+        ProductId : this.product.id
+      }).then(response =>{
+        console.log('ok')
+      })
     }
   }
 };

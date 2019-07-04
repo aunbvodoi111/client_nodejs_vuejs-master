@@ -11,21 +11,21 @@
         </div>
         <div class="nav-tab">
           <ul>
-            <li v-for="n in 3">
-              <i class="fas fa-star"></i>
-              <a href>Sản phẩm mua sau</a>
-            </li>
             <li>
               <i class="fas fa-star"></i>
               <nuxt-link to='/user/account/profile'>Thông báo của bạn</nuxt-link>
             </li>
-            <li>
+            <!-- <li>
               <i class="fas fa-star"></i>
               <nuxt-link to='/user/account/profile'>Thông báo của bạn</nuxt-link>
-            </li>
+            </li> -->
             <li>
               <i class="fas fa-star"></i>
               <nuxt-link to='/user/wishlist'>Sản phẩm yêu thích</nuxt-link>
+            </li>
+            <li>
+              <i class="fas fa-star"></i>
+              <nuxt-link to='/user/followShop'>Shop yêu thích</nuxt-link>
             </li>
             <li>
               <i class="fas fa-star"></i>
