@@ -1,35 +1,30 @@
 <template>
   <div class="container-fruid">
     <transition name="bounce" leave-active-class="animated bounceOutRight">
-        <div
-          class="add-cart-notification"
-          v-if="toggleComfirmCart"
-        >
-          <p>Bạn muốn xóa sản phẩm :</p>
-          <div class="product-add-cart">
-            <div class="img">
-              <img :src="cart.image" alt />
-            </div>
-            <div class="infor-product-cart" >
-              <p>{{ cart.name }}</p>
-              <!-- <div class="qty">
+      <div class="add-cart-notification" v-if="toggleComfirmCart">
+        <p>Bạn muốn xóa sản phẩm :</p>
+        <div class="product-add-cart">
+          <div class="img">
+            <img :src="cart.image" alt />
+          </div>
+          <div class="infor-product-cart">
+            <p>{{ cart.name }}</p>
+            <!-- <div class="qty">
                 số lượng sp trong giỏ hàng :
                 <span
                   style="color : red ; font-weight : bold;"
                 >{{ pr}}</span>
-              </div> -->
-              <div class="qty">
-                <!-- thành tiền : -->
-                <span
-                  style="color : red ; font-weight : bold;"
-                >{{ cart.discount }}</span>
-              </div>
+            </div>-->
+            <div class="qty">
+              <!-- thành tiền : -->
+              <span style="color : red ; font-weight : bold;">{{ cart.discount }}</span>
             </div>
           </div>
-          <p @click="deleteCart(cart)">Có</p>
-          <p @click="toggleComfirmCart = false">Không</p>
         </div>
-      </transition>
+        <p @click="deleteCart(cart)">Có</p>
+        <p @click="toggleComfirmCart = false">Không</p>
+      </div>
+    </transition>
     <div class="container-cart" v-if="carts.length">
       <div class="title-cart">
         <div class="check">
@@ -102,32 +97,42 @@
             <p>Tổng tiền hàng ({{ sumQtyCart }} sản phẩm): ₫{{sumMoneyCart}}</p>
           </div>
           <div class="btn-action">
-            <nuxt-link to='/checkout'>
+            <nuxt-link to="/checkout">
               <button>Thanh toán</button>
             </nuxt-link>
           </div>
         </div>
       </div>
     </div>
-    <div v-if="!carts.length" class="container-cart">
-      <img src="/img/cart_blank.png" alt />
+    <div v-if="!carts.length" class="container-fruid">
+      <div class="container-cart">
+        <div class="img-blank">
+          <img src="/img/cart_blank.png" alt />
+          <div class="btn">
+            <p>Giỏ hàng của bạn còn trống</p>
+            <nuxt-link to='/'>
+              <button>mua ngay</button>
+            </nuxt-link>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 <script>
 export default {
-  async asyncData({ $axios , store}) {
+  async asyncData({ $axios, store }) {
     var data = await $axios.get("/api/cart/");
     console.log(data.data);
     var carts = data.data.filter(data => data.users.length !== 0);
-    store.commit('LIST_CART', carts )
+    store.commit("LIST_CART", carts);
     return { carts: carts };
   },
-  data(){
-    return{
-      cart :{},
-      toggleComfirmCart : false
-    }
+  data() {
+    return {
+      cart: {},
+      toggleComfirmCart: false
+    };
   },
   methods: {
     reduction(item) {
@@ -162,16 +167,16 @@ export default {
         item.users[0].carts.qty = item.qty;
       }
     },
-    showPopCart(item){
-      this.cart = item
-      this.toggleComfirmCart = true
+    showPopCart(item) {
+      this.cart = item;
+      this.toggleComfirmCart = true;
     },
     deleteCart(item) {
       console.log(item);
-      this.cart = {}
-      this.toggleComfirmCart = false
-      var index = this.carts.indexOf(item)
-      this.carts.splice(index ,1 )
+      this.cart = {};
+      this.toggleComfirmCart = false;
+      var index = this.carts.indexOf(item);
+      this.carts.splice(index, 1);
       this.$axios.post("/api/cart/deleteCart", {
         ProductId: item.id,
         qty: item.users[0].carts.qty
@@ -198,6 +203,31 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.img-blank {
+  width: 1200px;
+  background: white;
+  margin: auto;
+  img {
+    margin-left: 35%;
+  }
+  .btn {
+    text-align: center;
+    margin-top :30px;
+    width: 20%;
+    margin: auto;
+    font-weight: bold;
+    font-size: 17px;  
+    button {
+      width: 60%;
+      margin: 20px;
+      height: 40px;
+      background-color: #2b3278;
+      color: white;
+      border: none;
+      text-transform: uppercase;
+    }
+  }
+}
 button {
   cursor: pointer;
 }
@@ -362,13 +392,13 @@ button {
           display: flex;
           .img {
             width: 30%;
-            img{
+            img {
               width: 80%;
             }
           }
-          .name{
+          .name {
             width: 70%;
-            p{
+            p {
               font-weight: bold;
             }
           }
