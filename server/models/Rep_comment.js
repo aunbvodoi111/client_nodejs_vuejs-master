@@ -1,9 +1,10 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  const Rep_comment = sequelize.define('req_comments', {
-    name: DataTypes.STRING,
+  const Rep_comment = sequelize.define('rep_comments', {
     content: DataTypes.STRING,
     image: DataTypes.STRING,
+    CommentId: DataTypes.INTEGER,
+    UserId: DataTypes.INTEGER,
   }, {
     updatedAt: 'updated_at',
     createdAt: 'created_at'

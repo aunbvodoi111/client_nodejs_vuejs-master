@@ -5,7 +5,8 @@
       <div class="rating-box-left" v-if="product.ratings.length > 0">
         <p>Đánh giá trung bình</p>
         <p>{{ mediumstar.toFixed(1) }}/5</p>
-        <i class="fas fa-star" v-for=" n in Math.floor(mediumstar)" :key="n"></i><i class="far fa-star" v-for=" n in 5-Math.floor(mediumstar)" :key="n + 1"></i>
+        <i class="fas fa-star" v-for=" n in Math.floor(mediumstar)" :key="n"></i>
+        <i class="far fa-star" v-for=" n in 5-Math.floor(mediumstar)" :key="n + 1"></i>
         <p class="total-rating">( {{ this.product.ratings.length }} nhận xét )</p>
       </div>
       <div class="rating-box-center" v-if="product.ratings.length > 0">
@@ -17,7 +18,10 @@
             </p>
           </div>
           <div class="tool-bar">
-            <div class="tool-bar-float" v-bind:style="{ width : (totalStarFive.length / product.ratings.length) *100  + '%' }"></div>
+            <div
+              class="tool-bar-float"
+              v-bind:style="{ width : (totalStarFive.length / product.ratings.length) *100  + '%' }"
+            ></div>
           </div>
           <div class="rating-total">{{ totalStarFive.length }}</div>
         </div>
@@ -29,7 +33,10 @@
             </p>
           </div>
           <div class="tool-bar">
-            <div class="tool-bar-float" v-bind:style="{ width : (totalStarFour.length / product.ratings.length) *100  + '%' }"></div>
+            <div
+              class="tool-bar-float"
+              v-bind:style="{ width : (totalStarFour.length / product.ratings.length) *100  + '%' }"
+            ></div>
           </div>
           <div class="rating-total">{{ totalStarFour.length }}</div>
         </div>
@@ -41,7 +48,10 @@
             </p>
           </div>
           <div class="tool-bar">
-            <div class="tool-bar-float" v-bind:style="{ width : (totalStarThree.length / product.ratings.length) *100  + '%' }"></div>
+            <div
+              class="tool-bar-float"
+              v-bind:style="{ width : (totalStarThree.length / product.ratings.length) *100  + '%' }"
+            ></div>
           </div>
           <div class="rating-total">{{ totalStarThree.length }}</div>
         </div>
@@ -53,7 +63,10 @@
             </p>
           </div>
           <div class="tool-bar">
-            <div class="tool-bar-float" v-bind:style="{ width : (totalStarTwo.length / product.ratings.length) *100  + '%' }" ></div>
+            <div
+              class="tool-bar-float"
+              v-bind:style="{ width : (totalStarTwo.length / product.ratings.length) *100  + '%' }"
+            ></div>
           </div>
           <div class="rating-total">{{ totalStarTwo.length }}</div>
         </div>
@@ -65,7 +78,10 @@
             </p>
           </div>
           <div class="tool-bar">
-            <div class="tool-bar-float" v-bind:style="{ width : (totalStarOne.length / product.ratings.length) *100  + '%' }"></div>
+            <div
+              class="tool-bar-float"
+              v-bind:style="{ width : (totalStarOne.length / product.ratings.length) *100  + '%' }"
+            ></div>
           </div>
           <div class="rating-total">{{ totalStarOne.length }}</div>
         </div>
@@ -85,7 +101,7 @@
         </p>
         <p>2. Tiêu đề của nhận xét:</p>
         <div>
-          <input type="text" class="txt-content" v-model="rating.title">
+          <input type="text" class="txt-content" v-model="rating.title" />
         </div>
         <p>3. Viết nhận xét của bạn vào bên dưới:</p>
         <div>
@@ -93,7 +109,7 @@
         </div>
         <div>
           <span>Thêm hình sản phẩm nếu có (tối đa 5 hình):</span>
-          <input type="file" id="upload-image">
+          <input type="file" id="upload-image" />
           <label for="upload-image">
             <button>Chọn hình ảnh</button>
           </label>
@@ -104,10 +120,7 @@
       </div>
       <div class="product-comment">
         <div class="img">
-          <img
-            :src="product.image"
-            alt
-          >
+          <img :src="product.image" alt />
         </div>
         <div class="name">
           <p>Máy Lạnh Inverter Daikin FTKQ35SAVMV/RKQ35SAVMV (1.5HP)</p>
@@ -132,29 +145,30 @@
         <div class="avatar">
           <div class="inclue-avatar">
             <div class="div-avatar"></div>
-            <div class="name-customer">{{ item.name }}</div>
+            <div class="name-customer">{{ item.user.name }}</div>
             <div class="time">2 tháng trước</div>
           </div>
         </div>
         <div class="content-cmt">
           <div>
             <p>
-              <i class="fas fa-star" v-for="n in item.star" :key=" n + 2"></i><i class="far fa-star" v-for="n in 5-item.star" :key=" n + 5"></i>  Cực Kì Hài Lòng
+              <i class="fas fa-star" v-for="n in item.star" :key=" n + 2"></i>
+              <i class="far fa-star" v-for="n in 5-item.star" :key=" n + 5"></i> Cực Kì Hài Lòng
             </p>
             <p class="buy-alredy">Đã mua sản phẩm này tại Tiki</p>
             <p>{{ item.content }}</p>
           </div>
           <div class>
-            <a href>Gui trả lời</a>
+            <a @click=" item.is_rating = !item.is_rating">Gui trả lời</a>
           </div>
 
           <div class="img-cmt">
             <!-- <img
               :src="product.image"
               alt
-            > -->
+            >-->
           </div>
-          <div class="txt-reply">
+          <div class="txt-reply" v-if="item.is_rating">
             <div class>
               <textarea v-model="item.contentcmt"></textarea>
               <div class="btn-send-rep">
@@ -176,6 +190,8 @@
 </template>
 <script>
 import StarRating from "vue-star-rating";
+import Vue from "vue";
+import socket from "~/plugins/socket.io.js";
 export default {
   components: {
     StarRating
@@ -186,29 +202,60 @@ export default {
       toggleCmt: false,
       rating: {
         star: 0,
-        id : 1,
-        name:'',
+        id: 1,
+        name: "",
         title: "",
         content: "",
         image: ""
       },
-      contentRepRating:''
+      idRating: "",
+      contentRepRating: ""
     };
   },
+  beforeMount() {
+    socket.on("nhannhe", (room,message) => {
+      // alert(message);
+      console.log(message)
+      console.log(room)
+      var audio = new Audio('/Iphone.mp3') // path to filesssdsaaaaaaaaaaaa
+      audio.play()
+       
+            
+      // this.room = this.rooms.find( room => room.id === room)
+      console.log()
+      // this.room.messagers.push(message)
+      // var audio = new Audio('/Iphone.mp3') // path to file
+      // audio.play() 
+      // var anhquy = this.messages.messages
+      console.log(this.room)  
+      if(this.room.id == room){
+        this.room.messagers.push(message)
+      }else{
+         console.log(this.$store.state.rooms)  
+          console.log(room)  
+        this.room = this.$store.state.rooms.find( room => room.id === room)
+        console.log(this.room)
+        this.count = this.count + 1
+        this.room.messagers.push(message)
+      }
+    
+      // this.$store.commit("ADD_MESS", message);
+    });
+  },
   computed: {
-    totalStarFive(){
+    totalStarFive() {
       return this.product.ratings.filter(star => star.star === 5);
     },
-    totalStarFour(){
+    totalStarFour() {
       return this.product.ratings.filter(star => star.star === 4);
     },
-    totalStarThree(){
+    totalStarThree() {
       return this.product.ratings.filter(star => star.star === 3);
     },
-    totalStarTwo(){
+    totalStarTwo() {
       return this.product.ratings.filter(star => star.star === 2);
     },
-    totalStarOne(){
+    totalStarOne() {
       return this.product.ratings.filter(star => star.star === 1);
     },
     titleToggle() {
@@ -226,47 +273,66 @@ export default {
     }
   },
   methods: {
-    toggleCmtAc(){
-      if(!this.$store.state.authUser){
-        this.$store.commit('OPEN_REGISTER')
-      }else{
-        this.toggleCmt = !this.toggleCmt
+    toggleCmtAc() {
+      if (!this.$store.state.authUser) {
+        this.$store.commit("OPEN_REGISTER");
+      } else {
+        this.toggleCmt = !this.toggleCmt;
       }
     },
-    send_reprating(item){
-      console.log(item)
+    send_reprating(item) {
+      console.log(item);
       var rating = this.product.ratings.find(star => star.id === item.id);
-      console.log(rating)
-      rating.rep_ratings.push({ content : item.contentcmt })
-      this.$axios.post('/api/rating/add_reprating',{
-        image : '',
-        content :item.contentcmt,
-        RatingId : item.id
-      }).then(response =>{
-        console.log('ok')
-      })
+      console.log(rating);
+      rating.rep_ratings.push({ content: item.contentcmt });
+      this.$axios
+        .post("/api/rating/add_reprating", {
+          image: "",
+          content: item.contentcmt,
+          RatingId: item.id
+        })
+        .then(response => {
+          console.log("ok");
+        });
     },
     sendRating() {
-      this.rating.id = this.rating.id + 1
-      this.product.ratings.unshift({
-        id : this.rating.id,
-        name: this.$store.state.authUser.name,
-        title :this.rating.title,
-        star :this.rating.star,
-        image :this.rating.image,
-        content :this.rating.content,
-        rep_ratings : []
-       })
-      this.$emit('totalRating', { total:this.product.ratings.length, mediumstar:this.mediumstar })
-      this.$axios.post('/api/rating/add',{
-        title :this.rating.title,
-        star :this.rating.star,
-        image :this.rating.image,
-        content :this.rating.content,
-        ProductId : this.product.id
-      }).then(response =>{
-        console.log('ok')
-      })
+      // this.rating.id = this.rating.id + 1;
+
+      // this.$emit("totalRating", {
+      //   total: this.product.ratings.length,
+      //   mediumstar: this.mediumstar
+      // });
+      this.$axios
+        .post("/api/rating/add", {
+          title: this.rating.title,
+          star: this.rating.star,
+          image: this.rating.image,
+          content: this.rating.content,
+          ProductId: this.product.id
+        })
+        .then(response => {
+          this.product.ratings.unshift({
+            id: response.data.id,
+            user: {
+              name: this.$store.state.authUser.name
+            },
+            title: response.data.title,
+            star: response.data.star,
+            image: response.data.image,
+            content: response.data.content,
+            rep_ratings: []
+          });
+          this.product.ratings.forEach(item => {
+            Vue.set(item, "is_rating", false);
+            Vue.set(item, "contentcmt", "");
+          });
+          var message = {
+            content: 'ádasdasd',
+            nameuser: this.product.user.name,
+            roomid: this.product.user.name
+          };
+          socket.emit("send-nofi-cmt", message);
+        });
     }
   }
 };
@@ -275,6 +341,12 @@ export default {
 <style lang="scss" scoped>
 .container {
   margin-top: 25px !important;
+}
+button {
+  cursor: pointer;
+}
+a {
+  cursor: pointer;
 }
 @media only screen and (min-width: 1200px) {
   .container {

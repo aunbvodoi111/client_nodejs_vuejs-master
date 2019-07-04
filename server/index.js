@@ -29,6 +29,7 @@ const wisheApi = require('./routes/wishe')
 const followApi = require('./routes/follow')
 const userApi = require('./routes/user')
 const ratingApi = require('./routes/rating')
+const commentApi = require('./routes/comment')
 // Import and Set Nuxt.js options
 
 // app.use(cors())
@@ -42,6 +43,7 @@ app.use('/api/follow',followApi)
 app.use('/api/user',userApi)
 app.use('/api/room',roomApi)
 app.use('/api/rating',ratingApi)
+app.use('/api/comment',commentApi)
 app.use(express.static('public'))
 
 const { ADD_MESSAGE } = require('./socket/socket') 
@@ -99,6 +101,29 @@ io.on('connection', (socket) => {
     }
     
   })
+
+  socket.on('send-nofi-cmt', async (message) => {
+    console.log(people)
+    console.log(message)
+    var name = message.nameuser
+    var receiverSocketId = findUserById(name);
+    if(receiverSocketId){
+      // var receiver = people[receiverSocketId];
+      var room = message.roomid;
+      socket.join(room);
+      io.sockets.connected[receiverSocketId].join(room);
+      //notify the client of thisss
+      socket.broadcast.to(room).emit('nhannhe',room,message);
+      // await ADD_MESSAGE({ data : message})
+    }else{
+      console.log('vao day')
+      var room = message.roomid;
+      socket.broadcast.to(room).emit('new-message',room,message);
+      // await ADD_MESSAGE({ data : message})
+    }
+    
+  })
+
   socket.on('userTyping', data => {
     var anhquy = 'Đang trả lời '
     socket

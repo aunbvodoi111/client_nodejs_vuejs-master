@@ -31,6 +31,21 @@ router.get('/listProductWish', async (req, res) => {
     return res.json(carts)
 })
 
+router.get('/listRating', async (req, res) => {
+    var carts
+    if (req.user) {
+        carts = await models.ratings.findAll({
+            where: { UserId: req.user.id },
+            include: [{
+                model: models.products,
+            }]
+        })
+    } else {
+        carts = []
+    }
+    return res.json(carts)
+})
+
 
 router.post('/addCartCustomer', async (req, res) => {
     var { carts } = req.body

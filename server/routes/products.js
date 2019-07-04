@@ -18,34 +18,34 @@ router.get('/', async (req, res) => {
         // }]
     })
     var cates = await models.cates.findAll({})
-    return res.send({ products : products , cates : cates})
+    return res.send({ products: products, cates: cates })
 })
 
 router.get('/shop/:id', async (req, res) => {
     console.log(req.user)
     var { id } = req.params
-    var products = await models.products.findAll({  
-        where:{ UserId : id },
+    var products = await models.products.findAll({
+        where: { UserId: id },
         include: [{
-          model: models.users,
-          as:'users'
+            model: models.users,
+            as: 'users'
         }]
     })
     return res.json(products)
 })
 
 router.get('/search/:keyword', async (req, res) => {
-    var { keyword } =  req.params
+    var { keyword } = req.params
     var products = await models.products.findAll({
-         where: { name: { [Op.like]: '%' + keyword + '%' }},limit: 5
+        where: { name: { [Op.like]: '%' + keyword + '%' } }, limit: 5
     })
     return res.status(200).json(products)
 })
 
 router.post('/search', async (req, res) => {
-    var { keyword } =  req.body
+    var { keyword } = req.body
     var products = await models.products.findAll({
-         where: { name: { [Op.like]: '%' + keyword + '%' }},limit: 5
+        where: { name: { [Op.like]: '%' + keyword + '%' } }, limit: 5
     })
     return res.status(200).json(products)
 })
@@ -54,14 +54,14 @@ router.post('/login',
     passport.authenticate('local'),
     async (req, res) => {
         const allOrders = await models.users.findAll({
-            where:{id : req.user.id },
+            where: { id: req.user.id },
             // Make sure to include the products
             include: [{
                 model: models.products,
                 as: 'products',
                 required: false,
                 // Pass in the Product attributes that you want to retrieve
-                attributes: ['id', 'name','price','image'],
+                attributes: ['id', 'name', 'price', 'image'],
                 through: {
                     // This block of code allows you to retrieve the properties of the join table
                     model: models.carts,
@@ -69,7 +69,7 @@ router.post('/login',
                 }
             }]
         });
-        return res.send({ user:req.user, carts : allOrders })
+        return res.send({ user: req.user, carts: allOrders })
     });
 
 
@@ -101,20 +101,33 @@ router.get('/detailPr/:id', async (req, res) => {
     var products = await models.products.findOne({
         where: { id: id },
         include: [{
-          model: models.ratings,
-          as: 'ratings',
-          include: [{
-            model: models.rep_ratings,
-            as: 'rep_ratings',
-          }],
-        },{model: models.users}],
-        
+            model: models.ratings,
+            as: 'ratings',
+            include: [{
+                model: models.rep_ratings,
+                as: 'rep_ratings',
+            },
+            { model: models.users },
+
+            ]
+        }, { model: models.users },
+            {
+                model: models.comments,
+                as: 'comments',
+                include: [{
+                    model: models.rep_comments,
+                    as: 'req_comments',
+                },
+                ]
+            }
+        ],
+
     })
     var count = await models.wishes.findAll({
-        where: { ProductId : id },
+        where: { ProductId: id },
     });
     var follows = await models.follows.findAll({
-        where: { ProductId : id },
+        where: { ProductId: id },
     });
     var carts
     if (req.user) {
@@ -157,7 +170,7 @@ router.get('/detailPr/:id', async (req, res) => {
     // } else {
     //     cart.users[0].carts = {}
     // }
-    return res.send({ products: products, count: count ,follows : follows , carts : carts })
+    return res.send({ products: products, count: count, follows: follows, carts: carts })
 })
 // router.post('/login', async (req, res) => {
 //     console.log(req.body)
@@ -257,7 +270,7 @@ passport.serializeUser(function (email, done) {
 
 
 passport.deserializeUser(function (id, done) {
-    models.users.findOne({ where: { id: id }}).then((users) => {
+    models.users.findOne({ where: { id: id } }).then((users) => {
         return done(null, users);
     });
 })

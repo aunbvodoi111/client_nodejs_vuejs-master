@@ -1,9 +1,10 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const Comment = sequelize.define('comments', {
-    name: DataTypes.STRING,
     content: DataTypes.STRING,
     image: DataTypes.STRING,
+    ProductId: DataTypes.INTEGER,
+    UserId: DataTypes.INTEGER,
   }, {
     updatedAt: 'updated_at',
     createdAt: 'created_at'
@@ -15,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
     //     allowNull: false
     //   }
     // });
+    Comment.hasMany(models.rep_comments,{ as: 'req_comments', foreignKey: 'CommentId'})
   };
   return Comment;
 };

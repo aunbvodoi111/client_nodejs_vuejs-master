@@ -106,6 +106,7 @@
       </div>
     </div>
     <saler :product="product " :follows="follows" />
+    <Quesiton :product="product " :follows="follows" />
     <Rating :product=" product " @totalRating="totalRating" />
     <ProductRelate />
   </div>
@@ -114,6 +115,7 @@
 import Rating from "./../components/detail/rating";
 import ProductRelate from "./../components/detail/productRelate";
 import saler from "./../components/detail/saler";
+import Quesiton from "./../components/detail/question";
 import socket from "~/plugins/socket.io.js"
 import Vue from "vue";
 export default {
@@ -124,6 +126,10 @@ export default {
     data.data.products.ratings.forEach(item => {
       Vue.set(item, "is_rating", false);
       Vue.set(item, "contentcmt", "");
+    });
+    data.data.products.comments.forEach(item => {
+      Vue.set(item, "is_comments", false);
+      Vue.set(item, "rep_comment", "");
     });
     if(store.state.authUser){
       socket.emit("joinRoom", store.state.authUser.name);
@@ -142,7 +148,8 @@ export default {
   components: {
     Rating,
     ProductRelate,
-    saler
+    saler,
+    Quesiton
   },
   data() {
     return {

@@ -11,7 +11,7 @@ router.post('/add', async (req, res) => {
     var { ProductId, title , star , image , content } = req.body
     var ratingNew = await models.ratings.create({ ProductId: ProductId, UserId: req.user.id,  name: req.user.name,title: title, star: star, image: image, content: content });
     ratingNew.save()
-    return res.status(200).json('ok')
+    return res.status(200).json(ratingNew)
 })
 router.post('/add_reprating', async (req, res) => {
     var { RatingId, image , content } = req.body

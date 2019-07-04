@@ -31,6 +31,14 @@
               <i class="fas fa-star"></i>
               <nuxt-link to='/user/productseen'>Đơn hàng đã xem</nuxt-link>
             </li>
+            <li>
+              <i class="fas fa-star"></i>
+              <nuxt-link to='/user/review'>Nhận xét của tôi</nuxt-link>
+            </li>
+            <li>
+              <i class="fas fa-star"></i>
+              <nuxt-link to='/user/order/history'>Quản lí đơn hàng</nuxt-link>
+            </li>
           </ul>
         </div>
       </div>
