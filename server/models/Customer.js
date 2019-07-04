@@ -33,6 +33,10 @@ module.exports = (sequelize, DataTypes) => {
     // });
 
     // Customer.belongsTo(models.users, {
+    //   as: '	UserIdSaler',
+    //   foreignKey: '	UserIdSaler'
+    // })
+    // Customer.belongsTo(models.users, {
     //   as: 'UserIdBuyer',
     //   foreignKey: 'UserIdBuyer'
     // })
