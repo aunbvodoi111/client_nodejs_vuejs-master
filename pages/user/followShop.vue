@@ -4,41 +4,30 @@
       <NavBar />
       <div class="content-right">
         <div class="content-main">
-          <h1>Thông báo của tôi</h1>
-          <div class="choose-nofi">
-            <div class="btn-act">
-              <button>Cập nhật đơn hàng</button>
-            </div>
-            <div class="btn-act">
-              <button>Cập nhật đánh giá</button>
-            </div>
-            <div class="btn-act">
-              <button>Hoạt động</button>
-            </div>
-            <div class="btn-act">
-              <button>Cập nhật sản phẩm</button>
-            </div>
-          </div>
+          <h1>Shop yêu thích</h1>
           <div class="content-nofi">
-            <div class="img" v-if="wishs.length == 0">
+            <div class="img" v-if="follow.length == 0">
               <img src="/img/anhdep.png" alt />
               <p>Bạn chưa có thông báo</p>
               <button>Tiếp tục mua sắm</button>
             </div>
-            <div class="product-content" v-else>
-              <div class="product" v-for="item in wishs" :key="item.id">
-                <div class="product-div" @click="submit(item)">
-                  <nuxt-link :to="`/${item.id}`">
-                    <div class="img-product">
-                      <img :src=" `${item.image} `" alt />
-                    </div>
+            <div class="div-shop-follow" v-else>
+              <div class="shop" v-for=" item in follow ">
+                <div class="img">
+                  <img
+                    src="https://media3.scdn.vn/img2/2018/5_15/SHZQTq_simg_d13049_158x78_maxb.jpg"
+                    alt
+                  />
+                </div>
+                <div class="infor-shop">
+                  <p>{{ item.user.name }}</p>
+                </div>
+                <div class="btn-action-shop">
+                  <nuxt-link :to="`/shop/${item.user.id}`">
+                    <button>Vào shop</button>
                   </nuxt-link>
-                  <div class="name">
-                    <nuxt-link :to="`/${item.name}`">{{ item.name }}</nuxt-link>
-                  </div>
-                  <div class="price">
-                    <p>3.600.000 đ</p>
-                  </div>
+                  <button @click="showDivChat(item)">Gửi tin nhắn</button>
+                  <button @click ="followSaler(item)">Bỏ yêu thích</button>
                 </div>
               </div>
               <div style=" clear:both;"></div>
@@ -52,15 +41,14 @@
 <script>
 import NavBar from "./../../components/navUser/navbar";
 export default {
-    async asyncData({ $axios }) {
-        var data = await $axios.get('/api/user/listProductWish')
-        console.log(data.data)
-        var wishs = data.data.filter(data => data.userlike.length !== 0);
-        
-        return {
-            wishs : wishs
-        }
-    },
+  async asyncData({ $axios }) {
+    var data = await $axios.get("/api/user/listFollow");
+    console.log(data.data);
+
+    return {
+      follow: data.data
+    };
+  },
   components: {
     NavBar
   },
@@ -78,7 +66,44 @@ export default {
         this.local = JSON.parse(localStorage.getItem("products"));
         console.log(JSON.parse(localStorage.getItem("products")));
       }
-    }
+    },
+    showDivChat(item) {
+      if (!this.$store.state.authUser) {
+        this.$store.commit("OPEN_REGISTER");
+      } else {
+        this.$axios
+          .post("/api/room/add", {
+            user: item.user.name
+          })
+          .then(response => {
+            console.log(response);
+            this.rooms = response.data;
+            this.$store.commit("ROOMS", response.data);
+          });
+        // this.$axios.$get("/api/room/").then(response => {
+        //   console.log(response);
+        // });
+        this.$store.commit("TOGGLE_CHAT");
+      }
+    },
+    followSaler(item) {
+      if (!this.$store.state.authUser) {
+        this.$store.commit("OPEN_REGISTER");
+      } else {
+        var find = this.follow.find(
+          follow => follow.UserIdFollow === item.user.id
+        );
+        var index = this.follow.indexOf(find);
+        if (find) {
+          this.follow.splice(index, 1);
+
+        } 
+        this.$axios
+          .$get("/api/follow/delete/"+ item.user.id)
+          .then(response => {
+          });
+      }
+    },
   }
 };
 </script>
@@ -102,7 +127,7 @@ ul li {
       background: white;
       cursor: pointer;
       .img-product {
-          width: 100%;
+        width: 100%;
         img {
           width: 100%;
           height: 188px;
@@ -226,24 +251,41 @@ ul li {
         width: 100%;
         margin-top: 20px;
         align-items: center;
-        .img {
-          margin-top: 100px;
-          width: 50%;
-          margin: auto;
-          img {
-            margin-left: 20px;
-          }
-          p {
-            font-size: 14px;
-            margin-left: 20px;
-          }
-          button {
-            width: 40%;
-            margin-top: 15px;
-            background: cornflowerblue;
-            height: 40px;
-            color: black;
-            border: none;
+        .div-shop-follow {
+          width: 100%;
+          height: auto;
+          .shop {
+            display: flex;
+            .infor-shop {
+              width: 20%;
+              p {
+                font-size: 16px;
+                color: #4585f4;
+                margin-left: 5px;
+                font-weight: bold;
+                line-height: 18px;
+                word-break: break-all;
+              }
+            }
+            .img {
+              width: 20%;
+              img {
+                width: 100%;
+              }
+            }
+            .btn-action-shop {
+              display: flex;
+              width: 60%;
+              button {
+                background-color: #2b3278;
+                cursor: pointer;
+                border: none;
+                color: white;
+                width: 100px;
+                height: 35px;
+                margin-left: 10px;
+              }
+            }
           }
         }
       }

@@ -2,7 +2,10 @@
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('users', {
     name: DataTypes.STRING,
+    address: DataTypes.STRING,
+    phone: DataTypes.INTEGER,
     email: DataTypes.STRING,
+    avatar: DataTypes.STRING,
     password: DataTypes.STRING,
   }, {
       updatedAt: 'updated_at',
@@ -15,21 +18,21 @@ module.exports = (sequelize, DataTypes) => {
   
     // User.hasMany(models.customers, {
     //   as: "sd",
-
+    User.hasMany(models.products,{ as: 'products', foreignKey: 'UserId'})
     // });
-    User.hasMany(models.customers,{ as: 'UserIdSaler', foreignKey: 'UserIdSaler'})
-    User.hasMany(models.customers,{ as: 'UserIdBuyer', foreignKey: 'UserIdBuyer'})
-    // User.hasMany(models.customers, {
-    //   as: "customers",
-    //   foreignKey: 'UserIdBuyer',
+    // User.hasMany(models.customers,{ as: 'UserIdSaler', foreignKey: 'UserIdSaler'})
+    // User.hasMany(models.customers,{ as: 'UserIdBuyer', foreignKey: 'UserIdBuyer'})
+    // // User.hasMany(models.customers, {
+    // //   as: "customers",
+    // //   foreignKey: 'UserIdBuyer',
+    // // });
+    // User.hasMany(models.products, { as: 'productss', foreignKey: 'UserId' })
+    // User.belongsToMany(models.products, {
+    //   as: 'products',
+    //   through: 'carts',
+    //   otherKey: 'UserId',
+    //   foreignKey: 'ProductId',
     // });
-    User.hasMany(models.products, { as: 'productss', foreignKey: 'UserId' })
-    User.belongsToMany(models.products, {
-      as: 'products',
-      through: 'carts',
-      otherKey: 'UserId',
-      foreignKey: 'ProductId',
-    });
     // User.belongsToMany(models.products, {
     //   through: 'carts',
     //   as: 'products',

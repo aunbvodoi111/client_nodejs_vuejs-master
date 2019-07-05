@@ -3,6 +3,7 @@ module.exports = (sequelize, DataTypes) => {
   const Follow = sequelize.define('follows', {
     ProductId: DataTypes.UUID,
     UserId: DataTypes.UUID,
+    UserIdFollow: DataTypes.UUID,
   }, {
     updatedAt: 'updated_at',
     createdAt: 'created_at'
@@ -14,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     //     allowNull: false
     //   }
     // });
+    Follow.belongsTo(models.users, {foreignKey: 'UserIdFollow'});
   };
   return Follow;
 };

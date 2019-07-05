@@ -5,10 +5,10 @@
         <p>Bạn muốn xóa sản phẩm :</p>
         <div class="product-add-cart">
           <div class="img">
-            <img :src="cart.image" alt />
+            <img :src="cart.HomeTeam.image" alt />
           </div>
           <div class="infor-product-cart">
-            <p>{{ cart.name }}</p>
+            <p>{{ cart.HomeTeam.name }}</p>
             <!-- <div class="qty">
                 số lượng sp trong giỏ hàng :
                 <span
@@ -17,7 +17,7 @@
             </div>-->
             <div class="qty">
               <!-- thành tiền : -->
-              <span style="color : red ; font-weight : bold;">{{ cart.discount }}</span>
+              <span style="color : red ; font-weight : bold;">{{ cart.HomeTeam.discount }}</span>
             </div>
           </div>
         </div>
@@ -25,7 +25,7 @@
         <p @click="toggleComfirmCart = false">Không</p>
       </div>
     </transition>
-    <div class="container-cart" v-if="carts.length">
+    <div class="container-cart">
       <div class="title-cart">
         <div class="check">
           <label class="container">
@@ -40,6 +40,10 @@
         <div class="action">Thao Tác</div>
       </div>
       <div class="cart-product" v-for="item in carts " :key="item.id">
+        <!-- <h1>sdadsasda</h1>
+        <div class="" v-for=" prod in item.cart_details ">
+          <img :src="prod.HomeTeam.image" alt="">
+        </div>-->
         <div class="saler-cart">
           <label class="container">
             <i class="fas fa-close"></i>Phamquy
@@ -47,7 +51,7 @@
             <span class="checkmark"></span>
           </label>
         </div>
-        <div class="cart-main">
+        <div class="cart-main" v-for=" prod in item.cart_details ">
           <div class="pr-cart">
             <label class="container">
               <i class="fas fa-close"></i>
@@ -55,24 +59,23 @@
               <span class="checkmark"></span>
             </label>
             <div class="img">
-              <img width="42%" :src="item.image" alt />
+              <img width="42%" :src="prod.HomeTeam.image" alt />
             </div>
             <div class="name">
-              <p>{{ item.name }}</p>
+              <p>{{ prod.HomeTeam.name }}</p>
             </div>
           </div>
           <div class="price">
-            <p>₫190.000 ₫ {{ item.price }}</p>
+            <p>₫190.000 ₫ {{ prod.HomeTeam.price }}</p>
           </div>
           <div class="price">
-            <!-- <p></p> -->
             <div class="qty-action">
               <div class="btn-txt">
-                <button @click="reduction(item)">
+                <button @click="reduction(prod)">
                   <i class="fas fa-minus"></i>
                 </button>
-                <input type="text" class="txt-qty" :value=" item.users[0].carts.qty " />
-                <button @click="increment(item)">
+                <input type="text" class="txt-qty" :value=" prod.qty " />
+                <button @click="increment(prod)">
                   <i class="fas fa-plus"></i>
                 </button>
               </div>
@@ -82,7 +85,7 @@
             <p>₫396.000</p>
           </div>
           <div class="action">
-            <p @click="showPopCart(item)">Xóa</p>
+            <p @click="showPopCart(prod,item)">Xóa</p>
           </div>
         </div>
       </div>
@@ -110,7 +113,7 @@
           <img src="/img/cart_blank.png" alt />
           <div class="btn">
             <p>Giỏ hàng của bạn còn trống</p>
-            <nuxt-link to='/'>
+            <nuxt-link to="/">
               <button>mua ngay</button>
             </nuxt-link>
           </div>
@@ -124,31 +127,32 @@ export default {
   async asyncData({ $axios, store }) {
     var data = await $axios.get("/api/cart/");
     console.log(data.data);
-    var carts = data.data.filter(data => data.users.length !== 0);
-    store.commit("LIST_CART", carts);
-    return { carts: carts };
+    // var carts = data.data.filter(data => data.users.length !== 0);
+    // store.commit("LIST_CART", carts);
+    return { carts: data.data };
   },
   data() {
     return {
       cart: {},
-      toggleComfirmCart: false
+      toggleComfirmCart: false,
+      item: ""
     };
   },
   methods: {
-    reduction(item) {
+    reduction(prod) {
       // if (this.qtyProduct > this.product.qty) {
       //   this.qtyProduct = this.product.qty;
       // } else {
       //   this.qtyProduct = this.qtyProduct + 1;
       // }
-      if (item.users[0].carts.qty == 1) {
-        item.users[0].carts.qty = 1;
+      if (prod.qty == 1) {
+        prod.qty = 1;
       } else {
-        item.users[0].carts.qty = item.users[0].carts.qty - 1;
+        prod.qty = prod.qty - 1;
         this.$axios
           .post("/api/cart/changeQty", {
-            ProductId: item.id,
-            qty: item.users[0].carts.qty
+            ProductId: prod.ProductId,
+            qty: prod.qty
           })
           .then(response => {
             console.log(response);
@@ -157,29 +161,42 @@ export default {
     },
     increment(item) {
       console.log(item);
-      if (item.users[0].carts.qty < item.qty) {
-        item.users[0].carts.qty = item.users[0].carts.qty + 1;
+      if (item.qty < item.HomeTeam.qty) {
+        item.qty = item.qty + 1;
         this.$axios.post("/api/cart/changeQty", {
-          ProductId: item.id,
-          qty: item.users[0].carts.qty
+          ProductId: item.ProductId,
+          qty: item.qty
         });
       } else {
-        item.users[0].carts.qty = item.qty;
+        item.qty = item.HomeTeam.qty;
       }
     },
-    showPopCart(item) {
-      this.cart = item;
+    showPopCart(prod, item) {
+      this.cart = prod;
+      this.item = item;
       this.toggleComfirmCart = true;
     },
-    deleteCart(item) {
-      console.log(item);
+    deleteCart(prod) {
+      console.log(prod);
       this.cart = {};
       this.toggleComfirmCart = false;
-      var index = this.carts.indexOf(item);
-      this.carts.splice(index, 1);
+      // var index = this.carts.indexOf(item);
+      for (var i = 0; i < this.carts.length; i++) {
+        var index = this.carts[i].cart_details.indexOf(prod);
+        if (index > -1) {
+          this.carts[i].cart_details.splice(index, 1);
+          if (this.carts[i].cart_details.length == 0) {
+            console.log(this.carts);
+            var index = this.carts.indexOf(this.item);
+            this.carts.splice(index, 1);
+          }
+        }
+
+        console.log(index);
+      }
+
       this.$axios.post("/api/cart/deleteCart", {
-        ProductId: item.id,
-        qty: item.users[0].carts.qty
+        ProductId: prod.ProductId
       });
     }
   },
@@ -187,15 +204,20 @@ export default {
     sumQtyCart() {
       var sum = 0;
       for (var i = 0; i < this.carts.length; i++) {
-        var sum = sum + this.carts[i].users[0].carts.qty;
+        console.log(this.carts[i])
+        for (var j = 0; j < this.carts[i].cart_details.length; j++) {
+          var sum = sum + this.carts[i].cart_details[j].qty;
+          console.log(this.carts[i].cart_details[j])
+        }
       }
       return sum;
     },
     sumMoneyCart() {
       var sum = 0;
       for (var i = 0; i < this.carts.length; i++) {
-        var sum = sum + this.carts[i].price * this.carts[i].users[0].carts.qty;
-        console.log(this.carts[i].price * this.carts[i].users[0].carts.qty);
+        for (var j = 0; j < this.carts[i].cart_details.length; j++) {
+          var sum = sum + this.carts[i].cart_details[j].HomeTeam.discount * this.carts[i].cart_details[j].qty;
+        }
       }
       return sum;
     }
@@ -212,11 +234,11 @@ export default {
   }
   .btn {
     text-align: center;
-    margin-top :30px;
+    margin-top: 30px;
     width: 20%;
     margin: auto;
     font-weight: bold;
-    font-size: 17px;  
+    font-size: 17px;
     button {
       width: 60%;
       margin: 20px;

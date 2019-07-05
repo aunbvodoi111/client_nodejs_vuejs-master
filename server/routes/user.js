@@ -7,6 +7,7 @@ var passport = require('passport')
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 var models = require('../models');
+
 router.get('/listProductWish', async (req, res) => {
     var carts
     if (req.user) {
@@ -44,6 +45,22 @@ router.get('/listRating', async (req, res) => {
         carts = []
     }
     return res.json(carts)
+})
+
+router.get('/listFollow', async (req, res) => {
+    if (req.user) {
+        var follows = await models.follows.findAll({
+            where: {
+                [Op.or]: [
+                    { UserId: req.user.id },
+                ]
+            },
+            include: [{
+                model : models.users
+            }]
+        });
+    }
+    return res.json(follows)
 })
 
 
@@ -143,8 +160,10 @@ router.get('/', async (req, res) => {
 })
 
 router.get('/checkout', async (req, res) => {
-    var carts
+    var carts , provinces, districts
     if (req.user) {
+        provinces = await models.provinces.findAll({})
+        districts = await models.districts.findAll({})
         carts = await models.products.findAll({
             include: [{
                 model: models.users,
@@ -162,8 +181,10 @@ router.get('/checkout', async (req, res) => {
         })
     } else {
         carts = []
+        provinces = []
+        districts = []
     }
-    return res.json(carts)
+    return res.send({ carts:carts , provinces : provinces , districts : districts })
 })
 
 router.get('/anhquy', async (req, res) => {

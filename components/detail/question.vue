@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <h4>HỎI, ĐÁP VỀ SẢN PHẨM</h4>
     <div class="content-question">
       <div class="div" v-for="n in product.comments" :key="n.id">
         <div class="user-question">
@@ -25,12 +26,12 @@
           </div>
         </div>
       </div>
-      <div class="div-center">
+      <div class="div-center" v-if="product.comments.length > 5 ">
         <a>Xem tất cả các câu hỏi đã được trả lời</a>
       </div>
       <div class="div-bottom">
         <div class="form-question">
-          <input type="text" class="txt-input" v-model="content" />
+          <input type="text" class="txt-input" v-model="content" placeholder="Hãy đặt câu hỏi liên quan về sản phẩm"/>
           <button class="btn-button" @click="sendQuestion">Gửi câu hỏi</button>
         </div>
       </div>

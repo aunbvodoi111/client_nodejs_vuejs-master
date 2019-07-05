@@ -54,10 +54,11 @@ export default {
   computed: {
     checkFollow: {
       get: function() {
+        console.log(this.follows)
         var index;
         if (this.$store.state.authUser && this.follows.length > 0) {
           index = this.follows.find(
-            follow => follow.UserId === this.$store.state.authUser.id
+            follow => follow.UserIdFollow === this.product.user.id
           );
           // index = count.length
         }
@@ -75,7 +76,7 @@ export default {
         this.$store.commit("OPEN_REGISTER");
       } else {
         var find = this.follows.find(
-          follow => follow.UserId === this.$store.state.authUser.id
+          follow => follow.UserIdFollow === this.product.user.id
         );
         var index = this.follows.indexOf(find);
         if (find) {
@@ -84,12 +85,13 @@ export default {
         } else {
           var anhquy = {
             UserId: this.$store.state.authUser.id,
-            ProductId: product.id
+            ProductId: this.product.id,
+            UserIdFollow : this.product.user.id
           };
           this.follows.push(anhquy);
         }
         this.$axios
-          .post("/api/follow/add", { ProductId: this.product.id })
+          .post("/api/follow/add", { ProductId: this.product.id , UserIdFollow : this.product.user.id })
           .then(response => {
           });
       }

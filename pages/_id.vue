@@ -204,11 +204,9 @@ export default {
       }
     },
     addCart() {
-
       if (!this.$store.state.authUser) {
         this.$store.commit("OPEN_REGISTER");
       } else {
-        
         this.showNofication = true;
         setTimeout(() => {
           this.showNofication = false;
@@ -216,7 +214,8 @@ export default {
         this.$axios
           .post("/api/cart/add", {
             ProductId: this.product.id,
-            qty: this.qtyProduct
+            qty: this.qtyProduct,
+            UserIdSaler : this.product.user.id
           })
           .then(response => {
             console.log(response);

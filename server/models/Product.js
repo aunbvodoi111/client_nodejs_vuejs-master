@@ -19,12 +19,12 @@ module.exports = (sequelize, DataTypes) => {
     Product.hasMany(models.ratings,{ as: 'ratings', foreignKey: 'ProductId'})
     Product.hasMany(models.comments,{ as: 'comments', foreignKey: 'ProductId'})
     Product.belongsTo(models.users, {foreignKey: 'UserId'});
-    Product.belongsToMany(models.users, {  
-      as: 'users',
-      through: 'carts',
-      foreignKey: 'ProductId',
-      otherKey: 'UserId'
-    });
+    // Product.belongsToMany(models.users, {  
+    //   as: 'users',
+    //   through: 'carts',
+    //   foreignKey: 'ProductId',
+    //   otherKey: 'UserId'
+    // });
     Product.belongsToMany(models.users, {  
       as: 'userlike',
       through: 'wishes',

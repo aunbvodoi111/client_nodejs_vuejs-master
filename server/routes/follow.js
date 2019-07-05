@@ -8,18 +8,32 @@ const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 var models = require('../models');
 router.post('/add', async (req, res) => {
-    var { ProductId } = req.body
+    var { ProductId ,UserIdFollow  } = req.body
+    console.log( req.body )
     const followsFind = await models.follows.findOne({
-        where: { UserId: req.user.id ,ProductId: ProductId }
+        where: { UserId: req.user.id , UserIdFollow: UserIdFollow }
     })
     if (followsFind) {
         followsFind.destroy({});
     } else {
-        var follows = await models.follows.create({ ProductId: ProductId, UserId: req.user.id });
+        var follows = await models.follows.create({ ProductId: ProductId, UserId: req.user.id , UserIdFollow: UserIdFollow });
         follows.save()
     }
     return res.status(200).json('ok')
 })
+
+router.get('/delete/:id', async (req, res) => {
+    var { id  } = req.params
+    console.log( req.body )
+    const followsFind = await models.follows.findOne({
+        where: { UserIdFollow: id }
+    })
+    if (followsFind) {
+        followsFind.destroy({});
+    } 
+    return res.status(200).json('ok')
+})
+
 router.get('/', async (req, res) => {
     // const allOrders = await models.products.findAll({
 

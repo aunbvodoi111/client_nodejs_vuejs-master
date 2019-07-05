@@ -28,7 +28,7 @@ router.get('/shop/:id', async (req, res) => {
         where: { UserId: id },
         include: [{
             model: models.users,
-            as: 'users'
+            
         }]
     })
     return res.json(products)
@@ -53,22 +53,23 @@ router.post('/search', async (req, res) => {
 router.post('/login',
     passport.authenticate('local'),
     async (req, res) => {
-        const allOrders = await models.users.findAll({
-            where: { id: req.user.id },
-            // Make sure to include the products
-            include: [{
-                model: models.products,
-                as: 'products',
-                required: false,
-                // Pass in the Product attributes that you want to retrieve
-                attributes: ['id', 'name', 'price', 'image'],
-                through: {
-                    // This block of code allows you to retrieve the properties of the join table
-                    model: models.carts,
-                    as: 'carts',
-                }
-            }]
-        });
+        // const allOrders = await models.users.findAll({
+        //     where: { id: req.user.id },
+        //     // Make sure to include the products
+        //     include: [{
+        //         model: models.products,
+        //         as: 'products',
+        //         required: false,
+        //         // Pass in the Product attributes that you want to retrieve
+        //         attributes: ['id', 'name', 'price', 'image'],
+        //         through: {
+        //             // This block of code allows you to retrieve the properties of the join table
+        //             model: models.carts,
+        //             as: 'carts',
+        //         }
+        //     }]
+        // });
+        var allOrders = []
         return res.send({ user: req.user, carts: allOrders })
     });
 
@@ -111,41 +112,49 @@ router.get('/detailPr/:id', async (req, res) => {
 
             ]
         }, { model: models.users },
-            {
-                model: models.comments,
-                as: 'comments',
-                include: [{
-                    model: models.rep_comments,
-                    as: 'req_comments',
-                },
-                ]
-            }
+        {
+            model: models.comments,
+            as: 'comments',
+            include: [{
+                model: models.rep_comments,
+                as: 'req_comments',
+            },
+            ]
+        }
         ],
 
     })
     var count = await models.wishes.findAll({
         where: { ProductId: id },
     });
-    var follows = await models.follows.findAll({
-        where: { ProductId: id },
-    });
+    if (req.user) {
+        var follows = await models.follows.findAll({
+            where: {
+                [Op.or]: [
+                    { ProductId: id },
+                    { UserId: req.user.id },
+                ]
+            }
+        });
+    }
     var carts
     if (req.user) {
-        carts = await models.products.findAll({
-            include: {
-                model: models.users,
-                as: 'users',
-                required: false,
-                where: { id: req.user.id },
-                // Pass in the Product attributes that you want to retrieve
-                attributes: ['id', 'name'],
-                through: {
-                    // This block of code allows you to retrieve the properties of the join table
-                    model: models.carts,
-                    as: 'carts',
-                }
-            }
-        })
+        // carts = await models.products.findAll({
+        //     include: {
+        //         model: models.users,
+        //         as: 'users',
+        //         required: false,
+        //         where: { id: req.user.id },
+        //         // Pass in the Product attributes that you want to retrieve
+        //         attributes: ['id', 'name'],
+        //         through: {
+        //             // This block of code allows you to retrieve the properties of the join table
+        //             model: models.carts,
+        //             as: 'carts',
+        //         }
+        //     }
+        // })
+        carts = []
     } else {
         carts = []
     }

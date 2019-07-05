@@ -15,31 +15,31 @@
                 @mousedown="handleItemClick"
                 @mouseover="pointer"
                 v-model="name"
+                placeholder="Tên"
               />
             </div>
             <span v-show="errorName">{{ errorName }}</span>
             <div class="from-control">
-              <input type="text" class="form-input" />
+              <input type="number" class="form-input" placeholder="Số điện thoại" />
             </div>
             <div class="from-control">
-              <select name id class="form-input">
-                <option value>anhquy</option>
+              <select name id class="form-input" >
+                <option value>Tỉnh/Thành phố</option>
+                <option value v-for="item in provinces" :key="item.id">{{ item.province_name }}</option>
               </select>
             </div>
             <div class="from-control">
               <select name id class="form-input">
+                <option value>Quận/huyện</option>
                 <option value>anhquy</option>
               </select>
             </div>
             <div class="from-control">
-              <input type="text" class="form-input" />
-            </div>
-            <div class="from-control">
-              <input type="text" class="form-input" />
+              <input type="text" class="form-input" placeholder="Tòa nhà , Tên đường"/>
             </div>
           </div>
           <div class="btn-action">
-            <button @click="showPopInforCustom = false">Trở lại</button>
+            <button @click=" back">Trở lại</button>
             <button>Hoàn thành</button>
           </div>
         </div>
@@ -125,7 +125,7 @@
             </div>
             <div class="div">
               <div>Tổng tiền hàng</div>
-              <div class="money-sum">₫299.920</div>
+              <div class="money-sum">₫{{ sumMoneyCart }}</div>
             </div>
           </div>
           <div style="clear:bold;"></div>
@@ -141,18 +141,37 @@
 </template>
 <script>
 export default {
-  async asyncData({ $axios }) {
-    var data = await $axios.get("/api/cart/checkout");
-    console.log(data.data);
-    var carts = data.data.filter(data => data.users.length !== 0);
-    return { carts: carts };
-  },
   data() {
     return {
-      showPopInforCustom: false,
+      // showPopInforCustom: false,
       name: "",
-      errorName: ""
+      errorName: "",
+      phone:'',
+      address : '',
+      sum : '',
+      UserIdSaler :'',
+      note : '',
     };
+  },
+    
+  async asyncData({ $axios , store}) {
+    var data = await $axios.get("/api/cart/checkout");
+    console.log(data)
+    var showPopInforCustom = false
+    if(store.state.authUser){
+      if(store.state.authUser.phone == 0){
+        showPopInforCustom = false
+      }else if( store.state.authUser.phone == 0){
+        showPopInforCustom = false
+      }
+    }
+    var carts = data.data.carts.filter(data => data.users.length !== 0);
+    return { 
+      carts: carts , 
+      showPopInforCustom : showPopInforCustom ,
+      provinces : data.data.provinces ,
+      districts : data.data.districts
+      };
   },
   computed: {
     sumMoneyCart() {
@@ -165,6 +184,10 @@ export default {
     
   },
   methods: {
+    back(){
+      this.showPopInforCustom = false
+      this.$router.push('/cart');
+    },
     showDivChat(item) {
       if (!this.$store.state.authUser) {
         this.$store.commit("OPEN_REGISTER");
@@ -196,7 +219,13 @@ export default {
       }
     },
     checkoutCart(){
-      this.$axios.post('/api/cart/addCartCustomer',{ carts : this.carts})
+      this.$axios.post('/api/cart/addCartCustomer',{ 
+        carts : this.carts,
+        phone : this.phone,
+        address : this.address,
+        UserIdSaler : this.UserIdSaler,
+        note : this.note
+      })
       .then( response =>{
         console.log(response)
       })

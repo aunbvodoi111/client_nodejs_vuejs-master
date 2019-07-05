@@ -8,22 +8,37 @@ const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 var models = require('../models');
 router.post('/add', async (req, res) => {
-    var { ProductId, qty } = req.body
+    var { ProductId, qty, UserIdSaler } = req.body
     // var cart = await models.carts.create({ ProductId: ProductId, UserId: req.user.id });
     // cart.save()
-    console.log('sdaaaaaaaaaaaaa')
-    console.log(qty)
+    console.log(req.body)
     const wishesFind = await models.carts.findOne({
-        where: { UserId: req.user.id, ProductId: ProductId }
+        where: {
+            [Op.and]:
+                [{ UserIdBuyer: req.user.id }, { UserIdSaler: UserIdSaler }]
+        }
     })
     if (wishesFind) {
-        var qtyBd = wishesFind.qty
-        wishesFind.update({
-            qty: qtyBd + qty
+        const cartDetail = await models.cart_details.findOne({
+            where: { ProductId: ProductId }
         })
+        if (cartDetail) {
+            console.log('vao dc day k ')
+            var qtyBd = cartDetail.qty
+            cartDetail.update({
+                qty: qtyBd + qty
+            })
+            return res.status(200).json('ok')
+        } else {
+            var cart_detail = await models.cart_details.create({ UserIdSaler: UserIdSaler, ProductId: ProductId, qty: qty ,UserIdBuyer: req.user.id });
+        }
+
+        return res.status(200).json('ok')
     } else {
-        var cart = await models.carts.create({ ProductId: ProductId, UserId: req.user.id, qty: qty });
+        var cart = await models.carts.create({ UserIdSaler: UserIdSaler, UserIdBuyer: req.user.id });
         cart.save()
+        var cart_detail = await models.cart_details.create({ UserIdSaler: UserIdSaler, ProductId: ProductId, qty: qty, UserIdBuyer: req.user.id });
+        cart_detail.save()
     }
     return res.status(200).json(wishesFind)
 })
@@ -56,8 +71,8 @@ router.post('/changeQty', async (req, res) => {
     // cart.save()
     console.log('sdaaaaaaaaaaaaa')
     console.log(qty)
-    const wishesFind = await models.carts.findOne({
-        where: { UserId: req.user.id, ProductId: ProductId }
+    const wishesFind = await models.cart_details.findOne({
+        where: { UserIdBuyer: req.user.id, ProductId: ProductId }
     })
     if (wishesFind) {
         wishesFind.update({
@@ -75,12 +90,12 @@ router.post('/deleteCart', async (req, res) => {
     // var cart = await models.carts.create({ ProductId: ProductId, UserId: req.user.id });
     // cart.save()
     console.log('sdaaaaaaaaaaaaa')
-    console.log(qty)
-    const wishesFind = await models.carts.findOne({
-        where: { UserId: req.user.id, ProductId: ProductId }
+    console.log(req.body)
+    const wishesFind = await models.cart_details.findOne({
+        where: { UserIdBuyer: req.user.id, ProductId: ProductId }
     })
     if (wishesFind) {
-        wishesFind.destroy({}) 
+        wishesFind.destroy({})
     }
     return res.status(200).json('ok')
 })
@@ -102,31 +117,61 @@ router.get('/', async (req, res) => {
     //         }
     //     }]
     var carts
+    var anhquy 
     if (req.user) {
-        carts = await models.products.findAll({
-            include: [{
-                model: models.users,
-                as: 'users',
-                required: false,
-                where: { id: req.user.id },
-                // Pass in the Product attributes that you want to retrieve
-                attributes: ['id', 'name'],
-                through: {
-                    // This block of code allows you to retrieve the properties of the join table
-                    model: models.carts,
-                    as: 'carts',
-                }
-            },{model: models.users}]
+        await models.carts.findOne({
+            where: { UserIdBuyer: req.user.id },
+            attributes: ['UserIdSaler','UserIdBuyer'],
+            // include:[{
+            //     model: models.cart_details,
+            //     as: 'cart_details',
+            //     where: { id: req.user.id },
+            // }]
+            // include: [{
+            //     model: models.users,
+            //     as: 'users',
+            //     required: false,
+            //     where: { id: req.user.id },
+            //     // Pass in the Product attributes that you want to retrieve
+            //     attributes: ['id', 'name'],
+            //     through: {
+            //         // This block of code allows you to retrieve the properties of the join table
+            //         model: models.carts,
+            //         as: 'carts',
+            //     }
+            // }, { model: models.users }]
+        }).then(function (projects) {
+
+             anhquy = projects
         })
+        var hahha
+        hahha = [1, 2, 3, 4, 5]
+        var anhquy = await models.carts.findAll({
+            where: { UserIdBuyer: anhquy.UserIdBuyer },
+            include: [{
+                model: models.cart_details,
+                as: 'cart_details',
+                where: { UserIdBuyer: anhquy.UserIdBuyer },
+                include:[{
+                    model: models.products,
+                    as: 'HomeTeam'
+                }]
+            },{
+                model: models.users,  
+            }]
+        })
+        return res.json(anhquy)
     } else {
         carts = []
     }
-    return res.json(carts)
+
 })
 
 router.get('/checkout', async (req, res) => {
     var carts
     if (req.user) {
+        provinces = await models.provinces.findAll({})
+        districts = await models.districts.findAll({})
         carts = await models.products.findAll({
             include: [{
                 model: models.users,
@@ -140,12 +185,14 @@ router.get('/checkout', async (req, res) => {
                     model: models.carts,
                     as: 'carts',
                 }
-            },{model: models.users}]
+            }, { model: models.users }]
         })
     } else {
         carts = []
+        provinces = []
+        districts = []
     }
-    return res.json(carts)
+    return res.send({ carts: carts, provinces: provinces, districts: districts })
 })
 
 router.get('/anhquy', async (req, res) => {
