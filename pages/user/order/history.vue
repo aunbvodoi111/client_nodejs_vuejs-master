@@ -4,7 +4,7 @@
       <NavBar />
       <div class="content-right">
         <div class="content-main">
-          <h1>Thông báo của tôi</h1>
+          <h1>Hóa đơn</h1>
           <div class="choose-nofi">
             <div class="btn-act">
               <button>Cập nhật đơn hàng</button>
@@ -25,30 +25,60 @@
               <p>Bạn chưa có thông báo</p>
               <button>Tiếp tục mua sắm</button>
             </div>
-            <div class="product-content" v-else>
-              <!-- <div class="product" v-for="item in local" :key="item.id">
-                <div class="product-div" @click="submit(item)">
-                  <nuxt-link :to="`/${item.id}`">
-                    <div class="img-product">
-                      <img :src=" `${item.image} `" alt />
+            <div class="bill-content" v-else>
+              <div class="bill-div" v-for="item in bills" :key="item.id">
+                <div class="title">
+                  <div class="div-name">
+                    <div class="img">
+                      <img src="https://cf.shopee.vn/file/aaa24a79e7015ab1d6c73392b4b54c93_tn" alt />
                     </div>
-                  </nuxt-link>
-                  <div class="name">
-                    <nuxt-link :to="`/${item.name}`">{{ item.name }}</nuxt-link>
+                    <div class="name">
+                      <p>{{ item.user.name }}</p>
+                    </div>
+                    <div class="btn-action-user">
+                      <button>chat</button>
+                      <button>xem shop</button>
+                    </div>
                   </div>
-                  <div class="price">
-                    <p>3.600.000 đ</p>
+                </div>
+                <div class="content-main-product">
+                  <div class="include-div" v-for="prod in item.bill_details" :key="prod.id">
+                    <div class="img-bill">
+                      <img :src="prod.image" alt />
+                    </div>
+                    <div class="detail-bill">
+                      <p>{{ prod.product.name }}</p>
+                      <p>x {{ prod.qty }}</p>
+                    </div>
+                    <div class="total-money-pr">
+                      <p>₫{{ prod.product.discount }}</p>
+                    </div>
                   </div>
-                </div> -->
-                <div class="" v-for="item in bills">
+                </div>
+                <div class="content-bottom">
+                  <div class="div-right">
+                    <div class="sum-bill">
+                      <p>
+                        Tổng số tiền:
+                        <span>₫{{ item.sum }}</span>
+                      </p>
+                    </div>
+                    <div class="btn-choose">
+                      <button>Chi tiết</button>
+                      <button>Mua lần nữa</button>
+                    </div>
+                  </div>
+                  <div style="clear: bold;"></div>
+                </div>
+              </div>
+              <!-- <div class="" v-for="item in bills">
                   <h1>{{ item.user.name }}</h1>
                   <div class="" v-for="prod in item.bill_details">
                     <img :src="prod.image" alt="">
                   </div>
-                </div>
-              </div>
-              <div style=" clear:both;"></div>
+              </div>-->
             </div>
+            <div style=" clear:both;"></div>
           </div>
         </div>
       </div>
@@ -58,7 +88,7 @@
 <script>
 import NavBar from "./../../../components/navUser/navbar";
 export default {
-   async asyncData({ $axios }) {
+  async asyncData({ $axios }) {
     var data = await $axios.get("/api/bill/");
     console.log(data.data);
 
@@ -94,43 +124,8 @@ a {
 ul li {
   list-style-type: none;
 }
-.product-content {
-  width: 100%;
-  .product {
-    float: left;
-    width: 20%;
-    height: 275px;
-    padding: 3px;
-
-    .product-div {
-      border: 1px solid transparent;
-      background: white;
-      cursor: pointer;
-      .img-product {
-          width: 100%;
-        img {
-          width: 100%;
-          height: 188px;
-        }
-      }
-      .name a {
-        padding: 4px;
-        word-wrap: break-word;
-        line-height: 1.125rem;
-        height: 2.25rem;
-        overflow: hidden;
-        display: -webkit-box;
-        text-overflow: ellipsis;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
-      }
-      .price p {
-        padding: 4px;
-        color: red;
-        margin-top: 10px;
-      }
-    }
-  }
+button {
+  cursor: pointer;
 }
 .container-fruid {
   height: 500px;
@@ -212,6 +207,113 @@ ul li {
         font-style: normal;
         font-stretch: normal;
         color: #242424;
+      }
+      .bill-content {
+        width: 100%;
+        padding: 15px;
+        margin-bottom: 30px;
+        .title {
+          width: 100%;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.09);
+          .div-name {
+            display: flex;
+            width: 30%;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            .img {
+              width: 15%;
+              img {
+                width: 100%;
+                border-radius: 100%;
+              }
+            }
+            .name {
+              width: 30%;
+              margin-left: 10px;
+              p {
+                font-weight: bold;
+              }
+            }
+            .btn-action-user {
+              width: 40%;
+              display: flex;
+              margin-left: 10px;
+              button:nth-child(1) {
+                background: #00bfa5;
+                color: white;
+                border: none;
+                padding: 3px 4px;
+              }
+              button:nth-child(2) {
+                background: #fff;
+                color: black;
+                margin-left: 5px;
+                border: 1px solid rgba(0, 0, 0, 0.09);
+                border-radius: 2px;
+                padding: 3px 4px;
+              }
+            }
+          }
+        }
+        .content-main-product {
+          width: 100%;
+          padding: 10px;
+          .include-div {
+            display: flex;
+            padding: 10px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.09);
+            .img-bill {
+              width: 10%;
+              img {
+                width: 100%;
+              }
+            }
+            .detail-bill {
+              width: 80%;
+              margin-left: 10px;
+            }
+            .total-money-pr {
+            }
+          }
+        }
+        .content-bottom {
+          width: 100%;
+          .div-right {
+            width: 40%;
+            margin-left: 65%;
+            .sum-bill {
+              p {
+                span {
+                  color: #ee4d2d;
+                  font-size: 1.875rem;
+                  line-height: 2rem;
+                }
+              }
+            }
+            .btn-choose {
+              margin-top: 30px;
+              width: 100%;
+              button {
+                width: 40%;
+                height: 40px;
+                text-transform: uppercase;
+              }
+              button:nth-child(1) {
+                width: 40%;
+                background: #ee4d2d;
+                color: white;
+                border: none;
+              }
+              button:nth-child(2) {
+                width: 40%;
+                border: 1px solid rgba(0, 0, 0, 0.09);
+                border-radius: 2px;
+                background: transparent;
+              }
+            }
+          }
+        }
       }
       .choose-nofi {
         display: flex;

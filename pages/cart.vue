@@ -51,7 +51,7 @@
             <span class="checkmark"></span>
           </label>
         </div>
-        <div class="cart-main" v-for=" prod in item.cart_details ">
+        <div class="cart-main" v-for=" prod in item.cart_details " :key="prod.id">
           <div class="pr-cart">
             <label class="container">
               <i class="fas fa-close"></i>

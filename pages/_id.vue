@@ -162,36 +162,24 @@ export default {
   },
   methods: {
     addWishe(product) {
-      // if (this.checkWishe == undefined) {
-      //   console.log('1')
-      //   this.checkWishe = 1;
-      // } else if (this.checkWishe != undefined) {
-      //    console.log('2')
-      //   this.checkWishe = undefined;
-      // }
-
       if (!this.$store.state.authUser) {
         this.$store.commit("OPEN_REGISTER");
       } else {
         var find = this.count.find(
           count => count.UserId === this.$store.state.authUser.id
         );
-        console.log(find);
         var index = this.count.indexOf(find);
-        console.log(index);
         if (find) {
           this.count.splice(index, 1);
           if (this.count.length == 0) {
             this.count = [];
           }
-          console.log(this.count);
         } else {
           var anhquy = {
             UserId: this.$store.state.authUser.id,
             ProductId: product.id
           };
           this.count.push(anhquy);
-          console.log(this.count);
         }
         this.$axios
           .post("/api/wishe/add", {

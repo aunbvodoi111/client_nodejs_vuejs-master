@@ -51,7 +51,7 @@
         </p>
       </div>
       <div class="product-checkout" v-for="item in carts" :key="item.id">
-        <div class="product" v-for=" prod in item.cart_details">
+        <div class="product" v-for=" prod in item.cart_details" :key="prod.id">
           <div class="name">
             <div class="name-shop">
               <h4>Sản phẩm</h4>

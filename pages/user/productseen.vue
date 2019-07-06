@@ -27,7 +27,7 @@
             </div>
             <div class="product-content" v-else>
               <div class="product" v-for="item in local" :key="item.id">
-                <div class="product-div" @click="submit(item)">
+                <div class="product-div" >
                   <nuxt-link :to="`/${item.id}`">
                     <div class="img-product">
                       <img :src=" `${item.image} `" alt />
@@ -75,6 +75,11 @@ export default {
 </script>
 <style lang="scss" scoped>
 a {
+  color: black;
+  font-size: 14px;
+  text-decoration: none;
+}
+a:hover {
   text-decoration: none;
 }
 ul li {

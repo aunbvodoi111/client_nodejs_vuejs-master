@@ -4,8 +4,8 @@
       <NavBar />
       <div class="content-right">
         <div class="content-main">
-          <h1>Thông báo của tôi</h1>
-          <div class="choose-nofi">
+          <h1>Nhận xét của tôi ({{ ratings.length }})</h1>
+          <!-- <div class="choose-nofi">
             <div class="btn-act">
               <button>Cập nhật đơn hàng</button>
             </div>
@@ -18,30 +18,42 @@
             <div class="btn-act">
               <button>Cập nhật sản phẩm</button>
             </div>
-          </div>
+          </div>-->
           <div class="content-nofi">
-            <div class="img" v-if="wishs.length == 0">
+            <div class="img" v-if="ratings.length == 0">
               <img src="/img/anhdep.png" alt />
               <p>Bạn chưa có thông báo</p>
               <button>Tiếp tục mua sắm</button>
             </div>
-            <div class="product-content" v-else>
-              <div class="product" v-for="item in wishs" :key="item.id">
-                <div class="product-div" @click="submit(item)">
-                  <nuxt-link :to="`/${item.id}`">
-                    <div class="img-product">
-                      <img :src=" `${item.product.image} `" alt />
-                    </div>
-                  </nuxt-link>
-                  <div class="name">
-                    <nuxt-link :to="`/${item.name}`">{{ item.name }}</nuxt-link>
+            <div class="rating-content" v-else>
+              <div class="div-rating" v-for=" item in ratings" :key="item.id">
+                <div class="img">
+                  <img
+                    :src="item.product.image"
+                    alt
+                  />
+                </div>
+                <div class="infor">
+                  <div class="name-product">
+                    <nuxt-link :to="`/${item.product.id}`">{{ item.product.name }}</nuxt-link>
                   </div>
-                  <div class="price">
-                    <p>3.600.000 đ</p>
+                  <div class="name-product">
+                    <p>03/07/2019 22:20:55</p>
+                  </div>
+                  <div class="name-product">
+                    <div class="rating">
+                      <p>
+                        {{ item.title }}
+                        <i class="fas fa-star" v-for="item in item.star" :key="item"></i><i class="far fa-star" v-for=" n in 5 - item.star" :key="n"></i>
+                        <span>Đang chờ duyệt</span>
+                      </p>
+                    </div>
+                    <div class="content">
+                      <p>{{ item.content }}</p>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div style=" clear:both;"></div>
             </div>
           </div>
         </div>
@@ -52,15 +64,14 @@
 <script>
 import NavBar from "./../../components/navUser/navbar";
 export default {
-    async asyncData({ $axios }) {
-        var data = await $axios.get('/api/user/listRating')
-        console.log(data.data)
-       
-        
-        return {
-            wishs : data.data
-        }
-    },
+  async asyncData({ $axios }) {
+    var data = await $axios.get("/api/user/listRating");
+    console.log(data.data);
+
+    return {
+      ratings: data.data
+    };
+  },
   components: {
     NavBar
   },
@@ -102,7 +113,7 @@ ul li {
       background: white;
       cursor: pointer;
       .img-product {
-          width: 100%;
+        width: 100%;
         img {
           width: 100%;
           height: 188px;
@@ -219,6 +230,50 @@ ul li {
             color: white;
             border: none;
             cursor: pointer;
+          }
+        }
+      }
+      .rating-content {
+        .div-rating {
+          margin-top: 30px; 
+          display: flex;
+          .img {
+            width: 10%;
+            img {
+              width: 100%;
+            }
+          }
+          .rating {
+            p {
+              color: black;
+              font-size: 15px;
+              i {
+                color: #fd9727;
+              }
+              span {
+                color: #fcb415;
+                margin-left: 10px;
+                font-size: 13px;
+              }
+            }
+          }
+          .infor {
+            width: 82%;
+            .name-product {
+              a {
+                font-size: 13px;
+                color: #007ff0;
+              }
+              p {
+                color: #787878;
+                font-size: 12px;
+                margin-top: 20px;
+                display: inline-block;
+                vertical-align: top;
+                margin-bottom: 0;
+                position: static;
+              }
+            }
           }
         }
       }
