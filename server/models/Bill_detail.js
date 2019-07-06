@@ -4,21 +4,29 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     content: DataTypes.STRING,
     price: DataTypes.INTEGER,
-    soluong: DataTypes.INTEGER,
+    qty: DataTypes.INTEGER,
     image: DataTypes.INTEGER,
-    ProductId: DataTypes.INTEGER,
-    UserId: DataTypes.INTEGER,
+    Product_Id: DataTypes.UUID,
+    BillId: DataTypes.UUID,
+    UserIdBuyer: DataTypes.UUID,
+    UserIdSaler: DataTypes.UUID,
   }, {
-    updatedAt: 'updated_at',
-    createdAt: 'created_at'
-  });
-  Bill_detail.associate = function(models) {
+      updatedAt: 'updated_at',
+      createdAt: 'created_at'
+    });
+  Bill_detail.associate = function (models) {
     // models.Product.belongsTo(models.Cate, {
     //   onDelete: "CASCADE",
     //   foreignKey: {
     //     allowNull: false
     //   }
     // });
+    Bill_detail.belongsTo(models.bills, {
+      foreignKey: 'UserIdSaler', onDelete: "CASCADE"
+    });
+    Bill_detail.hasOne(models.products, {
+      as: 'product', foreignKey: 'id', sourceKey: 'Product_Id'
+    });
   };
   return Bill_detail;
 };

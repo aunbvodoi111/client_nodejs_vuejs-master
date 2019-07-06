@@ -29,7 +29,7 @@
             </li>
             <li>
               <i class="fas fa-star"></i>
-              <nuxt-link to='/user/productseen'>Đơn hàng đã xem</nuxt-link>
+              <nuxt-link to='/user/productseen'>Sản phẩm đã xem</nuxt-link>
             </li>
             <li>
               <i class="fas fa-star"></i>

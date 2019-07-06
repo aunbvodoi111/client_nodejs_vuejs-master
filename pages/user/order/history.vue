@@ -20,13 +20,13 @@
             </div>
           </div>
           <div class="content-nofi">
-            <div class="img" v-if="local.length == 0">
+            <div class="img" v-if="bills.length == 0">
               <img src="/img/anhdep.png" alt />
               <p>Bạn chưa có thông báo</p>
               <button>Tiếp tục mua sắm</button>
             </div>
             <div class="product-content" v-else>
-              <div class="product" v-for="item in local" :key="item.id">
+              <!-- <div class="product" v-for="item in local" :key="item.id">
                 <div class="product-div" @click="submit(item)">
                   <nuxt-link :to="`/${item.id}`">
                     <div class="img-product">
@@ -38,6 +38,12 @@
                   </div>
                   <div class="price">
                     <p>3.600.000 đ</p>
+                  </div>
+                </div> -->
+                <div class="" v-for="item in bills">
+                  <h1>{{ item.user.name }}</h1>
+                  <div class="" v-for="prod in item.bill_details">
+                    <img :src="prod.image" alt="">
                   </div>
                 </div>
               </div>
@@ -52,6 +58,14 @@
 <script>
 import NavBar from "./../../../components/navUser/navbar";
 export default {
+   async asyncData({ $axios }) {
+    var data = await $axios.get("/api/bill/");
+    console.log(data.data);
+
+    return {
+      bills: data.data
+    };
+  },
   components: {
     NavBar
   },
@@ -61,15 +75,15 @@ export default {
     };
   },
   created() {
-    this.getLocal();
+    // this.getLocal();
   },
   methods: {
-    getLocal() {
-      if (process.browser) {
-        this.local = JSON.parse(localStorage.getItem("products"));
-        console.log(JSON.parse(localStorage.getItem("products")));
-      }
-    }
+    // getLocal() {
+    //   if (process.browser) {
+    //     this.local = JSON.parse(localStorage.getItem("products"));
+    //     console.log(JSON.parse(localStorage.getItem("products")));
+    //   }
+    // }
   }
 };
 </script>

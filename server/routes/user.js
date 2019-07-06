@@ -1,9 +1,6 @@
 const express = require('express');
 const router = express.Router();
-var bcrypt = require('bcryptjs');
-var passport = require('passport')
-    , LocalStrategy = require('passport-local').Strategy
-    , FacebookStrategy = require('passport-facebook').Strategy;
+
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 var models = require('../models');

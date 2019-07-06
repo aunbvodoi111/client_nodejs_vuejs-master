@@ -20,7 +20,10 @@ router.post('/add', async (req, res) => {
     })
     if (wishesFind) {
         const cartDetail = await models.cart_details.findOne({
-            where: { ProductId: ProductId }
+            where: {
+                [Op.and]:
+                    [{ ProductId: ProductId }, { UserIdBuyer : req.user.id }]
+            }
         })
         if (cartDetail) {
             console.log('vao dc day k ')
@@ -30,7 +33,7 @@ router.post('/add', async (req, res) => {
             })
             return res.status(200).json('ok')
         } else {
-            var cart_detail = await models.cart_details.create({ UserIdSaler: UserIdSaler, ProductId: ProductId, qty: qty ,UserIdBuyer: req.user.id });
+            var cart_detail = await models.cart_details.create({ UserIdSaler: UserIdSaler, ProductId: ProductId, qty: qty, UserIdBuyer: req.user.id });
         }
 
         return res.status(200).json('ok')
@@ -47,21 +50,44 @@ router.post('/add', async (req, res) => {
 router.post('/addCartCustomer', async (req, res) => {
     var { carts } = req.body
     console.log(carts)
-    // var cart = await models.carts.create({ ProductId: ProductId, UserId: req.user.id });
-    // cart.save()
-    // console.log('sdaaaaaaaaaaaaa')
-    // console.log(qty)
-    // const wishesFind = await models.carts.findOne({
-    //     where: { UserId: req.user.id, ProductId: ProductId }
-    // })
-    // if (wishesFind) {
-    //     wishesFind.update({
-    //         qty: qty
-    //     })
-    // } else {
-    //     var cart = await models.carts.create({ ProductId: ProductId, UserId: req.user.id, qty: qty });
-    //     cart.save()
-    // }
+    for (var i = 0; i < carts.length; i++) {
+        var bills = await models.bills.create({
+            UserIdBuyer: carts[i].UserIdBuyer,
+            UserIdSaler: carts[i].UserIdSaler,
+            sum: 0,
+            note: 'aaaa',
+            date_order: '30/1/2019',
+            payment: 1,
+            payment: 'anqnh',
+        });
+        bills.save()
+        var sum = 0
+        for (var j = 0; j < carts[i].cart_details.length; j++) {
+            var bill_details = await models.bill_details.create({
+                UserIdBuyer: carts[i].cart_details[j].UserIdBuyer,
+                UserIdSaler: carts[i].cart_details[j].UserIdSaler,
+                Product_Id: carts[i].cart_details[j].ProductId,
+                BillId: bills.id,
+                image: carts[i].cart_details[j].HomeTeam.image,
+                qty: carts[i].cart_details[j].qty,
+                price: carts[i].cart_details[j].HomeTeam.discount,
+                content: 1,
+                name: 'anqnh',
+            });
+            bill_details.save()
+            sum = sum + carts[i].cart_details[j].HomeTeam.discount * carts[i].cart_details[j].qty;
+        }
+        const wishesFind = await models.bills.findOne({
+            where: { id: bills.id }
+        })
+
+        if(wishesFind){
+            console.log(sum)
+            wishesFind.update({
+                sum: sum
+            })
+        }
+    }
     return res.status(200).json('ok')
 })
 
@@ -117,11 +143,46 @@ router.get('/', async (req, res) => {
     //         }
     //     }]
     var carts
-    var anhquy 
+    var anhquy
     if (req.user) {
         await models.carts.findOne({
             where: { UserIdBuyer: req.user.id },
-            attributes: ['UserIdSaler','UserIdBuyer'],
+            attributes: ['UserIdSaler', 'UserIdBuyer'],
+        }).then(function (projects) {
+            anhquy = projects
+        })
+        var hahha
+        hahha = [1, 2, 3, 4, 5]
+        var anhquy = await models.carts.findAll({
+            where: { UserIdBuyer: anhquy.UserIdBuyer },
+            include: [{
+                model: models.cart_details,
+                as: 'cart_details',
+                where: { UserIdBuyer: anhquy.UserIdBuyer },
+                include: [{
+                    model: models.products,
+                    as: 'HomeTeam'
+                }]
+            }, {
+                model: models.users,
+            }]
+        })
+        return res.json(anhquy)
+    } else {
+        carts = []
+    }
+
+})
+
+router.get('/checkout', async (req, res) => {
+    var carts
+    var anhquy
+    if (req.user) {
+        // provinces = await models.provinces.findAll({})
+        // districts = await models.districts.findAll({})
+        await models.carts.findOne({
+            where: { UserIdBuyer: req.user.id },
+            attributes: ['UserIdSaler', 'UserIdBuyer'],
             // include:[{
             //     model: models.cart_details,
             //     as: 'cart_details',
@@ -142,56 +203,32 @@ router.get('/', async (req, res) => {
             // }, { model: models.users }]
         }).then(function (projects) {
 
-             anhquy = projects
+            anhquy = projects
         })
         var hahha
         hahha = [1, 2, 3, 4, 5]
-        var anhquy = await models.carts.findAll({
+        carts = await models.carts.findAll({
             where: { UserIdBuyer: anhquy.UserIdBuyer },
             include: [{
                 model: models.cart_details,
                 as: 'cart_details',
                 where: { UserIdBuyer: anhquy.UserIdBuyer },
-                include:[{
+                include: [{
                     model: models.products,
                     as: 'HomeTeam'
                 }]
-            },{
-                model: models.users,  
+            }, {
+                model: models.users,
             }]
         })
-        return res.json(anhquy)
+
     } else {
         carts = []
+        var provinces = []
+        var districts = []
     }
-
-})
-
-router.get('/checkout', async (req, res) => {
-    var carts
-    if (req.user) {
-        provinces = await models.provinces.findAll({})
-        districts = await models.districts.findAll({})
-        carts = await models.products.findAll({
-            include: [{
-                model: models.users,
-                as: 'users',
-                required: false,
-                where: { id: req.user.id },
-                // Pass in the Product attributes that you want to retrieve
-                attributes: ['id', 'name'],
-                through: {
-                    // This block of code allows you to retrieve the properties of the join table
-                    model: models.carts,
-                    as: 'carts',
-                }
-            }, { model: models.users }]
-        })
-    } else {
-        carts = []
-        provinces = []
-        districts = []
-    }
+    var provinces = []
+    var districts = []
     return res.send({ carts: carts, provinces: provinces, districts: districts })
 })
 

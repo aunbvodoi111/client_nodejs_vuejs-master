@@ -31,6 +31,7 @@ const userApi = require('./routes/user')
 const ratingApi = require('./routes/rating')
 const commentApi = require('./routes/comment')
 const checkoutApi = require('./routes/checkout')
+const billApi = require('./routes/bill')
 // Import and Set Nuxt.js options
 
 // app.use(cors())
@@ -46,6 +47,7 @@ app.use('/api/room',roomApi)
 app.use('/api/rating',ratingApi)
 app.use('/api/comment',commentApi)
 app.use('/api/checkout',checkoutApi)
+app.use('/api/bill',billApi)
 app.use(express.static('public'))
 
 const { ADD_MESSAGE } = require('./socket/socket') 

@@ -6,6 +6,8 @@ module.exports = (sequelize, DataTypes) => {
     date_order: DataTypes.DATE,
     note: DataTypes.STRING,
     sum: DataTypes.INTEGER,
+    UserIdBuyer: DataTypes.UUID,
+    UserIdSaler: DataTypes.UUID,
   }, {
     updatedAt: 'updated_at',
     createdAt: 'created_at'
@@ -17,6 +19,8 @@ module.exports = (sequelize, DataTypes) => {
     //     allowNull: false
     //   }
     // });
+    Bill.hasMany(models.bill_details,{ as: 'bill_details',foreignKey: 'BillId'})
+    Bill.belongsTo(models.users, {foreignKey: 'UserIdSaler'});
   };
   return Bill;
 };

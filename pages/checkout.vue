@@ -6,7 +6,7 @@
           <div class="title">
             <h3>Thêm 1 địa chỉ mới</h3>
           </div>
-          <div class="form">
+          <!-- <div class="form">
             <p>Để đặt hàng, vui lòng thêm địa chỉ nhận hàng</p>
             <div class="from-control">
               <input
@@ -37,7 +37,7 @@
             <div class="from-control">
               <input type="text" class="form-input" placeholder="Tòa nhà , Tên đường"/>
             </div>
-          </div>
+          </div>-->
           <div class="btn-action">
             <button @click=" back">Trở lại</button>
             <button>Hoàn thành</button>
@@ -51,55 +51,55 @@
         </p>
       </div>
       <div class="product-checkout" v-for="item in carts" :key="item.id">
-        <div class="product">
+        <div class="product" v-for=" prod in item.cart_details">
           <div class="name">
             <div class="name-shop">
               <h4>Sản phẩm</h4>
               <p>
                 <span>{{ item.user.name }}</span>
-                <span @click="showDivChat(item)">Chat ngay</span>
+                <span @click="showDivChat(prod)">Chat ngay</span>
               </p>
             </div>
             <div class="img-name-pr">
               <div class="img">
-                <img :src="item.image" alt />
+                <img :src="prod.HomeTeam.image" alt />
               </div>
               <div class="name-pr">
-                <a>{{ item.name }}</a>
+                <a>{{ prod.HomeTeam.name }}</a>
               </div>
             </div>
           </div>
           <div class="price">
             <p>Đơn giá</p>
             <div class="infor">
-              <p>₫{{ item.discount }}</p>
+              <p>₫{{ prod.HomeTeam.discount }}</p>
             </div>
           </div>
           <div class="qty">
             <p>Số lượng</p>
             <div class="infor">
-              <p>{{ item.users[0].carts.qty }}</p>
+              <p>{{ prod.qty }}</p>
             </div>
           </div>
           <div class="total-money">
             <p>Thành tiền</p>
             <div class="infor">
-              <p>₫{{ item.users[0].carts.qty * item.discount }}</p>
+              <!-- <p>₫{{ item.users[0].carts.qty * item.discount }}</p> -->
             </div>
           </div>
         </div>
-        <div class="send-saler">
+        <!-- <div class="send-saler">
           <span>Lời nhắn:</span>
           <input type="text" />
-        </div>
-        <div class="total-money-product">
+        </div>-->
+        <!-- <div class="total-money-product">
           <p>
             Tổng số tiền ({{ item.users[0].carts.qty }} sản phẩm):
             <span
               style="color :red "
             >₫{{ item.users[0].carts.qty * item.discount }}</span>
           </p>
-        </div>
+        </div>-->
       </div>
       <div class="check-out">
         <div class="title">
@@ -117,7 +117,7 @@
           <div class="div-right">
             <div class="div">
               <div>Tổng tiền hàng</div>
-              <div>₫{{ sumMoneyCart }}</div>
+              <!-- <div>₫{{ sumMoneyCart }}</div> -->
             </div>
             <div class="div">
               <div>Phí vận chuyển</div>
@@ -132,7 +132,9 @@
         </div>
         <div class="button">
           <div class="btn-action">
-            <button @click="checkoutCart">Đặt hàng</button>
+            <nuxt-link to="/user/order/history">
+              <button @click="checkoutCart">Đặt hàng</button>
+            </nuxt-link>
           </div>
         </div>
       </div>
@@ -146,47 +148,44 @@ export default {
       // showPopInforCustom: false,
       name: "",
       errorName: "",
-      phone:'',
-      address : '',
-      sum : '',
-      UserIdSaler :'',
-      note : '',
+      phone: "",
+      address: "",
+      sum: "",
+      UserIdSaler: "",
+      note: ""
     };
   },
-    
-  async asyncData({ $axios , store}) {
+
+  async asyncData({ $axios, store }) {
     var data = await $axios.get("/api/cart/checkout");
-    console.log(data)
-    var showPopInforCustom = false
-    if(store.state.authUser){
-      if(store.state.authUser.phone == 0){
-        showPopInforCustom = false
-      }else if( store.state.authUser.phone == 0){
-        showPopInforCustom = false
+    console.log(data);
+    var showPopInforCustom = false;
+    if (store.state.authUser) {
+      if (store.state.authUser.phone == 0) {
+        showPopInforCustom = false;
+      } else if (store.state.authUser.phone == 0) {
+        showPopInforCustom = false;
       }
     }
-    var carts = data.data.carts.filter(data => data.users.length !== 0);
-    return { 
-      carts: carts , 
-      showPopInforCustom : showPopInforCustom ,
-      provinces : data.data.provinces ,
-      districts : data.data.districts
-      };
+
+    return {
+      carts: data.data.carts,
+      showPopInforCustom: showPopInforCustom
+    };
   },
   computed: {
-    sumMoneyCart() {
-      var sum = 0;
-      for (var i = 0; i < this.carts.length; i++) {
-        var sum = sum + this.carts[i].discount * this.carts[i].users[0].carts.qty;
-      }
-      return sum;
-    },
-    
+    // sumMoneyCart() {
+    //   var sum = 0;
+    //   for (var i = 0; i < this.carts.length; i++) {
+    //     var sum = sum + this.carts[i].discount * this.carts[i].users[0].carts.qty;
+    //   }
+    //   return sum;
+    // },
   },
   methods: {
-    back(){
-      this.showPopInforCustom = false
-      this.$router.push('/cart');
+    back() {
+      this.showPopInforCustom = false;
+      this.$router.push("/cart");
     },
     showDivChat(item) {
       if (!this.$store.state.authUser) {
@@ -218,17 +217,18 @@ export default {
         this.errorName = " ";
       }
     },
-    checkoutCart(){
-      this.$axios.post('/api/cart/addCartCustomer',{ 
-        carts : this.carts,
-        phone : this.phone,
-        address : this.address,
-        UserIdSaler : this.UserIdSaler,
-        note : this.note
-      })
-      .then( response =>{
-        console.log(response)
-      })
+    checkoutCart() {
+      this.$axios
+        .post("/api/cart/addCartCustomer", {
+          carts: this.carts,
+          phone: this.phone,
+          address: this.address,
+          UserIdSaler: this.UserIdSaler,
+          note: this.note
+        })
+        .then(response => {
+          console.log(response);
+        });
     }
   }
 };
