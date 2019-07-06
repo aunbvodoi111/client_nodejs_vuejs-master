@@ -6,7 +6,7 @@
           </div>
           <div class="name-user">
             <p>Tài khoản của bạn</p>
-            <span>Phạm Đức Qúy</span>
+            <span>{{ $store.state.authUser.name }}</span>
           </div>
         </div>
         <div class="nav-tab">

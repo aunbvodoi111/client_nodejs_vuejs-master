@@ -5,9 +5,9 @@ export const state = () => ({
   login: false,
   register: true,
   closeAuth: false,
-  toggleChat:false,
-  rooms:[],
-  carts : []
+  toggleChat: false,
+  rooms: [],
+  carts: []
 })
 
 export const mutations = {
@@ -26,29 +26,26 @@ export const mutations = {
     state.closeAuth = true
     state.login = false
   },
-  LIST_CART: function (state ,carts) {
+  LIST_CART: function (state, carts) {
     state.carts = carts
   },
   TOGGLE_CHAT: function (state) {
     state.toggleChat = !state.toggleChat
   },
-  ADD_CART: function (state ,cart) {
+  ADD_CART: function (state, cart) {
     var index = -1;
-    state.carts.forEach((subcate, index) => {  
-      if(subcate.users[0]){
-        if (subcate.users[0].carts.ProductId === cart.ProductId) {
-          console.log('sdadas')
-          subcate.users.splice(index,1)
-          console.log(subcate.users.splice(index,1))
-          subcate.users[0].carts.push(cart)
-          index = index;
+    var addCart = cart
+      for (var i = 0; i < state.carts.length; i++) {
+        console.log('adsdsa')
+        for (var j = 0; j < state.carts[i].cart_details.length; j++) {
+          if(state.carts[i].cart_details[j].id == addCart.id ){
+            state.carts[i].cart_details[j].push(addCart)
+          }
         }
       }
-        
-    });
     console.log(state.carts)
   },
-  ROOMS: function (state ,rooms) {
+  ROOMS: function (state, rooms) {
     state.rooms = rooms
   },
 }

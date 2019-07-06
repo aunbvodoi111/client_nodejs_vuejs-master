@@ -200,9 +200,6 @@ export default {
             this.rooms = response.data;
             this.$store.commit("ROOMS", response.data);
           });
-        // this.$axios.$get("/api/room/").then(response => {
-        //   console.log(response);
-        // });
         this.$store.commit("TOGGLE_CHAT");
       }
     },

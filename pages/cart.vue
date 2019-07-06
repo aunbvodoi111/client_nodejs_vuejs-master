@@ -140,11 +140,6 @@ export default {
   },
   methods: {
     reduction(prod) {
-      // if (this.qtyProduct > this.product.qty) {
-      //   this.qtyProduct = this.product.qty;
-      // } else {
-      //   this.qtyProduct = this.qtyProduct + 1;
-      // }
       if (prod.qty == 1) {
         prod.qty = 1;
       } else {

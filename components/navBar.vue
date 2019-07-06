@@ -18,7 +18,7 @@
               <a href>Kênh người bán</a>
             </li>
             <li v-if="$store.state.authUser">
-              <nuxt-link to='/user/account/profile'>Chao , {{ $store.state.authUser.email}}</nuxt-link>
+              <nuxt-link to="/user/account/profile">Chao , {{ $store.state.authUser.email}}</nuxt-link>
             </li>
             <li @click="loginAuth" v-if="!$store.state.authUser">
               <a>Đăng kí</a>
@@ -55,7 +55,12 @@
             </button>
           </nuxt-link>
           <div class="pop-search" v-if="keyword && closePopSearch">
-            <div class="product-search" v-for="item in products" :key="item.id" @click="closePopSearch = false">
+            <div
+              class="product-search"
+              v-for="item in products"
+              :key="item.id"
+              @click="closePopSearch = false"
+            >
               <div class="img-product">
                 <nuxt-link :to="`/${item.id}`">
                   <img :src="item.image" alt />
@@ -88,20 +93,17 @@
               </template>
               <div class="pop-cart" v-if="hover && $store.state.authUser">
                 <div class="product-cart" v-for="n in carts" :key="n.id">
-                  <div class="image-pop-cart">
-                    <img
-                      :src="n.image"
-                      alt
-                    />
-                  </div>
-                  <div class="name-pop-cart">
-                    <a
-                      href
-                    >{{ n.name }}</a>
-                  </div>
-                  <div class="action-pop-cart">
-                    <p>{{ n.discount }}đ</p>
-                    <a @click="deleteCart(n)">Xóa</a>
+                  <div class="pop-new" v-for="prod in n.cart_details">
+                    <div class="image-pop-cart">
+                      <img :src="prod.HomeTeam.image" alt />
+                    </div>
+                    <div class="name-pop-cart">
+                      <a href>{{ prod.HomeTeam.name }}</a>
+                    </div>
+                    <div class="action-pop-cart">
+                      <p>{{ prod.HomeTeam.discount }}đ</p>
+                      <a @click="deleteCart(n)">Xóa</a>
+                    </div>
                   </div>
                 </div>
                 <button class="btn-to-cart">Vào giỏ hàng</button>
@@ -120,7 +122,7 @@ export default {
       keyword: "",
       hover: false,
       products: [],
-      closePopSearch: false,
+      closePopSearch: false
     };
   },
   created() {
@@ -130,20 +132,18 @@ export default {
     // });
   },
   computed: {
-    carts(){
-      var carts =  this.$store.state.carts.filter(data => data.users.length !== 0);
-      return carts
+    carts() {
+      console.log('ok dc k')
+      return this.$store.state.carts;
     },
     sumQtyCart() {
       var sum = 0;
-      if (this.$store.state.carts.length ) {
-        for (var i = 0; i < this.$store.state.carts.length; i++) {
-          if( this.$store.state.carts[i].users.length ){
-             var sum = sum + this.$store.state.carts[i].users[0].carts.qty;
-             console.log('da')
-          }
+      for (var i = 0; i < this.carts.length; i++) {
+        console.log(this.carts[i]);
+        for (var j = 0; j < this.carts[i].cart_details.length; j++) {
+          var sum = sum + this.carts[i].cart_details[j].qty;
+          console.log(this.carts[i].cart_details[j]);
         }
-        return sum;
       }
       return sum;
     }
@@ -153,8 +153,8 @@ export default {
       // console.log(item);
       // this.cart = {}
       // this.toggleComfirmCart = false
-      var index = this.carts.indexOf(item)
-      this.carts.splice(index ,1 )
+      var index = this.carts.indexOf(item);
+      this.carts.splice(index, 1);
       this.$axios.post("/api/cart/deleteCart", {
         ProductId: item.id,
         qty: item.users[0].carts.qty
@@ -346,35 +346,39 @@ a:hover {
             box-shadow: 3px 4px 29px -10px rgba(0, 0, 0, 0.75);
             .product-cart {
               width: 100%;
-              display: flex;
-              .image-pop-cart {
-                width: 20%;
-                img {
-                  width: 45px;
-                  height: 45px;
-                  margin: 10%;
+              
+              .pop-new {
+                display: flex;
+                width: 100%;
+                .image-pop-cart {
+                  width: 20%;
+                  img {
+                    width: 45px;
+                    height: 45px;
+                    margin: 10%;
+                  }
                 }
-              }
-              .name-pop-cart {
-                width: 60%;
-                a {
-                  font-size: 14px;
-                  color: black;
-                  font-weight: normal;
+                .name-pop-cart {
+                  width: 60%;
+                  a {
+                    font-size: 14px;
+                    color: black;
+                    font-weight: normal;
+                  }
                 }
-              }
-              .action-pop-cart {
-                width: 20%;
-                margin: 3%;
-                a {
-                  font-weight: normal;
-                  font-size: 14px;
-                  color: blue;
-                }
-                p {
-                  font-weight: normal;
-                  font-size: 16px;
-                  color: red;
+                .action-pop-cart {
+                  width: 20%;
+                  margin: 3%;
+                  a {
+                    font-weight: normal;
+                    font-size: 14px;
+                    color: blue;
+                  }
+                  p {
+                    font-weight: normal;
+                    font-size: 16px;
+                    color: red;
+                  }
                 }
               }
             }

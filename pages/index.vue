@@ -33,8 +33,8 @@
       </div>
       <div class="product-content">
         <div class="product" v-for="item in cates" :key="item.id">
-          <div class="product-div" @click="submit(item)">
-            <nuxt-link :to="`/${item.id}`">
+          <div class="product-div" >
+            <nuxt-link :to="`/danhmuc/${item.id}`">
               <div class="img">
                 <img :src=" `${item.image} `" alt>
               </div>
@@ -85,6 +85,7 @@ export default {
       socket.emit("joinRoom", store.state.authUser.name);
     }
     console.log(data.data.cates)
+    store.commit('LIST_CART', data.data.carts )
     return { products: data.data.products ,  cates: data.data.cates};
   },
   data(){

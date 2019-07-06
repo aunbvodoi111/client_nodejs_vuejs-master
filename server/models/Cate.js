@@ -5,16 +5,18 @@ module.exports = (sequelize, DataTypes) => {
     keyword: DataTypes.STRING,
     image: DataTypes.STRING,
   }, {
-    updatedAt: 'updated_at',
-    createdAt: 'created_at'
-  });
-  Cate.associate = function(models) {
+      updatedAt: 'updated_at',
+      createdAt: 'created_at'
+    });
+  Cate.associate = function (models) {
     // models.Product.belongsTo(models.Cate, {
     //   onDelete: "CASCADE",
     //   foreignKey: {
     //     allowNull: false
     //   }
     // });
+    Cate.hasMany(models.subcates,{ as: 'subcates', foreignKey: 'CateId'})
+    
   };
   return Cate;
 };

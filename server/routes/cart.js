@@ -31,12 +31,11 @@ router.post('/add', async (req, res) => {
             cartDetail.update({
                 qty: qtyBd + qty
             })
-            return res.status(200).json('ok')
+            return res.status(200).json(cartDetail)
         } else {
             var cart_detail = await models.cart_details.create({ UserIdSaler: UserIdSaler, ProductId: ProductId, qty: qty, UserIdBuyer: req.user.id });
+            return res.status(200).json(cart_detail)
         }
-
-        return res.status(200).json('ok')
     } else {
         var cart = await models.carts.create({ UserIdSaler: UserIdSaler, UserIdBuyer: req.user.id });
         cart.save()
@@ -82,21 +81,17 @@ router.post('/addCartCustomer', async (req, res) => {
         })
 
         if(wishesFind){
-            console.log(sum)
             wishesFind.update({
                 sum: sum
             })
         }
     }
-    return res.status(200).json('ok')
+    return res.status(200).json(bill_details)
 })
 
 router.post('/changeQty', async (req, res) => {
     var { ProductId, qty } = req.body
-    // var cart = await models.carts.create({ ProductId: ProductId, UserId: req.user.id });
-    // cart.save()
-    console.log('sdaaaaaaaaaaaaa')
-    console.log(qty)
+
     const wishesFind = await models.cart_details.findOne({
         where: { UserIdBuyer: req.user.id, ProductId: ProductId }
     })
@@ -113,10 +108,7 @@ router.post('/changeQty', async (req, res) => {
 
 router.post('/deleteCart', async (req, res) => {
     var { ProductId, qty } = req.body
-    // var cart = await models.carts.create({ ProductId: ProductId, UserId: req.user.id });
-    // cart.save()
-    console.log('sdaaaaaaaaaaaaa')
-    console.log(req.body)
+
     const wishesFind = await models.cart_details.findOne({
         where: { UserIdBuyer: req.user.id, ProductId: ProductId }
     })
@@ -127,21 +119,6 @@ router.post('/deleteCart', async (req, res) => {
 })
 
 router.get('/', async (req, res) => {
-    // const allOrders = await models.products.findAll({
-
-    //     // Make sure to include the products
-    //     include: [{
-    //         model: models.users,
-    //         as: 'users',
-    //         required: false,
-    //         // Pass in the Product attributes that you want to retrieve
-    //         attributes: ['id', 'name'],
-    //         through: {
-    //             // This block of code allows you to retrieve the properties of the join table
-    //             model: models.carts,
-    //             as: 'carts',
-    //         }
-    //     }]
     var carts
     var anhquy
     if (req.user) {
@@ -183,24 +160,6 @@ router.get('/checkout', async (req, res) => {
         await models.carts.findOne({
             where: { UserIdBuyer: req.user.id },
             attributes: ['UserIdSaler', 'UserIdBuyer'],
-            // include:[{
-            //     model: models.cart_details,
-            //     as: 'cart_details',
-            //     where: { id: req.user.id },
-            // }]
-            // include: [{
-            //     model: models.users,
-            //     as: 'users',
-            //     required: false,
-            //     where: { id: req.user.id },
-            //     // Pass in the Product attributes that you want to retrieve
-            //     attributes: ['id', 'name'],
-            //     through: {
-            //         // This block of code allows you to retrieve the properties of the join table
-            //         model: models.carts,
-            //         as: 'carts',
-            //     }
-            // }, { model: models.users }]
         }).then(function (projects) {
 
             anhquy = projects

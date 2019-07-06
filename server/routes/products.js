@@ -11,15 +11,66 @@ var models = require('../models');
 // Get gig list
 router.get('/', async (req, res) => {
     console.log(req.user)
+    var cates = await models.cates.findAll({})
     var products = await models.products.findAll({
         // include: [{
         //   model: models.Product,
         //   as: 'products'
         // }]
     })
-    var cates = await models.cates.findAll({})
-    return res.send({ products: products, cates: cates })
+    var carts = []
+    var anhquy
+    if (req.user) {
+        var findCart = await models.carts.findOne({
+            where: { UserIdBuyer: req.user.id },
+            attributes: ['UserIdSaler', 'UserIdBuyer'],
+        })
+        if (findCart) {
+            carts = await models.carts.findAll({
+                where: { UserIdBuyer: findCart.UserIdBuyer },
+                include: [{
+                    model: models.cart_details,
+                    as: 'cart_details',
+                    where: { UserIdBuyer: findCart.UserIdBuyer },
+                    include: [{
+                        model: models.products,
+                        as: 'HomeTeam'
+                    }]
+                }, {
+                    model: models.users,
+                }]
+            })
+        } else {
+            carts = []
+            return res.send({ products: products, cates: cates, carts: carts })
+        }
+
+    } else {
+        carts = []
+    }
+
+    return res.send({ products: products, cates: cates, carts: carts })
 })
+
+router.get('/danhmuc/:id', async (req, res) => {
+   var cates =  await models.cates.findOne({
+        where: { id: req.params.id },
+        include: [{
+            model: models.subcates,
+            as : 'subcates',
+            include: [{
+                model: models.products,
+                as : 'products',
+            }]
+        }]
+    });
+    // var products = await models.products.findAll({
+    //     where: { id: req.params.id },
+    // })
+    return res.send({cates: cates })
+})
+
+
 
 router.get('/shop/:id', async (req, res) => {
     console.log(req.user)
@@ -28,7 +79,7 @@ router.get('/shop/:id', async (req, res) => {
         where: { UserId: id },
         include: [{
             model: models.users,
-            
+
         }]
     })
     return res.json(products)
@@ -53,22 +104,7 @@ router.post('/search', async (req, res) => {
 router.post('/login',
     passport.authenticate('local'),
     async (req, res) => {
-        // const allOrders = await models.users.findAll({
-        //     where: { id: req.user.id },
-        //     // Make sure to include the products
-        //     include: [{
-        //         model: models.products,
-        //         as: 'products',
-        //         required: false,
-        //         // Pass in the Product attributes that you want to retrieve
-        //         attributes: ['id', 'name', 'price', 'image'],
-        //         through: {
-        //             // This block of code allows you to retrieve the properties of the join table
-        //             model: models.carts,
-        //             as: 'carts',
-        //         }
-        //     }]
-        // });
+
         var allOrders = []
         return res.send({ user: req.user, carts: allOrders })
     });
@@ -137,48 +173,38 @@ router.get('/detailPr/:id', async (req, res) => {
             }
         });
     }
-    var carts
+    var carts = []
+    var anhquy
     if (req.user) {
-        // carts = await models.products.findAll({
-        //     include: {
-        //         model: models.users,
-        //         as: 'users',
-        //         required: false,
-        //         where: { id: req.user.id },
-        //         // Pass in the Product attributes that you want to retrieve
-        //         attributes: ['id', 'name'],
-        //         through: {
-        //             // This block of code allows you to retrieve the properties of the join table
-        //             model: models.carts,
-        //             as: 'carts',
-        //         }
-        //     }
-        // })
-        carts = []
+        var findCart = await models.carts.findOne({
+            where: { UserIdBuyer: req.user.id },
+            attributes: ['UserIdSaler', 'UserIdBuyer'],
+        })
+        if (findCart) {
+            console.log('ok dc k ')
+            carts = await models.carts.findAll({
+                where: { UserIdBuyer: findCart.UserIdBuyer },
+                include: [{
+                    model: models.cart_details,
+                    as: 'cart_details',
+                    where: { UserIdBuyer: findCart.UserIdBuyer },
+                    include: [{
+                        model: models.products,
+                        as: 'HomeTeam'
+                    }]
+                }, {
+                    model: models.users,
+                }]
+            })
+            return res.send({ products: products, count: count, follows: follows, carts: carts })
+        } else {
+            carts = []
+
+        }
+
     } else {
         carts = []
     }
-    var cart
-    // if (req.user) {
-    //     cart = await models.products.findOne({
-    //         where:{ id : id },
-    //         include: {
-    //             model: models.users,
-    //             as: 'users',
-    //             required: false,
-    //             where: { id: req.user.id },
-    //             // Pass in the Product attributes that you want to retrieve
-    //             attributes: ['id', 'name'],
-    //             through: {
-    //                 // This block of code allows you to retrieve the properties of the join table
-    //                 model: models.carts,
-    //                 as: 'carts',
-    //             }
-    //         }
-    //     })
-    // } else {
-    //     cart.users[0].carts = {}
-    // }
     return res.send({ products: products, count: count, follows: follows, carts: carts })
 })
 // router.post('/login', async (req, res) => {
