@@ -130,16 +130,39 @@
     </div>
     <div class="box-customer-comment" v-if="product.ratings.length > 0">
       <div class="filer-comment">
-        <span>Chọn xem nhận xét</span>
-        <select name id>
-          <option value>Hữu ích</option>
-        </select>
-        <select name id>
-          <option value>Tất cả khách hàng</option>
-        </select>
-        <select name id>
-          <option value>Tất cả sao</option>
-        </select>
+        <div class="btn-choose-rating">
+          <div class="button">
+            <button :class="{highlight:1 == selected}" @click="selected = 1">Tất cả</button>
+            <button
+              :class="{highlight:2 == selected}"
+              @click="selected = 2"
+            >5 sao({{ totalStarFive.length }})</button>
+            <button
+              :class="{highlight:3 == selected}"
+              @click="selected = 3"
+            >4 sao({{ totalStarFour.length }})</button>
+            <button
+              :class="{highlight:4 == selected}"
+              @click="selected = 4"
+            >3 sao({{ totalStarThree.length }})</button>
+            <button
+              :class="{highlight:5 == selected}"
+              @click="selected = 5"
+            >2 sao({{ totalStarTwo.length }})</button>
+            <button
+              :class="{highlight:6 == selected}"
+              @click="selected = 6"
+            >1 sao({{ totalStarOne.length }})</button>
+            <button
+              :class="{highlight:7 == selected}"
+              @click="selected = 7"
+            >có bình luận({{ totalStarOne.length }})</button>
+            <button
+              :class="{highlight:8 == selected}"
+              @click="selected = 8"
+            >có hình ảnh({{ totalStarOne.length }})</button>
+          </div>
+        </div>
       </div>
       <div class="rating-cmt" v-for="item in product.ratings" :key="item.id">
         <div class="avatar">
@@ -180,6 +203,7 @@
           <div class="rep-rating" v-for="prod in item.rep_ratings" :key="prod.id">
             <div class="avatar-rep"></div>
             <div class="content-rep">
+              <p>Phản Hồi Của Người Bán</p>
               <p>{{ prod.content }}</p>
             </div>
           </div>
@@ -209,36 +233,36 @@ export default {
         image: ""
       },
       idRating: "",
-      contentRepRating: ""
+      contentRepRating: "",
+      selected : 1
     };
   },
   beforeMount() {
-    socket.on("nhannhe", (room,message) => {
+    socket.on("nhannhe", (room, message) => {
       // alert(message);
-      console.log(message)
-      console.log(room)
-      var audio = new Audio('/Iphone.mp3') // path to filesssdsaaaaaaaaaaaa
-      audio.play()
-       
-            
+      console.log(message);
+      console.log(room);
+      var audio = new Audio("/Iphone.mp3"); // path to filesssdsaaaaaaaaaaaa
+      audio.play();
+
       // this.room = this.rooms.find( room => room.id === room)
-      console.log()
+      console.log();
       // this.room.messagers.push(message)
       // var audio = new Audio('/Iphone.mp3') // path to file
-      // audio.play() 
+      // audio.play()
       // var anhquy = this.messages.messages
-      console.log(this.room)  
-      if(this.room.id == room){
-        this.room.messagers.push(message)
-      }else{
-         console.log(this.$store.state.rooms)  
-          console.log(room)  
-        this.room = this.$store.state.rooms.find( room => room.id === room)
-        console.log(this.room)
-        this.count = this.count + 1
-        this.room.messagers.push(message)
+      console.log(this.room);
+      if (this.room.id == room) {
+        this.room.messagers.push(message);
+      } else {
+        console.log(this.$store.state.rooms);
+        console.log(room);
+        this.room = this.$store.state.rooms.find(room => room.id === room);
+        console.log(this.room);
+        this.count = this.count + 1;
+        this.room.messagers.push(message);
       }
-    
+
       // this.$store.commit("ADD_MESS", message);
     });
   },
@@ -327,7 +351,7 @@ export default {
             Vue.set(item, "contentcmt", "");
           });
           var message = {
-            content: 'ádasdasd',
+            content: "ádasdasd",
             nameuser: this.product.user.name,
             roomid: this.product.user.name
           };
@@ -339,6 +363,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.highlight {
+  border: 1px solid red !important;
+  color: red !important;
+  outline: none;
+}
 .container {
   margin-top: 25px !important;
 }
@@ -471,6 +500,35 @@ a {
       width: 100%;
       .filer-comment {
         display: flex;
+        .btn-choose-rating {
+          width: 100%;
+          padding: 20px;
+          .button {
+            button {
+              cursor: pointer;
+              user-select: none;
+              height: 2rem;
+              line-height: 2rem;
+              min-width: 6.25rem;
+              text-align: center;
+              background-color: rgb(255, 255, 255);
+              box-sizing: border-box;
+              display: inline-block;
+              margin-right: 0.5rem;
+              color: rgba(0, 0, 0, 0.8);
+              text-transform: capitalize;
+              margin-bottom: 0.3125rem;
+              margin-top: 0.3125rem;
+              padding: 0px 0.625rem;
+              border-width: 1px;
+              border-style: solid;
+              border-color: rgba(0, 0, 0, 0.09);
+              border-image: initial;
+              text-decoration: none;
+              border-radius: 2px;
+            }
+          }
+        }
       }
       .rating-cmt {
         display: flex;

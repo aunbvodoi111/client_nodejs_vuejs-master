@@ -19,5 +19,17 @@ router.post('/add_reprating', async (req, res) => {
     rep_ratingsNew.save()
     return res.status(200).json('ok')
 })
+router.get('/buyer/:id', async (req, res) => {
+    var { id } = req.params
+    var listRating = await models.ratings.findAll({
+        include: [{
+            where: { UserId: id },
+            model: models.products,
+        },
+            { model: models.users }
+        ]
+    })
+    return res.status(200).json(listRating)
+})
 
 module.exports = router;

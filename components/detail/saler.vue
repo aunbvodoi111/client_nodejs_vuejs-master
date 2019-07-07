@@ -8,8 +8,8 @@
         <div class="chat-saler">
           <p class="name-saler">{{ product.user.name }}</p>
           <p class="online">Online 5 Giờ Trước</p>
-          <button @click="showDivChat">Chat ngay</button>
-          <button @click="followSaler">{{ checkFollow === undefined ? 'Follow' : 'Đã Follow' }}</button>
+          <button @click="showDivChat" v-if="product.user.id != $store.state.authUser.id">Chat ngay</button>
+          <button @click="followSaler" v-if="product.user.id != $store.state.authUser.id">{{ checkFollow === undefined ? 'Follow' : 'Đã Follow' }}</button>
           <nuxt-link :to="`/shop/${product.user.id}`">
             <button>Xem shop</button>
           </nuxt-link>
@@ -18,12 +18,16 @@
       <div class="saler-right">
         <ul>
           <li>
-            Đánh giá :
-            <span>{{ sumRating }}</span>
+            <nuxt-link :to="`/buyer/rating/${product.user.id}`">
+              Đánh giá :
+              <span>{{ sumRating }}</span>
+            </nuxt-link>
           </li>
           <li>
+            <nuxt-link :to="`/shop/${product.user.id}`">
             Sản phẩm :
             <span>{{ totalProduct }}</span>
+            </nuxt-link>
           </li>
           <li>
             Tham gia :
@@ -39,7 +43,8 @@
   </div>
 </template>
 <script>
-import moment from 'moment'
+import moment from "moment";
+moment.locale("vi");
 export default {
   props: ["product", "follows", "totalProduct", "totalFollow", "sumRating"],
   data() {
@@ -56,7 +61,7 @@ export default {
   computed: {
     checkFollow: {
       get: function() {
-        console.log(this.follows)
+        console.log(this.follows);
         var index;
         if (this.$store.state.authUser && this.follows.length > 0) {
           index = this.follows.find(
@@ -83,19 +88,20 @@ export default {
         var index = this.follows.indexOf(find);
         if (find) {
           this.follows.splice(index, 1);
-
         } else {
           var anhquy = {
             UserId: this.$store.state.authUser.id,
             ProductId: this.product.id,
-            UserIdFollow : this.product.user.id
+            UserIdFollow: this.product.user.id
           };
           this.follows.push(anhquy);
         }
         this.$axios
-          .post("/api/follow/add", { ProductId: this.product.id , UserIdFollow : this.product.user.id })
-          .then(response => {
-          });
+          .post("/api/follow/add", {
+            ProductId: this.product.id,
+            UserIdFollow: this.product.user.id
+          })
+          .then(response => {});
       }
     },
     showDivChat() {
@@ -171,6 +177,10 @@ ul li {
       ul {
         width: 100%;
         li {
+          a{
+            color: rgba(0, 0, 0, 0.4);
+            text-decoration: none;
+          }
           text-transform: capitalize;
           color: rgba(0, 0, 0, 0.4);
           float: left;
