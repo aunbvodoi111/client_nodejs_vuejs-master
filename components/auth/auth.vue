@@ -76,6 +76,7 @@ export default {
         email : this.auth.email,
         password  : this.auth.password
       }).then(response=>{
+        this.$forceUpdate()
         console.log(response.data)
         this.$store.commit('SET_USER',response.data.user)
         this.$store.commit('CLOSE_AUTH')

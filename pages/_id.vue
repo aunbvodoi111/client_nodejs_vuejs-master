@@ -2,29 +2,23 @@
   <div class="container-detail">
     <div class="container">
       <transition name="bounce" leave-active-class="animated bounceOutRight">
-        <div
-          class="add-cart-notification"
-          v-show="showNofication"
-          v-if="$store.state.authUser "
-        >
+        <div class="add-cart-notification" v-show="showNofication" v-if="$store.state.authUser ">
           <p>Bạn vừa thêm sản phẩm :</p>
           <div class="product-add-cart">
             <div class="img">
               <img :src="product.image" alt />
             </div>
-            <div class="infor-product-cart" >
+            <div class="infor-product-cart">
               <p>{{ product.name }}</p>
               <!-- <div class="qty">
                 số lượng sp trong giỏ hàng :
                 <span
                   style="color : red ; font-weight : bold;"
                 >{{ pr}}</span>
-              </div> -->
+              </div>-->
               <div class="qty">
                 <!-- thành tiền : -->
-                <span
-                  style="color : red ; font-weight : bold;"
-                >{{ product.discount }}</span>
+                <span style="color : red ; font-weight : bold;">{{ product.discount }}</span>
               </div>
             </div>
           </div>
@@ -105,23 +99,29 @@
         </div>
       </div>
     </div>
-    <saler :product="product " :follows="follows"  :totalProduct="totalProduct" :totalFollow ="totalFollow" :sumRating ="sumRating"/>
+    <saler
+      :product="product "
+      :follows="follows"
+      :totalProduct="totalProduct"
+      :totalFollow="totalFollow"
+      :sumRating="sumRating"
+      :online ="online"
+    />
     <Quesiton :product="product " :follows="follows" />
-    <Rating :product=" product " @totalRating="totalRating" />
+    <Rating :product=" product " @totalRating="totalRating" :productnew="productnew" />
     <ProductRelate />
   </div>
 </template>
 <script>
-
 import Rating from "./../components/detail/rating";
 import ProductRelate from "./../components/detail/productRelate";
 import saler from "./../components/detail/saler";
 import Quesiton from "./../components/detail/question";
-import socket from "~/plugins/socket.io.js"
+import socket from "~/plugins/socket.io.js";
 import Vue from "vue";
 export default {
   transition: "bounceok",
-  async asyncData({ params, $axios, req , store }) {
+  async asyncData({ params, $axios, req, store }) {
     const data = await $axios.get("/api/product/detailPr/" + params.id);
     var rating1 = [];
     data.data.products.ratings.forEach(item => {
@@ -132,21 +132,33 @@ export default {
       Vue.set(item, "is_comments", false);
       Vue.set(item, "rep_comment", "");
     });
-    if(store.state.authUser){
-      socket.emit("joinRoom", store.state.authUser.name);
+    var product = data.data.products
+    var online = 0
+    if (store.state.authUser) {
+      await socket.emit("joinRoom", store.state.authUser.name);
+      socket.on("userOnline", async (data) => {
+       var socketId
+          for (socketId in data) {
+            if (data[socketId].data === product.user.name) {
+              var online = 1;
+            }
+          }
+      });
     }
-    var carts = data.data.carts
+    var carts = data.data.carts;
     console.log(data.data);
-    
-    store.commit('LIST_CART', carts )
+    console.log(online);
+    store.commit("LIST_CART", carts);
     return {
-      carts : data.data.carts,
+      carts: data.data.carts,
       product: data.data.products,
+      productnew: data.data.products,
       count: data.data.count,
       follows: data.data.follows,
-      totalProduct : data.data.totalProduct,
-      totalFollow  : data.data.totalFollow,
-      sumRating : data.data.totalRating
+      online : online,
+      totalProduct: data.data.totalProduct,
+      totalFollow: data.data.totalFollow,
+      sumRating: data.data.totalRating
     };
   },
   components: {
@@ -163,6 +175,9 @@ export default {
       index: undefined,
       showNofication: false
     };
+  },
+  created(){
+
   },
   methods: {
     addWishe(product) {
@@ -207,11 +222,11 @@ export default {
           .post("/api/cart/add", {
             ProductId: this.product.id,
             qty: this.qtyProduct,
-            UserIdSaler : this.product.user.id
+            UserIdSaler: this.product.user.id
           })
           .then(response => {
             console.log(response);
-            this.$store.commit('ADD_CART', response.data )
+            this.$store.commit("ADD_CART", response.data);
           });
       }
     },

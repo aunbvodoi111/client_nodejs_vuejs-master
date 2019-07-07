@@ -132,39 +132,39 @@
       <div class="filer-comment">
         <div class="btn-choose-rating">
           <div class="button">
-            <button :class="{highlight:1 == selected}" @click="selected = 1">Tất cả</button>
-            <button
-              :class="{highlight:2 == selected}"
-              @click="selected = 2"
-            >5 sao({{ totalStarFive.length }})</button>
-            <button
-              :class="{highlight:3 == selected}"
-              @click="selected = 3"
-            >4 sao({{ totalStarFour.length }})</button>
-            <button
-              :class="{highlight:4 == selected}"
-              @click="selected = 4"
-            >3 sao({{ totalStarThree.length }})</button>
+            <button :class="{highlight:0 == selected}" @click="filterRating(0)">Tất cả</button>
             <button
               :class="{highlight:5 == selected}"
-              @click="selected = 5"
+              @click="filterRating(5)"
+            >5 sao({{ totalStarFive.length }})</button>
+            <button
+              :class="{highlight:4 == selected}"
+              @click="filterRating(4)"
+            >4 sao({{ totalStarFour.length }})</button>
+            <button
+              :class="{highlight:3 == selected}"
+              @click="filterRating(3)"
+            >3 sao({{ totalStarThree.length }})</button>
+            <button
+              :class="{highlight:2 == selected}"
+              @click="filterRating(2)"
             >2 sao({{ totalStarTwo.length }})</button>
             <button
-              :class="{highlight:6 == selected}"
-              @click="selected = 6"
+              :class="{highlight:1 == selected}"
+              @click="filterRating(1)"
             >1 sao({{ totalStarOne.length }})</button>
             <button
               :class="{highlight:7 == selected}"
-              @click="selected = 7"
+              @click="filterRating(7)"
             >có bình luận({{ totalStarOne.length }})</button>
             <button
               :class="{highlight:8 == selected}"
-              @click="selected = 8"
+              @click="filterRating(8)"
             >có hình ảnh({{ totalStarOne.length }})</button>
           </div>
         </div>
       </div>
-      <div class="rating-cmt" v-for="item in product.ratings" :key="item.id">
+      <div class="rating-cmt" v-for="item in anhquy" :key="item.id">
         <div class="avatar">
           <div class="inclue-avatar">
             <div class="div-avatar"></div>
@@ -213,6 +213,7 @@
   </div>
 </template>
 <script>
+import { cloneDeep } from 'lodash'
 import StarRating from "vue-star-rating";
 import Vue from "vue";
 import socket from "~/plugins/socket.io.js";
@@ -234,7 +235,9 @@ export default {
       },
       idRating: "",
       contentRepRating: "",
-      selected : 1
+      selected: 0,
+      showDiv:false,
+      anhquy : []
     };
   },
   beforeMount() {
@@ -297,6 +300,23 @@ export default {
     }
   },
   methods: {
+    filterRating(item) {
+      this.selected = item;
+      this.showDiv = true
+      this.$axios
+        .post("/api/rating/filterRating", {
+          ProductId: this.product.id,
+          value: item,
+        })
+        .then(response => {
+          console.log(response.data)
+          // this.product = _.cloneDeep(response.data)
+          // this.product.ratings =  response.data
+
+          this.anhquy = response.data
+          console.log(this.product.ratings)
+        });
+    },
     toggleCmtAc() {
       if (!this.$store.state.authUser) {
         this.$store.commit("OPEN_REGISTER");
@@ -316,7 +336,7 @@ export default {
           RatingId: item.id
         })
         .then(response => {
-          console.log("ok");
+          
         });
     },
     sendRating() {

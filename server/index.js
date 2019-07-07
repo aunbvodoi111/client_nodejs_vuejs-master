@@ -78,6 +78,7 @@ io.on('connection', (socket) => {
   socket.on('joinRoom', function(data){
     people[socket.id] = {data: data};
     console.log(people)
+    socket.emit('userOnline',people)
   })
   socket.on('disconnect', function(){
     delete people[socket.id];

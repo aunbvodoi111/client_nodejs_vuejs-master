@@ -7,6 +7,7 @@ module.exports = {
     const newMess = await models.messagers.create({
       content: data.data.content,
       RoomId: data.data.roomid,
+      UserId: data.data.UserId,
     })
     newMess.save()
     // var room = await Room.findOne({ _id: data.data.roomid })

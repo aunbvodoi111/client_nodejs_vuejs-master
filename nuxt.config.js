@@ -15,9 +15,11 @@ module.exports = {
             { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
             { rel: 'stylesheet', type: 'text/css', href: 'https://use.fontawesome.com/releases/v5.7.0/css/all.css' },
             { rel: 'stylesheet', type: 'text/css', href: 'https://cdn.jsdelivr.net/npm/animate.css@3.5.1' },
-            { rel: 'stylesheet', type: 'text/css', href: 'https://raw.githubusercontent.com/daneden/animate.css/master/animate.css' }
+            { rel: 'stylesheet', type: 'text/css', href: 'https://raw.githubusercontent.com/daneden/animate.css/master/animate.css' },
+            {  src: 'https://code.jquery.com/jquery-3.2.1.slim.min.js' }
         ]
     },
+    
     /*
      ** Customize the progress-bar color
      */

@@ -7,9 +7,10 @@
         </div>
         <div class="chat-saler">
           <p class="name-saler">{{ product.user.name }}</p>
-          <p class="online">Online 5 Giờ Trước</p>
-          <button @click="showDivChat" v-if="product.user.id != $store.state.authUser.id">Chat ngay</button>
-          <button @click="followSaler" v-if="product.user.id != $store.state.authUser.id">{{ checkFollow === undefined ? 'Follow' : 'Đã Follow' }}</button>
+          <p class="online" v-if="online == 1">Đang online</p>
+          <p class="online" v-if="online == 0">Online 5 Giờ Trước</p>
+          <button @click="showDivChat">Chat ngay</button>
+          <button @click="followSaler" >{{ checkFollow === undefined ? 'Follow' : 'Đã Follow' }}</button>
           <nuxt-link :to="`/shop/${product.user.id}`">
             <button>Xem shop</button>
           </nuxt-link>
@@ -44,13 +45,15 @@
 </template>
 <script>
 import moment from "moment";
+import socket from "~/plugins/socket.io.js";
 moment.locale("vi");
 export default {
-  props: ["product", "follows", "totalProduct", "totalFollow", "sumRating"],
+  props: ["product", "follows", "totalProduct", "totalFollow", "sumRating" ,],
   data() {
     return {
       rooms: [],
-      moment: moment
+      moment: moment,
+      online:0
     };
   },
   async asyncData({ $axios }) {
@@ -61,23 +64,38 @@ export default {
   computed: {
     checkFollow: {
       get: function() {
-        console.log(this.follows);
+        console.log('online' + this.online);
         var index;
         if (this.$store.state.authUser && this.follows.length > 0) {
           index = this.follows.find(
             follow => follow.UserIdFollow === this.product.user.id
           );
-          // index = count.length
         }
-
+        
         return index;
       },
       set: function(newValue) {
         this.index = newValue;
       }
-    }
+    },
+  },
+  created(){
+    this.anhquy()
   },
   methods: {
+    anhquy(){
+      // console.log('vao nhge');
+      // var data = this.product.user.name
+      // socket.on("userOnline", function (data){
+      //  var socketId
+      //     for (socketId in data) {
+      //       if (data[socketId].data === data) {
+      //          this.online = 1;
+      //          console.log('vao nhge');
+      //       }
+      //     }
+      // });
+    },
     followSaler(product) {
       if (!this.$store.state.authUser) {
         this.$store.commit("OPEN_REGISTER");

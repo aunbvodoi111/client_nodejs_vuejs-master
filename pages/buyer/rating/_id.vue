@@ -6,7 +6,7 @@
         <div class="rating-box-left" v-if="ratings.length > 0">
           <p>Đánh giá trung bình</p>
           <p>{{ mediumstar.toFixed(1) }}/5</p>
-          <i class="fas fa-star" v-for=" n in Math.floor(mediumstar)" :key="n"></i>
+          <i class="fas fa-star" v-for=" n in Math.floor(mediumstar)" :key="n + 5"></i>
           <i class="far fa-star" v-for=" n in 5-Math.floor(mediumstar)" :key="n + 1"></i>
           <p class="total-rating">( {{ ratings.length }} nhận xét )</p>
         </div>
@@ -95,26 +95,26 @@
       <div class="btn-choose-rating">
         <div class="button">
           <button :class="{highlight:1 == selected}" @click="selected = 1">Tất cả</button>
-          <button
-            :class="{highlight:2 == selected}"
-            @click="selected = 2"
-          >5 sao({{ totalStarFive.length }})</button>
-          <button
-            :class="{highlight:3 == selected}"
-            @click="selected = 3"
-          >4 sao({{ totalStarFour.length }})</button>
-          <button
-            :class="{highlight:4 == selected}"
-            @click="selected = 4"
-          >3 sao({{ totalStarThree.length }})</button>
-          <button
-            :class="{highlight:5 == selected}"
-            @click="selected = 5"
-          >2 sao({{ totalStarTwo.length }})</button>
-          <button
-            :class="{highlight:6 == selected}"
-            @click="selected = 6"
-          >1 sao({{ totalStarOne.length }})</button>
+         <button
+              :class="{highlight:5 == selected}"
+              @click="filterRating(5)"
+            >5 sao({{ totalStarFive.length }})</button>
+            <button
+              :class="{highlight:4 == selected}"
+              @click="filterRating(4)"
+            >4 sao({{ totalStarFour.length }})</button>
+            <button
+              :class="{highlight:3 == selected}"
+              @click="filterRating(3)"
+            >3 sao({{ totalStarThree.length }})</button>
+            <button
+              :class="{highlight:2 == selected}"
+              @click="filterRating(2)"
+            >2 sao({{ totalStarTwo.length }})</button>
+            <button
+              :class="{highlight:1 == selected}"
+              @click="filterRating(1)"
+            >1 sao({{ totalStarOne.length }})</button>
         </div>
       </div>
       <div class="box-rating" v-for=" item in ratings" :key="item.id">
@@ -125,7 +125,7 @@
           <div class="content">
             <p>{{ item.user.name}}</p>
             <p>
-              <i class="fas fa-star" v-for="n in item.star" :key="n"></i><i class="far fa-star" v-for="n in 5 - item.star" :key="n"></i>
+              <i class="fas fa-star" v-for="n in item.star" :key="n + 20"></i><i class="far fa-star" v-for="n in 5 - item.star" :key="n"></i>
             </p>
             <div class="product-rating">
               <div class="img-product">
@@ -227,6 +227,17 @@ export default {
     }
   },
   methods: {
+    filterRating(item) {
+      this.selected = item;
+      this.$axios
+        .post("/api/rating/filterRating", {
+          ProductId: this.product.id,
+          value: item,
+        })
+        .then(response => {
+          this.product.ratings =  response.data
+        });
+    },
     toggleCmtAc() {
       if (!this.$store.state.authUser) {
         this.$store.commit("OPEN_REGISTER");

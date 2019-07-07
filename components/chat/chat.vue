@@ -9,14 +9,14 @@
           <p>Chat cùng shop</p>
         </div>
         <div class="input-chat">
-          <input type="text" class="txt-filter" placeholder="Tìm người chat">
+          <input type="text" class="txt-filter" placeholder="Tìm người chat" />
         </div>
         <div class="people-pm" v-for="item in rooms " :key="item.id" @click="chatUser(item)">
           <div class="avatar">
             <img
               src="https://media3.scdn.vn/img3/2019/5_14/nEZOmN_simg_ab1f47_250x250_maxb.jpg"
               alt
-            >
+            />
           </div>
           <div class="name-buyer">
             <p v-if="item.UserName1 != $store.state.authUser.name">{{ item.UserName1 }} {{ count }}</p>
@@ -28,25 +28,33 @@
         <div class="title-chat-right">
           <i class="fas fa-minus" @click="$store.commit('TOGGLE_CHAT')"></i>
         </div>
-        <div class="content-chat" style="overflow-y: scroll; height : 360px;" ref="messages">
+        <div class="content-chat" id="infinite-list" ref="messages">
           <div class="messager" v-for="item in room.messagers">
-            <div class="saler" >
-              <div class="div-left">
-                <p>{{ item.content }}</p>
-                <img src="https://cf.shopee.vn/file/aaa24a79e7015ab1d6c73392b4b54c93_tn" alt>
+            <div class="saler">
+              <div class="div-left" v-if="item.UserId == $store.state.authUser.id">
+                <div class="content">
+                  <p>{{ item.content }}</p>
+                </div>
+                <div class="img">
+                  <img src="https://cf.shopee.vn/file/aaa24a79e7015ab1d6c73392b4b54c93_tn" alt />
+                </div>
               </div>
             </div>
-            <!-- <div class="buyer" v-if="item.nameuser == $store.state.authUser.name">
+            <div class="buyer" v-if="item.UserId != $store.state.authUser.id">
               <div class="div-right">
-                <img src="https://cf.shopee.vn/file/aaa24a79e7015ab1d6c73392b4b54c93_tn" alt>
-                <p>{{ item.content }}</p>
+                <div class="img">
+                  <img src="https://cf.shopee.vn/file/aaa24a79e7015ab1d6c73392b4b54c93_tn" alt />
+                </div>
+                <div class="content-right">
+                  <p>{{ item.content }}</p>
+                </div>
               </div>
-            </div> -->
+            </div>
           </div>
           {{ typing }}
         </div>
         <div class="bottom-chat-right">
-          <input type="text" class="txt-input-chat" v-model="message" @keyup="triggerMessageSend">
+          <input type="text" class="txt-input-chat" v-model="message" @keyup="triggerMessageSend" />
           <div>
             <button @click="sendMessages">Gui</button>
           </div>
@@ -58,27 +66,49 @@
 <script>
 import socket from "~/plugins/socket.io.js";
 export default {
-  data(){
-    return{
-      message:'',
-      roomname:'',
-      idUserSend : '',
-      messages:[],
-      typing:'',
-      room :{},
-      count:''
+  data() {
+    return {
+      message: "",
+      roomname: "",
+      idUserSend: "",
+      messages: [],
+      typing: "",
+      room: {},
+      count: "",
+      scrollToTop: true,
+      scrollHeight : true
+    };
+  },
+  computed: {
+    toggleChat() {
+      return this.$store.state.toggleChat;
+    },
+    rooms() {
+      return this.$store.state.rooms;
     }
   },
-  computed:{
-    toggleChat(){
-      return this.$store.state.toggleChat
-    },
-    // rooms(){
-    //    return this.$store.state.rooms;
-    // }
-    rooms(){
-       return this.$store.state.rooms;
-    }
+
+  beforeMount() {
+    socket.on("new-message", (room, message) => {
+      var audio = new Audio("/Iphone.mp3"); // path to filesssdsaaaaaaaaaaaa
+      audio.play();
+      if (this.room.id == room) {
+        this.room.messagers.push(message);
+      } else {
+        console.log(this.$store.state.rooms);
+        console.log(room);
+        this.room = this.$store.state.rooms.find(room => room.id === room);
+        console.log(this.room);
+        this.count = this.count + 1;
+        this.room.messagers.push(message);
+      }
+
+      // this.$store.commit("ADD_MESS", message);
+    });
+    socket.on("receivedUserTyping", message => {
+      console.log(message);
+      this.typing = message;
+    });
   },
   mounted() {
     this.scrollMessages();
@@ -86,41 +116,7 @@ export default {
   updated() {
     this.scrollMessages();
   },
-  beforeMount() {
-    socket.on("new-message", (room,message) => {
-      // alert(message);
-      console.log(message)
-      console.log(room)
-      var audio = new Audio('/Iphone.mp3') // path to filesssdsaaaaaaaaaaaa
-      audio.play()
-       
-            
-      // this.room = this.rooms.find( room => room.id === room)
-      console.log()
-      // this.room.messagers.push(message)
-      // var audio = new Audio('/Iphone.mp3') // path to file
-      // audio.play() 
-      // var anhquy = this.messages.messages
-      console.log(this.room)  
-      if(this.room.id == room){
-        this.room.messagers.push(message)
-      }else{
-         console.log(this.$store.state.rooms)  
-          console.log(room)  
-        this.room = this.$store.state.rooms.find( room => room.id === room)
-        console.log(this.room)
-        this.count = this.count + 1
-        this.room.messagers.push(message)
-      }
-    
-      // this.$store.commit("ADD_MESS", message);
-    });
-    socket.on("receivedUserTyping", message => {
-       console.log(message);
-      this.typing = message
-    });
-  },
-  methods:{
+  methods: {
     showDivChat() {
       if (!this.$store.state.authUser) {
         this.$store.commit("OPEN_REGISTER");
@@ -134,80 +130,83 @@ export default {
             this.rooms = response.data;
             this.$store.commit("ROOMS", response.data);
           });
-        // this.$axios.$get("/api/room/").then(response => {
-        //   console.log(response);
-        // });
         this.$store.commit("TOGGLE_CHAT");
       }
     },
-    chatUser(item){
-      this.roomname = item.id
-      this.room = this.rooms.find( room => room.id === item.id)
-      this.count = ''
-      if(item.UserName1 == this.$store.state.authUser.name){
-        this.idUserSend = item.UserName2
-      }else if(item.UserName2 == this.$store.state.authUser.name){
-        this.idUserSend = item.UserName1
+    chatUser(item) {
+      this.roomname = item.id;
+      this.room = this.rooms.find(room => room.id === item.id);
+      this.count = "";
+      if (item.UserName1 == this.$store.state.authUser.name) {
+        this.idUserSend = item.UserName2;
+      } else if (item.UserName2 == this.$store.state.authUser.name) {
+        this.idUserSend = item.UserName1;
       }
     },
     sendUserTyping() {
       socket.emit("userTyping", {
-        room: this.roomname,
+        room: this.roomname
       });
     },
     sendUserNotTyping() {
       socket.emit("removeUserTyping", {
-        room: this.roomname,
+        room: this.roomname
       });
     },
     triggerMessageSend(e) {
       e.preventDefault();
       if (e.keyCode === 13 && !e.shiftKey) {
-        this.sendMessage();
-        
+        this.sendMessages();
       } else {
         if (this.message !== "") {
-          console.log('dsaasd')
+          console.log("dsaasd");
           this.sendUserTyping();
         } else {
           this.sendUserNotTyping();
         }
       }
     },
-    sendMessages(){
+    sendMessages() {
       var message = {
         content: this.message,
         nameuser: this.idUserSend,
-        roomid: this.roomname
+        roomid: this.roomname,
+        UserId: this.$store.state.authUser.id
       };
-      this.room.messagers.push(message)
-      socket.emit('send-message',message)
-      this.message = ""
+      this.room.messagers.push(message);
+      socket.emit("send-message", message);
+      this.message = "";
       this.sendUserNotTyping();
     },
-     scrollMessages() {
-      var container = this.$refs.messages;
-      // container.scrollTop = container.scrollHeight;
-    },
+    scrollMessages() {
+      // var elmnt = document.getElementById("infinite-list");
+      // var y = elmnt.scrollHeight;
+      // var objDiv = document.getElementById("#infinite-list");
+      // objDiv.scrollTop = objDiv.scrollHeight;
+    }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
-.btn-chat{
+#infinite-list {
+  overflow-y: auto;
+  height: 360px;
+}
+.btn-chat {
   position: fixed;
   background: white;
   bottom: 2%;
   right: 0;
   z-index: 200;
   display: flex;
-  button{
+  button {
     width: 130px;
     height: 40px;
     background: red;
     color: white;
     border: none;
-    border-radius: 10px; 
+    border-radius: 10px;
   }
 }
 .container {
@@ -286,57 +285,74 @@ export default {
             display: flex;
             margin-left: auto;
             width: 80%;
-            img {
+            height: auto;
+            .img {
               width: 15%;
-              border-radius: 100%;
+              margin-left: auto;
+              img {
+                width: 100%;
+                border-radius: 100%;
+              }
             }
-            p {
-              background: #00bfa5;
-              display: inline-block;
-              border-radius: 12px;
-              padding: 6px 12px;
-              color: white;
-              margin-left: right;
-              white-space: pre-wrap;
-              word-wrap: break-word;
-              word-break: break-word;
+            .content {
+              width: 80%;
+              p {
+                margin-left: 20%;
+                background: #00bfa5;
+                border-radius: 12px;
+                padding: 6px 12px;
+                color: white;
+                margin-right: auto;
+                white-space: pre-wrap;
+                word-wrap: break-word;
+                word-break: break-word;
+              }
             }
           }
         }
         .buyer {
           margin-top: 10px;
+          display: flex;
+          width: 100%;
           .div-right {
             display: flex;
+            margin-left: right;
+            width: 80%;
 
-            img {
-              width: 10%;
-              border-radius: 100%;
-              margin-top: 10px;
+            .img {
+              width: 15%;
+              margin-left: auto;
+              img {
+                width: 100%;
+                border-radius: 100%;
+              }
             }
-            p {
-              float: left;
-              display: inline-block;
-              border-radius: 12px;
-              padding: 6px 12px;
-              color: #000;
-              background-color: #e8e8e8;
-              white-space: pre-wrap;
-              word-wrap: break-word;
-              word-break: break-word;
+            .content-right {
+              width: 80%;
+              p {
+                float: left;
+                border-radius: 12px;
+                padding: 6px 12px;
+                color: #000;
+                background-color: #e8e8e8;
+                white-space: pre-wrap;
+                word-wrap: break-word;
+                word-break: break-word;
+              }
             }
           }
         }
       }
     }
-    .bottom-chat-right{
+    .bottom-chat-right {
       width: 100%;
       display: flex;
-      .txt-input-chat{
+      .txt-input-chat {
         width: 80%;
         height: 30px;
       }
-      button{
-        width:50px;
+      button {
+        width: 50px;
         height: 30px;
       }
     }
