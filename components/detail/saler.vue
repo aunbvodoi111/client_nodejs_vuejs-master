@@ -19,19 +19,19 @@
         <ul>
           <li>
             Đánh giá :
-            <span>1138</span>
+            <span>{{ sumRating }}</span>
           </li>
           <li>
             Sản phẩm :
-            <span>1138</span>
+            <span>{{ totalProduct }}</span>
           </li>
           <li>
             Tham gia :
-            <span>1138</span>
+            <span>{{ moment(product.created_at).fromNow()}}</span>
           </li>
           <li>
             Người theo dõi :
-            <span>1138</span>
+            <span>{{ totalFollow }}</span>
           </li>
         </ul>
       </div>
@@ -39,11 +39,13 @@
   </div>
 </template>
 <script>
+import moment from 'moment'
 export default {
-  props: ["product", "follows"],
+  props: ["product", "follows", "totalProduct", "totalFollow", "sumRating"],
   data() {
     return {
-      rooms: []
+      rooms: [],
+      moment: moment
     };
   },
   async asyncData({ $axios }) {

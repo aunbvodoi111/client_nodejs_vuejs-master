@@ -2,27 +2,33 @@
   <div class="container-fruid">
     <transition name="bounce" leave-active-class="animated bounceOutRight">
       <div class="add-cart-notification" v-if="toggleComfirmCart">
-        <p>Bạn muốn xóa sản phẩm :</p>
-        <div class="product-add-cart">
-          <div class="img">
-            <img :src="cart.HomeTeam.image" alt />
-          </div>
-          <div class="infor-product-cart">
-            <p>{{ cart.HomeTeam.name }}</p>
-            <!-- <div class="qty">
+        <div v-if="addCartNofi">
+          <p>Bạn muốn xóa sản phẩm :</p>
+          <div class="product-add-cart">
+            <div class="img">
+              <img :src="cart.HomeTeam.image" alt />
+            </div>
+            <div class="infor-product-cart">
+              <p>{{ cart.HomeTeam.name }}</p>
+              <!-- <div class="qty">
                 số lượng sp trong giỏ hàng :
                 <span
                   style="color : red ; font-weight : bold;"
                 >{{ pr}}</span>
-            </div>-->
-            <div class="qty">
-              <!-- thành tiền : -->
-              <span style="color : red ; font-weight : bold;">{{ cart.HomeTeam.discount }}</span>
+              </div>-->
+              <div class="qty">
+                <!-- thành tiền : -->
+                <span style="color : red ; font-weight : bold;">{{ cart.HomeTeam.discount }}</span>
+              </div>
             </div>
           </div>
+          <p @click="deleteCart(cart)">Có</p>
+          <p @click="toggleComfirmCart = false">Không</p>
         </div>
-        <p @click="deleteCart(cart)">Có</p>
-        <p @click="toggleComfirmCart = false">Không</p>
+        <div v-else>
+          <p>Bạn chưa chọn sản phẩm nào để mua</p>
+          <button @click="nofiCartBlank" style="width : 100%;    background: #ee4d2d; height : 30px; color : white; margin-top : 30%; border :none;  ">OK</button>
+        </div>
       </div>
     </transition>
     <div class="container-cart">
@@ -48,14 +54,20 @@
           <label class="container">
             <i class="fas fa-close"></i>Phamquy
             <input type="checkbox" checked="checked" />
-            <span class="checkmark"></span>
+            
           </label>
         </div>
         <div class="cart-main" v-for=" prod in item.cart_details " :key="prod.id">
           <div class="pr-cart">
             <label class="container">
               <i class="fas fa-close"></i>
-              <input type="checkbox" checked="checked" />
+              <input
+                type="checkbox"
+                checked="checked"
+                v-if="prod.checkBuy == 1"
+                @click="changeStatus(prod)"
+              />
+              <input type="checkbox" v-else @click="changeStatus(prod)" />
               <span class="checkmark"></span>
             </label>
             <div class="img">
@@ -100,9 +112,10 @@
             <p>Tổng tiền hàng ({{ sumQtyCart }} sản phẩm): ₫{{sumMoneyCart}}</p>
           </div>
           <div class="btn-action">
-            <nuxt-link to="/checkout">
+            <nuxt-link to="/checkout" v-if="sumMoneyCart > 0">
               <button>Thanh toán</button>
             </nuxt-link>
+            <button v-if="sumMoneyCart == 0" @click=" nofiCartBlank">Thanh 11toán</button>
           </div>
         </div>
       </div>
@@ -135,10 +148,29 @@ export default {
     return {
       cart: {},
       toggleComfirmCart: false,
-      item: ""
+      item: "",
+      addCartNofi : false
     };
   },
   methods: {
+    nofiCartBlank(){
+      this.toggleComfirmCart = !this.toggleComfirmCart
+    },
+    changeStatus(prod) {
+      if (prod.checkBuy == 1) {
+        prod.checkBuy = 0;
+      } else {
+        prod.checkBuy = 1;
+      }
+      this.$axios
+        .post("/api/cart/changeCheckBuy", {
+          checkBuy: prod.checkBuy,
+          id: prod.id
+        })
+        .then(response => {
+          console.log(response);
+        });
+    },
     reduction(prod) {
       if (prod.qty == 1) {
         prod.qty = 1;
@@ -170,6 +202,7 @@ export default {
       this.cart = prod;
       this.item = item;
       this.toggleComfirmCart = true;
+      this.addCartNofi = true
     },
     deleteCart(prod) {
       console.log(prod);
@@ -199,10 +232,12 @@ export default {
     sumQtyCart() {
       var sum = 0;
       for (var i = 0; i < this.carts.length; i++) {
-        console.log(this.carts[i])
+        console.log(this.carts[i]);
         for (var j = 0; j < this.carts[i].cart_details.length; j++) {
-          var sum = sum + this.carts[i].cart_details[j].qty;
-          console.log(this.carts[i].cart_details[j])
+          if (this.carts[i].cart_details[j].checkBuy == 1) {
+            var sum = sum + this.carts[i].cart_details[j].qty;
+          }
+          console.log(this.carts[i].cart_details[j]);
         }
       }
       return sum;
@@ -211,7 +246,12 @@ export default {
       var sum = 0;
       for (var i = 0; i < this.carts.length; i++) {
         for (var j = 0; j < this.carts[i].cart_details.length; j++) {
-          var sum = sum + this.carts[i].cart_details[j].HomeTeam.discount * this.carts[i].cart_details[j].qty;
+          if (this.carts[i].cart_details[j].checkBuy == 1) {
+            var sum =
+              sum +
+              this.carts[i].cart_details[j].HomeTeam.discount *
+                this.carts[i].cart_details[j].qty;
+          }
         }
       }
       return sum;

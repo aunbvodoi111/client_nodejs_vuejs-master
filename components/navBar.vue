@@ -78,7 +78,7 @@
           </div>
         </div>
         <div class="cart-icon">
-          <nuxt-link to="cart">
+          <nuxt-link to="/cart">
             <i
               class="fas fa-shopping-cart"
               @mouseover="hover = true"

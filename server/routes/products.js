@@ -53,21 +53,21 @@ router.get('/', async (req, res) => {
 })
 
 router.get('/danhmuc/:id', async (req, res) => {
-   var cates =  await models.cates.findOne({
+    var cates = await models.cates.findOne({
         where: { id: req.params.id },
         include: [{
             model: models.subcates,
-            as : 'subcates',
+            as: 'subcates',
             include: [{
                 model: models.products,
-                as : 'products',
+                as: 'products',
             }]
         }]
     });
     // var products = await models.products.findAll({
     //     where: { id: req.params.id },
     // })
-    return res.send({cates: cates })
+    return res.send({ cates: cates })
 })
 
 
@@ -135,6 +135,7 @@ passport.use(new LocalStrategy({
 
 router.get('/detailPr/:id', async (req, res) => {
     var id = req.params.id
+   
     var products = await models.products.findOne({
         where: { id: id },
         include: [{
@@ -160,6 +161,39 @@ router.get('/detailPr/:id', async (req, res) => {
         ],
 
     })
+
+    var totalProduct = 0
+    await models.products.count({
+        where: { UserId: products.user.id },
+        include: [{
+            model: models.users,
+        }]
+    }).then(function (count) {
+        // count is an integer
+        console.log(count)
+        totalProduct = count
+    });
+
+    var totalRating = 0
+    await models.ratings.count({
+        include: [{
+            where: { UserId: products.user.id },
+            model: models.products,
+        }]
+    }).then(function (count) {
+        // count is an integer
+        console.log( 'dddddddd' + count)
+        totalRating = count
+    });
+
+    var totalFollow = 0
+    await models.follows.count({
+        where: { UserIdFollow: products.user.id },
+    }).then(function (count) {
+        // count is an integer
+        totalFollow = count
+    });
+
     var count = await models.wishes.findAll({
         where: { ProductId: id },
     });
@@ -196,7 +230,15 @@ router.get('/detailPr/:id', async (req, res) => {
                     model: models.users,
                 }]
             })
-            return res.send({ products: products, count: count, follows: follows, carts: carts })
+            return res.send({ 
+                products: products, 
+                count: count, 
+                follows: follows, 
+                carts: carts, 
+                totalProduct : totalProduct , 
+                totalFollow : totalFollow,
+                totalRating : totalRating 
+             })
         } else {
             carts = []
 
@@ -205,7 +247,7 @@ router.get('/detailPr/:id', async (req, res) => {
     } else {
         carts = []
     }
-    return res.send({ products: products, count: count, follows: follows, carts: carts })
+    return res.send({ products: products, count: count, follows: follows, carts: carts, totalProduct : totalProduct , totalFollow : totalFollow , totalRating : totalRating})
 })
 // router.post('/login', async (req, res) => {
 //     console.log(req.body)

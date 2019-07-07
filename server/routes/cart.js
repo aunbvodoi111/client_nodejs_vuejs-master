@@ -106,6 +106,23 @@ router.post('/changeQty', async (req, res) => {
     return res.status(200).json('ok')
 })
 
+router.post('/changeCheckBuy', async (req, res) => {
+    var { id, checkBuy } = req.body
+
+    const wishesFind = await models.cart_details.findOne({
+        where: { id: id }
+    })
+    if (wishesFind) {
+        wishesFind.update({
+            checkBuy: checkBuy
+        })
+    } else {
+        var cart = await models.carts.create({ ProductId: ProductId, UserId: req.user.id, qty: qty });
+        cart.save()
+    }
+    return res.status(200).json('ok')
+})
+
 router.post('/deleteCart', async (req, res) => {
     var { ProductId, qty } = req.body
 
@@ -171,7 +188,10 @@ router.get('/checkout', async (req, res) => {
             include: [{
                 model: models.cart_details,
                 as: 'cart_details',
-                where: { UserIdBuyer: anhquy.UserIdBuyer },
+                where: {
+                    [Op.and]:
+                        [{ UserIdBuyer: anhquy.UserIdBuyer }, { checkBuy: 1 }]
+                },
                 include: [{
                     model: models.products,
                     as: 'HomeTeam'

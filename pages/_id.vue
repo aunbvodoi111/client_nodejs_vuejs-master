@@ -105,13 +105,14 @@
         </div>
       </div>
     </div>
-    <saler :product="product " :follows="follows" />
+    <saler :product="product " :follows="follows"  :totalProduct="totalProduct" :totalFollow ="totalFollow" :sumRating ="sumRating"/>
     <Quesiton :product="product " :follows="follows" />
     <Rating :product=" product " @totalRating="totalRating" />
     <ProductRelate />
   </div>
 </template>
 <script>
+
 import Rating from "./../components/detail/rating";
 import ProductRelate from "./../components/detail/productRelate";
 import saler from "./../components/detail/saler";
@@ -143,6 +144,9 @@ export default {
       product: data.data.products,
       count: data.data.count,
       follows: data.data.follows,
+      totalProduct : data.data.totalProduct,
+      totalFollow  : data.data.totalFollow,
+      sumRating : data.data.totalRating
     };
   },
   components: {
