@@ -45,7 +45,7 @@
             id
             class="txt-search"
             v-model="keyword"
-            placeholder="Nhập từ khóa tìm kiếm"
+            placeholder="Tìm sản phẩm , thương hiệu và tên shop"
             @keyup="searchProduct"
           />
 

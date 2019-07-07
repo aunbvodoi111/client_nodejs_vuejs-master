@@ -17,8 +17,8 @@
       </div>
       <div class="txt" v-if="!login">
         <div class="txt-form">
-          <input type="text" class="txt-control" v-model="auth.email">
-          <input type="text" class="txt-control" v-model="auth.password">
+          <input type="text" class="txt-control" v-model="auth.email" placeholder="Email">
+          <input type="text" class="txt-control" v-model="auth.password" placeholder="Mật khẩu">
           <button class="btn-login" @click="loginAuth">Đăng nhập</button>
           <div class="forget-pass" >Quên mật khẩu ?</div>
           <div class="option-login">Hoặc đăng nhập bằng</div>

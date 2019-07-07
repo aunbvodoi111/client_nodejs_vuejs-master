@@ -132,7 +132,7 @@
       <div class="filer-comment">
         <div class="btn-choose-rating">
           <div class="button">
-            <button :class="{highlight:0 == selected}" @click="filterRating(0)">Tất cả</button>
+            <button :class="{highlight:7 == selected}" @click="filterRating(7)">Tất cả</button>
             <button
               :class="{highlight:5 == selected}"
               @click="filterRating(5)"
@@ -235,7 +235,7 @@ export default {
       },
       idRating: "",
       contentRepRating: "",
-      selected: 0,
+      selected: 7,
       showDiv:false,
       anhquy : []
     };
@@ -340,12 +340,6 @@ export default {
         });
     },
     sendRating() {
-      // this.rating.id = this.rating.id + 1;
-
-      // this.$emit("totalRating", {
-      //   total: this.product.ratings.length,
-      //   mediumstar: this.mediumstar
-      // });
       this.$axios
         .post("/api/rating/add", {
           title: this.rating.title,

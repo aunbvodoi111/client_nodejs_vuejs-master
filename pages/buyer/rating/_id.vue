@@ -6,8 +6,7 @@
         <div class="rating-box-left" v-if="ratings.length > 0">
           <p>Đánh giá trung bình</p>
           <p>{{ mediumstar.toFixed(1) }}/5</p>
-          <i class="fas fa-star" v-for=" n in Math.floor(mediumstar)" :key="n + 5"></i>
-          <i class="far fa-star" v-for=" n in 5-Math.floor(mediumstar)" :key="n + 1"></i>
+          <i class="fas fa-star" v-for=" n in Math.floor(mediumstar)" :key="n + 5"></i><i class="far fa-star" v-for=" n in 5-Math.floor(mediumstar)" :key="n + 1"></i>
           <p class="total-rating">( {{ ratings.length }} nhận xét )</p>
         </div>
         <div class="rating-box-center" v-if="ratings.length > 0">
@@ -94,7 +93,7 @@
       </div>
       <div class="btn-choose-rating">
         <div class="button">
-          <button :class="{highlight:1 == selected}" @click="selected = 1">Tất cả</button>
+          <button :class="{highlight:7 == selected}" @click="filterRating(7)">Tất cả</button>
          <button
               :class="{highlight:5 == selected}"
               @click="filterRating(5)"
@@ -117,7 +116,7 @@
             >1 sao({{ totalStarOne.length }})</button>
         </div>
       </div>
-      <div class="box-rating" v-for=" item in ratings" :key="item.id">
+      <div class="box-rating" v-for=" item in ratingFilter" :key="item.id">
         <div class="div">
           <div class="img">
             <img src="https://cf.shopee.vn/file/e9534ab02c7d1eceae35917a633d533e_tn" alt />
@@ -153,7 +152,7 @@ export default {
   async asyncData({ $axios, params }) {
     const data = await $axios.get("/api/rating/buyer/" + params.id);
     console.log(data);
-    return { ratings: data.data };
+    return { ratings: data.data ,ratingFilter : data.data };
   },
   components: {
     StarRating
@@ -171,10 +170,10 @@ export default {
         content: "",
         image: ""
       },
-      selected: 1,
+      selected: 7,
       items: [],
       idRating: "",
-      contentRepRating: ""
+      contentRepRating: "",
     };
   },
   beforeMount() {
@@ -228,14 +227,16 @@ export default {
   },
   methods: {
     filterRating(item) {
+      console.log(item)
       this.selected = item;
       this.$axios
-        .post("/api/rating/filterRating", {
-          ProductId: this.product.id,
+        .post("/api/rating/filterRatingBuyer", {
+          UserId: this.$route.params.id,
           value: item,
         })
         .then(response => {
-          this.product.ratings =  response.data
+          this.ratingFilter = response.data
+         
         });
     },
     toggleCmtAc() {

@@ -32,14 +32,55 @@ router.get('/buyer/:id', async (req, res) => {
     return res.status(200).json(listRating)
 })
 
+
+router.post('/filterRatingBuyer', async (req, res) => {
+    var { UserId, value } = req.body
+    if (value < 6 ) {
+        var listRating = await models.ratings.findAll({
+            where:
+                { star: value }
+            ,
+            include: [{
+                where: { UserId: UserId },
+                model: models.products,
+            },
+            { model: models.users }
+            ]
+        })
+    }else if (value == 7) {
+        var listRating = await models.ratings.findAll({
+            include: [{
+                where: { UserId: UserId },
+                model: models.products,
+            },
+            { model: models.users }
+            ]
+        })
+    }
+    return res.status(200).json(listRating)
+})
+
 router.post('/filterRating', async (req, res) => {
     var { ProductId, value } = req.body
-    console.log( req.body )
+    console.log(req.body)
     if (value < 6) {
         var listRating = await models.ratings.findAll({
             where: {
                 [Op.and]:
                     [{ star: value }, { ProductId: ProductId }]
+            },
+            include: [{
+                model: models.rep_ratings,
+                as: 'rep_ratings'
+            },
+            { model: models.users }
+            ]
+        })
+    } 
+    else if (value == 7) {
+        var listRating = await models.ratings.findAll({
+            where: {
+                ProductId: ProductId 
             },
             include: [{
                 model: models.rep_ratings,
