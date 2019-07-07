@@ -181,8 +181,6 @@ export default {
     scrollMessages() {
       // var elmnt = document.getElementById("infinite-list");
       // var y = elmnt.scrollHeight;
-      // var objDiv = document.getElementById("#infinite-list");
-      // objDiv.scrollTop = objDiv.scrollHeight;
     }
   }
 };

@@ -5,8 +5,8 @@
       <div class="rating-box-left" v-if="product.ratings.length > 0">
         <p>Đánh giá trung bình</p>
         <p>{{ mediumstar.toFixed(1) }}/5</p>
-        <i class="fas fa-star" v-for=" n in Math.floor(mediumstar)" :key="n"></i>
-        <i class="far fa-star" v-for=" n in 5-Math.floor(mediumstar)" :key="n + 1"></i>
+        <i class="fas fa-star" v-for=" n in Math.floor(mediumstar)" :key="n + 20"></i>
+        <i class="far fa-star" v-for=" n in 5-Math.floor(mediumstar)" :key="n + 24"></i>
         <p class="total-rating">( {{ this.product.ratings.length }} nhận xét )</p>
       </div>
       <div class="rating-box-center" v-if="product.ratings.length > 0">
@@ -175,7 +175,7 @@
         <div class="content-cmt">
           <div>
             <p>
-              <i class="fas fa-star" v-for="n in item.star" :key=" n + 2"></i>
+              <i class="fas fa-star" v-for="n in item.star" :key=" n + 4"></i>
               <i class="far fa-star" v-for="n in 5-item.star" :key=" n + 5"></i> Cực Kì Hài Lòng
             </p>
             <p class="buy-alredy">Đã mua sản phẩm này tại Tiki</p>
