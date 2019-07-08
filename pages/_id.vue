@@ -249,7 +249,7 @@ export default {
       this.mediumstar = e.mediumstar;
     },
     increment() {
-      if (this.qtyProduct > this.product.qty) {
+      if (this.qtyProduct == this.product.qty) {
         this.qtyProduct = this.product.qty;
       } else {
         this.qtyProduct = this.qtyProduct + 1;
