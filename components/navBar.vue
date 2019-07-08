@@ -68,7 +68,7 @@
               </div>
               <div class="detail-product">
                 <nuxt-link :to="`/${item.id}`">{{ item.name }}</nuxt-link>
-                <p>{{ item.price }}</p>
+                <p>₫{{ formatPrice(item.discount) }}</p>
               </div>
             </div>
             <h4 v-if="products.length == ''" style="text-align:center;">
@@ -101,7 +101,7 @@
                       <a href>{{ prod.HomeTeam.name }}</a>
                     </div>
                     <div class="action-pop-cart">
-                      <p>{{ prod.HomeTeam.discount }}đ</p>
+                      <p>₫{{ formatPrice(prod.HomeTeam.discount) }}</p>
                       <a @click="deleteCart(n)">Xóa</a>
                     </div>
                   </div>
@@ -166,6 +166,10 @@ export default {
       } else {
         this.toggleCmt = !this.toggleCmt;
       }
+    },
+    formatPrice(value) {
+      let val = (value / 1).toFixed(0).replace(".", ",");
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     },
     loginAuth() {
       this.$store.commit("OPEN_LOGIN");

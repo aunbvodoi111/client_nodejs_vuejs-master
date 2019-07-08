@@ -123,9 +123,9 @@
           <img :src="product.image" alt />
         </div>
         <div class="name">
-          <p>Máy Lạnh Inverter Daikin FTKQ35SAVMV/RKQ35SAVMV (1.5HP)</p>
+          <p>{{ product.name }}</p>
         </div>
-        <div class="price">Giá: 10.790.000 ₫</div>
+        <div class="price">Giá: {{ product.price }} ₫</div>
       </div>
     </div>
     <div class="box-customer-comment" v-if="product.ratings.length > 0">
@@ -169,7 +169,7 @@
           <div class="inclue-avatar">
             <div class="div-avatar"></div>
             <div class="name-customer">{{ item.user.name }}</div>
-            <div class="time">2 tháng trước</div>
+            <div class="time">{{ moment(item.created_at).fromNow()}}</div>
           </div>
         </div>
         <div class="content-cmt">
@@ -216,6 +216,8 @@
 import { cloneDeep } from 'lodash'
 import StarRating from "vue-star-rating";
 import Vue from "vue";
+import moment from "moment";
+moment.locale("vi");
 import socket from "~/plugins/socket.io.js";
 export default {
   components: {
@@ -237,7 +239,8 @@ export default {
       contentRepRating: "",
       selected: 7,
       showDiv:false,
-      anhquy : []
+      anhquy : [],
+      moment : moment
     };
   },
   beforeMount() {
@@ -349,6 +352,11 @@ export default {
           ProductId: this.product.id
         })
         .then(response => {
+          this.toggleCmt =  false
+          this.star = 0
+          this.name = ''
+          this.title = ''
+          this.content = ''
           this.product.ratings.unshift({
             id: response.data.id,
             user: {
@@ -361,6 +369,23 @@ export default {
             rep_ratings: []
           });
           this.product.ratings.forEach(item => {
+            Vue.set(item, "is_rating", false);
+            Vue.set(item, "contentcmt", "");
+          });
+
+          this.anhquy.unshift({
+            id: response.data.id,
+            user: {
+              name: this.$store.state.authUser.name
+            },
+            title: response.data.title,
+            star: response.data.star,
+            image: response.data.image,
+            content: response.data.content,
+            rep_ratings: []
+          });
+
+          this.anhquy.forEach(item => {
             Vue.set(item, "is_rating", false);
             Vue.set(item, "contentcmt", "");
           });

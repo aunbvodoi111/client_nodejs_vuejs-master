@@ -9,15 +9,13 @@
           <div class="swiper-slide" v-for="item in products" :key="item.id">
             <div class="product-div">
               <div class="img">
-                <img :src="item.image" alt>
+                <img :src="item.image" alt />
               </div>
               <div class="name">
-                <a
-                  href
-                >{{ item.name }}</a>
+                <a href>{{ item.name }}</a>
               </div>
               <div class="price">
-                <p>{{ item.discount }} đ</p>
+                <p>₫{{ formatPrice(item.price) }} </p>
               </div>
             </div>
           </div>
@@ -33,10 +31,10 @@
       </div>
       <div class="product-content">
         <div class="product" v-for="item in cates" :key="item.id">
-          <div class="product-div" >
+          <div class="product-div">
             <nuxt-link :to="`/danhmuc/${item.id}`">
               <div class="img">
-                <img :src=" `${item.image} `" alt>
+                <img :src=" `${item.image} `" alt />
               </div>
             </nuxt-link>
           </div>
@@ -51,14 +49,14 @@
           <div class="product-div" @click="submit(item)">
             <nuxt-link :to="`/${item.id}`">
               <div class="img">
-                <img :src=" `${item.image} `" alt>
+                <img :src=" `${item.image} `" alt />
               </div>
             </nuxt-link>
             <div class="name">
               <nuxt-link :to="`/${item.name}`">{{ item.name }}</nuxt-link>
             </div>
             <div class="price">
-              <p>3.600.000 đ</p>
+              <p>₫{{ formatPrice(item.price) }} </p>
             </div>
           </div>
         </div>
@@ -73,25 +71,24 @@ import Logo from "~/components/Logo.vue";
 import NavBar from "./../components/navBar";
 import Swiper from "swiper";
 import "swiper/dist/css/swiper.min.css";
-import socket from "~/plugins/socket.io.js"
+import socket from "~/plugins/socket.io.js";
 export default {
   components: {
     Logo,
     NavBar
   },
-  async asyncData({ $axios ,store }) {
+  async asyncData({ $axios, store }) {
     var data = await $axios.get("/api/product");
-    if(store.state.authUser){
+    if (store.state.authUser) {
       socket.emit("joinRoom", store.state.authUser.name);
     }
-    console.log(data.data.cates)
-    store.commit('LIST_CART', data.data.carts )
-    return { products: data.data.products ,  cates: data.data.cates};
+    store.commit("LIST_CART", data.data.carts);
+    return { products: data.data.products, cates: data.data.cates };
   },
-  data(){
-    return{
+  data() {
+    return {
       local: []
-    }
+    };
   },
   created() {
     this.fetchProduct();
@@ -99,7 +96,7 @@ export default {
   methods: {
     fetchProduct() {},
     submit(item) {
-      var anhquy = []
+      var anhquy = [];
       if (localStorage && localStorage.getItem("products")) {
         this.local = JSON.parse(localStorage.getItem("products"));
         anhquy = this.local.filter(product => product.id !== item.id);
@@ -109,6 +106,10 @@ export default {
         this.local.push(item);
         localStorage.setItem("products", JSON.stringify(this.local));
       }
+    },
+    formatPrice(value) {
+      let val = (value / 1).toFixed(0).replace(".", ",");
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
   },
   mounted() {

@@ -37,7 +37,7 @@
                     <nuxt-link :to="`/${item.name}`">{{ item.name }}</nuxt-link>
                   </div>
                   <div class="price">
-                    <p>3.600.000 đ</p>
+                    <p>{{ formatPrice(item.discount) }} đ</p>
                   </div>
                 </div>
               </div>
@@ -69,6 +69,10 @@ export default {
         this.local = JSON.parse(localStorage.getItem("products"));
         console.log(JSON.parse(localStorage.getItem("products")));
       }
+    },
+    formatPrice(value) {
+      let val = (value / 1).toFixed(0).replace(".", ",");
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
   }
 };

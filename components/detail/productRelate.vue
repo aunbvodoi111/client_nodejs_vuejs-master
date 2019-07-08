@@ -18,7 +18,7 @@
                 </div>
               </nuxt-link>
               <div class="price">
-                <p>{{ item.price }} đ</p>
+                <p>{{ formatPrice(item.price) }} đ</p>
               </div>
             </div>
           </div>
@@ -103,7 +103,11 @@ export default {
         this.local = JSON.parse(localStorage.getItem("products"));
         console.log(JSON.parse(localStorage.getItem("products")));
       }
-    }
+    },
+    formatPrice(value) {
+      let val = (value / 1).toFixed(0).replace(".", ",");
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    },
   },
   mounted() {
     // eslint-disable-next-line no-unused-vars

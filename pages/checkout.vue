@@ -72,7 +72,7 @@
           <div class="price">
             <p>Đơn giá</p>
             <div class="infor">
-              <p>₫{{ prod.HomeTeam.discount }}</p>
+              <p>₫{{ formatPrice(prod.HomeTeam.discount) }}</p>
             </div>
           </div>
           <div class="qty">
@@ -97,7 +97,7 @@
             Tổng số tiền ({{ item.users[0].carts.qty }} sản phẩm):
             <span
               style="color :red "
-            >₫{{ item.users[0].carts.qty * item.discount }}</span>
+            >₫{{ formatPrice(item.users[0].carts.qty * item.discount) }}</span>
           </p>
         </div>-->
       </div>
@@ -125,7 +125,7 @@
             </div>
             <div class="div">
               <div>Tổng tiền hàng</div>
-              <div class="money-sum">₫{{ sumMoneyCart }}</div>
+              <div class="money-sum">₫{{ formatPrice(sumMoneyCart) }}</div>
             </div>
           </div>
           <div style="clear:bold;"></div>
@@ -213,6 +213,10 @@ export default {
       } else {
         this.errorName = " ";
       }
+    },
+    formatPrice(value) {
+      let val = (value / 1).toFixed(0).replace(".", ",");
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     },
     checkoutCart() {
       this.$axios

@@ -45,8 +45,9 @@
 </template>
 <script>
 import moment from "moment";
-import socket from "~/plugins/socket.io.js";
 moment.locale("vi");
+import socket from "~/plugins/socket.io.js";
+
 export default {
   props: ["product", "follows", "totalProduct", "totalFollow", "sumRating" ,],
   data() {

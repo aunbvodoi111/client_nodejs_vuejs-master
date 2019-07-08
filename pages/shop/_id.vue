@@ -16,19 +16,19 @@
           <div class="filter-rating">
             <h5>Đánh giá</h5>
             <p>
-              <i class="fas fa-star" v-for="n in 5"></i>( ít nhất 4 sao )
+              <i class="fas fa-star" v-for="n in 5" :key="n + 1"></i>( ít nhất 4 sao )
             </p>
             <p>
-              <i class="fas fa-star" v-for="n in 5"></i>( ít nhất 4 sao )
+              <i class="fas fa-star" v-for="n in 5" :key="n + 2"></i>( ít nhất 4 sao )
             </p>
             <p>
-              <i class="fas fa-star" v-for="n in 5"></i>( ít nhất 4 sao )
+              <i class="fas fa-star" v-for="n in 5" :key="n + 3"></i>( ít nhất 4 sao )
             </p>
             <p>
-              <i class="fas fa-star" v-for="n in 5"></i>( ít nhất 4 sao )
+              <i class="fas fa-star" v-for="n in 5" :key="n + 4"></i>( ít nhất 4 sao )
             </p>
             <p>
-              <i class="fas fa-star" v-for="n in 5"></i>( ít nhất 4 sao )
+              <i class="fas fa-star" v-for="n in 5" :key="n + 5"></i>( ít nhất 4 sao )
             </p>
           </div>
           <div class="filter-rating">
@@ -71,7 +71,7 @@
               </div>
             </nuxt-link>
             <div class="price">
-              <p>{{ item.price }} đ</p>
+              <p>{{ formatPrice(item.price) }} đ</p>
             </div>
           </div>
         </div>
@@ -86,6 +86,12 @@ export default {
     var products = await $axios.get("/api/product/shop/" + params.id);
     console.log(products)
     return { products: products.data };
+  },
+  methods:{
+    formatPrice(value) {
+      let val = (value / 1).toFixed(0).replace(".", ",");
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    },
   }
 };
 </script>

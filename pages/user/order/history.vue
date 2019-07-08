@@ -51,7 +51,7 @@
                       <p>x {{ prod.qty }}</p>
                     </div>
                     <div class="total-money-pr">
-                      <p>₫{{ prod.product.discount }}</p>
+                      <p>₫{{ formatPrice(prod.product.discount) }}</p>
                     </div>
                   </div>
                 </div>
@@ -60,7 +60,7 @@
                     <div class="sum-bill">
                       <p>
                         Tổng số tiền:
-                        <span>₫{{ item.sum }}</span>
+                        <span>₫{{ formatPrice(item.sum) }}</span>
                       </p>
                     </div>
                     <div class="btn-choose">
@@ -90,8 +90,6 @@ import NavBar from "./../../../components/navUser/navbar";
 export default {
   async asyncData({ $axios }) {
     var data = await $axios.get("/api/bill/");
-    console.log(data.data);
-
     return {
       bills: data.data
     };
@@ -108,12 +106,10 @@ export default {
     // this.getLocal();
   },
   methods: {
-    // getLocal() {
-    //   if (process.browser) {
-    //     this.local = JSON.parse(localStorage.getItem("products"));
-    //     console.log(JSON.parse(localStorage.getItem("products")));
-    //   }
-    // }
+    formatPrice(value) {
+      let val = (value / 1).toFixed(0).replace(".", ",");
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
   }
 };
 </script>

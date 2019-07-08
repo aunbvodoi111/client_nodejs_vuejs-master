@@ -78,7 +78,7 @@
             </div>
           </div>
           <div class="price">
-            <p>₫190.000 ₫ {{ prod.HomeTeam.price }}</p>
+            <p>₫190.000 ₫ {{ formatPrice(prod.HomeTeam.price) }}</p>
           </div>
           <div class="price">
             <div class="qty-action">
@@ -109,7 +109,7 @@
             <span class="checkmark"></span>
           </label>
           <div>
-            <p>Tổng tiền hàng ({{ sumQtyCart }} sản phẩm): ₫{{sumMoneyCart}}</p>
+            <p>Tổng tiền hàng ({{ sumQtyCart }} sản phẩm): ₫{{ formatPrice(sumMoneyCart) }}</p>
           </div>
           <div class="btn-action">
             <nuxt-link to="/checkout" v-if="sumMoneyCart > 0">
@@ -226,6 +226,10 @@ export default {
       this.$axios.post("/api/cart/deleteCart", {
         ProductId: prod.ProductId
       });
+    },
+    formatPrice(value) {
+      let val = (value / 1).toFixed(0).replace(".", ",");
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
   },
   computed: {

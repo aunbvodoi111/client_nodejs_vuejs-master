@@ -31,7 +31,12 @@
       </div>
       <div class="div-bottom">
         <div class="form-question">
-          <input type="text" class="txt-input" v-model="content" placeholder="Hãy đặt câu hỏi liên quan về sản phẩm"/>
+          <input
+            type="text"
+            class="txt-input"
+            v-model="content"
+            placeholder="Hãy đặt câu hỏi liên quan về sản phẩm"
+          />
           <button class="btn-button" @click="sendQuestion">Gửi câu hỏi</button>
         </div>
       </div>
@@ -39,12 +44,16 @@
   </div>
 </template>
 <script>
+import Vue from "vue";
+import moment from "moment";
+moment.locale("vi");
 export default {
   props: ["product", "follows"],
   data() {
     return {
       content: "",
-      image: ""
+      image: "",
+      moment : moment
     };
   },
 
@@ -54,18 +63,21 @@ export default {
       if (!this.$store.state.authUser) {
         this.$store.commit("OPEN_REGISTER");
       } else {
-        var comment = this.product.comments.find( comment => comment.id  === item.id)
+        var comment = this.product.comments.find(
+          comment => comment.id === item.id
+        );
         comment.req_comments.push({
-            content : item.comment
-        })
+          content: item.comment
+        });
         this.$axios
           .post("/api/comment/add_repcomment", {
-            content : item.comment,
-            image: '',
+            content: item.comment,
+            image: "",
             CommentId: item.id
           })
           .then(response => {
-           
+            item.is_comments = false
+            item.comment = ''
           });
       }
     },
@@ -84,6 +96,10 @@ export default {
               id: response.data.id,
               content: response.data.content,
               req_comments: []
+            });
+            this.product.comments.forEach(item => {
+              Vue.set(item, "is_comments", false);
+              Vue.set(item, "comment", "");
             });
           });
       }

@@ -66,8 +66,8 @@
             <div class="number-rating">45 đã bán</div>
           </div>
           <div class="price-detail">
-            <span class="payment">₫ {{ product.price }}</span>
-            <span class="discount">₫{{ product.discount }}</span>
+            <span class="payment">₫ {{ formatPrice(product.price) }}</span>
+            <span class="discount">₫{{ formatPrice(product.discount) }}</span>
           </div>
           <div class="qty-action">
             <span>Số Lượng</span>
@@ -146,8 +146,6 @@ export default {
       });
     }
     var carts = data.data.carts;
-    console.log(data.data);
-    console.log(online);
     store.commit("LIST_CART", carts);
     return {
       carts: data.data.carts,
@@ -180,6 +178,10 @@ export default {
 
   },
   methods: {
+    formatPrice(value) {
+      let val = (value / 1).toFixed(0).replace(".", ",");
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    },
     addWishe(product) {
       if (!this.$store.state.authUser) {
         this.$store.commit("OPEN_REGISTER");
