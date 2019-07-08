@@ -203,7 +203,7 @@
           <div class="rep-rating" v-for="prod in item.rep_ratings" :key="prod.id">
             <div class="avatar-rep"></div>
             <div class="content-rep">
-              <p>Phản Hồi Của Người Bán</p>
+              <p>Phản Hồi Của Người Bán <span v-if="product.user.id == prod.UserId">dddddđ</span></p>
               <p>{{ prod.content }}</p>
             </div>
           </div>
@@ -308,6 +308,7 @@ export default {
       this.showDiv = true
       this.$axios
         .post("/api/rating/filterRating", {
+          UserId : this.$store.state.authUser.id,
           ProductId: this.product.id,
           value: item,
         })
@@ -317,6 +318,10 @@ export default {
           // this.product.ratings =  response.data
 
           this.anhquy = response.data
+          this.anhquy.forEach(item => {
+            Vue.set(item, "is_rating", false);
+            Vue.set(item, "contentcmt", "");
+          });
           console.log(this.product.ratings)
         });
     },
@@ -329,7 +334,7 @@ export default {
     },
     send_reprating(item) {
       console.log(item);
-      var rating = this.product.ratings.find(star => star.id === item.id);
+      var rating = this.anhquy.find(star => star.id === item.id);
       console.log(rating);
       rating.rep_ratings.push({ content: item.contentcmt });
       this.$axios
@@ -339,7 +344,8 @@ export default {
           RatingId: item.id
         })
         .then(response => {
-          
+          item.is_rating = false
+          item.contentcmt = ''
         });
     },
     sendRating() {
@@ -362,12 +368,8 @@ export default {
           ProductId: this.product.id
         })
         .then(response => {
-          this.toggleCmt =  false
-          this.rating.star = 0
-          this.rating.name = ''
-          this.rating.title = ''
-          this.rating.content = ''
-          this.rating.product.ratings.unshift({
+          
+          this.product.ratings.unshift({
             id: response.data.id,
             user: {
               name: this.$store.state.authUser.name
@@ -406,6 +408,11 @@ export default {
           };
           socket.emit("send-nofi-cmt", message);
         });
+        this.toggleCmt =  false
+          this.rating.star = 0
+          this.rating.name = ''
+          this.rating.title = ''
+          this.rating.content = ''
       }
     }
   }

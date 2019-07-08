@@ -93,7 +93,7 @@
               </template>
               <div class="pop-cart" v-if="hover && $store.state.authUser">
                 <div class="product-cart" v-for="n in carts" :key="n.id">
-                  <div class="pop-new" v-for="prod in n.cart_details">
+                  <div class="pop-new" v-for="prod in n.cart_details" :key="prod.id">
                     <div class="image-pop-cart">
                       <img :src="prod.HomeTeam.image" alt />
                     </div>

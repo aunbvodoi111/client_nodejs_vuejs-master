@@ -11,7 +11,7 @@
         <div class="input-chat">
           <input type="text" class="txt-filter" placeholder="Tìm người chat" />
         </div>
-        <div class="people-pm" v-for="item in rooms " :key="item.id" @click="chatUser(item)">
+        <div class="people-pm" v-for="item in rooms " :key="item.id" @click="chatUser(item)" :class="{highlight:item.id == selected}" >
           <div class="avatar">
             <img
               src="https://media3.scdn.vn/img3/2019/5_14/nEZOmN_simg_ab1f47_250x250_maxb.jpg"
@@ -29,7 +29,7 @@
           <i class="fas fa-minus" @click="$store.commit('TOGGLE_CHAT')"></i>
         </div>
         <div class="content-chat" id="infinite-list" ref="messages">
-          <div class="messager" v-for="item in room.messagers">
+          <div class="messager" v-for="item in room.messagers" :key="item.id">
             <div class="saler">
               <div class="div-left" v-if="item.UserId == $store.state.authUser.id">
                 <div class="content">
@@ -76,7 +76,8 @@ export default {
       room: {},
       count: "",
       scrollToTop: true,
-      scrollHeight : true
+      scrollHeight : true,
+      selected : ''
     };
   },
   computed: {
@@ -123,7 +124,7 @@ export default {
       } else {
         this.$axios
           .post("/api/room/add", {
-            user: this.product.user
+            user: this.$store.state.authUser
           })
           .then(response => {
             console.log(response);
@@ -134,6 +135,7 @@ export default {
       }
     },
     chatUser(item) {
+      this.selected = item.id
       this.roomname = item.id;
       this.room = this.rooms.find(room => room.id === item.id);
       this.count = "";
@@ -187,6 +189,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.highlight{
+  color: white !important;
+  background: grey;
+}
 #infinite-list {
   overflow-y: auto;
   height: 360px;

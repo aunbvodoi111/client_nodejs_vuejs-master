@@ -142,36 +142,39 @@ router.post('/deleteCart', async (req, res) => {
 })
 
 router.get('/', async (req, res) => {
-    var carts
+    var carts = []
     var anhquy
     if (req.user) {
-        await models.carts.findOne({
+        var findCart = await models.carts.findOne({
             where: { UserIdBuyer: req.user.id },
             attributes: ['UserIdSaler', 'UserIdBuyer'],
-        }).then(function (projects) {
-            anhquy = projects
         })
-        var hahha
-        hahha = [1, 2, 3, 4, 5]
-        var anhquy = await models.carts.findAll({
-            where: { UserIdBuyer: anhquy.UserIdBuyer },
-            include: [{
-                model: models.cart_details,
-                as: 'cart_details',
-                where: { UserIdBuyer: anhquy.UserIdBuyer },
+        if (findCart) {
+            console.log('ok dc k ')
+            carts = await models.carts.findAll({
+                where: { UserIdBuyer: findCart.UserIdBuyer },
                 include: [{
-                    model: models.products,
-                    as: 'HomeTeam'
+                    model: models.cart_details,
+                    as: 'cart_details',
+                    where: { UserIdBuyer: findCart.UserIdBuyer },
+                    include: [{
+                        model: models.products,
+                        as: 'HomeTeam'
+                    }]
+                }, {
+                    model: models.users,
                 }]
-            }, {
-                model: models.users,
-            }]
-        })
-        return res.json(anhquy)
+            })
+            return res.json(carts)
+        } else {
+            carts = []
+
+        }
+
     } else {
         carts = []
     }
-
+    return res.json(carts)
 })
 
 router.get('/checkout', async (req, res) => {
