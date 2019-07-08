@@ -343,6 +343,16 @@ export default {
         });
     },
     sendRating() {
+      
+      var findUser 
+      for( var i = 0 ; i < this.product.ratings.length ; i++){
+        if( this.product.ratings[i].user.name == this.$store.state.authUser.name){
+          findUser = 1
+        }
+      }
+      if(findUser == 1){
+        console.log('dsaaaaaaaaaaaaaaa')
+      }else{
       this.$axios
         .post("/api/rating/add", {
           title: this.rating.title,
@@ -353,11 +363,11 @@ export default {
         })
         .then(response => {
           this.toggleCmt =  false
-          this.star = 0
-          this.name = ''
-          this.title = ''
-          this.content = ''
-          this.product.ratings.unshift({
+          this.rating.star = 0
+          this.rating.name = ''
+          this.rating.title = ''
+          this.rating.content = ''
+          this.rating.product.ratings.unshift({
             id: response.data.id,
             user: {
               name: this.$store.state.authUser.name
@@ -396,12 +406,14 @@ export default {
           };
           socket.emit("send-nofi-cmt", message);
         });
+      }
     }
   }
 };
 </script>
 
 <style lang="scss" scoped>
+
 .highlight {
   border: 1px solid red !important;
   color: red !important;
@@ -419,6 +431,7 @@ a {
 @media only screen and (min-width: 1200px) {
   .container {
     width: 100%;
+    position: relative;
     .rating-box {
       border: 1px solid #f7f7f7;
       height: 200px;

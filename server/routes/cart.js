@@ -86,6 +86,12 @@ router.post('/addCartCustomer', async (req, res) => {
             })
         }
     }
+    
+    for (var i = 0; i < carts.length; i++) {
+        await models.carts.destroy({ where: { id: carts[i].id }})
+    }
+    
+
     return res.status(200).json(bill_details)
 })
 
