@@ -19,7 +19,7 @@
                   <label>Email</label>
                 </div>
                 <div class="name-email">
-                  <p>phamquycntta@gmail.com</p>
+                  <p>{{ $store.state.authUser.email }}</p>
                 </div>
               </div>
               <div class="email">
@@ -27,7 +27,7 @@
                   <label>Tên Shop</label>
                 </div>
                 <div class="name-email">
-                  <input type="text" class="txt-name-shop">
+                  <input type="text" class="txt-name-shop" :value="$store.state.authUser.name">
                 </div>
               </div>
               <div class="email">
@@ -77,9 +77,10 @@
                 />
               </div>
               <label for="file-input">
-                <button class="btn-upload" >Chọn ảnh</button>
+                <img src="https://goo.gl/pB9rpQ" alt="">
               </label>
-              <input  id="file-input" type="file"/>
+              <p>Thay đổi ảnh đại diện</p>
+              <input  id="file-input" type="file" class="upload"/>
             </div>
           </div>
         </div>
@@ -224,8 +225,15 @@ ul li {
               width: 100%;
             }
           }
-          #file-input{
+          .upload{
             display: none;
+          }
+          label{
+            img{
+              width: 30%;
+              cursor: pointer;
+              margin:30px 30px; 
+            }
           }
         }
       }
