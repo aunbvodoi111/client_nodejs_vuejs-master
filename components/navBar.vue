@@ -133,19 +133,11 @@ export default {
   },
   computed: {
     carts() {
-      console.log('ok dc k')
+      console.log("ok dc k");
       return this.$store.state.carts;
     },
     sumQtyCart() {
-      var sum = 0;
-      for (var i = 0; i < this.carts.length; i++) {
-        console.log(this.carts[i]);
-        for (var j = 0; j < this.carts[i].cart_details.length; j++) {
-          var sum = sum + this.carts[i].cart_details[j].qty;
-          console.log(this.carts[i].cart_details[j]);
-        }
-      }
-      return sum;
+      return this.$store.state.carts;
     }
   },
   methods: {
@@ -350,7 +342,7 @@ a:hover {
             box-shadow: 3px 4px 29px -10px rgba(0, 0, 0, 0.75);
             .product-cart {
               width: 100%;
-              
+
               .pop-new {
                 display: flex;
                 width: 100%;

@@ -15,20 +15,19 @@
           </div>
           <div class="filter-rating">
             <h5>Đánh giá</h5>
-            <p>
+            <p @click="filterStar(5)">
               <i class="fas fa-star" v-for="n in 5" :key="n + 1"></i>( ít nhất 5 sao )
-              
             </p>
-            <p>
+            <p @click="filterStar(4)">
               <i class="fas fa-star" v-for="n in 4" :key="n + 1"></i><i class="far fa-star" v-for="n in 1" :key="n + 1"></i>( ít nhất 4 sao )
             </p>
-            <p>
+            <p @click="filterStar(3)">
               <i class="fas fa-star" v-for="n in 3" :key="n + 2"></i><i class="far fa-star" v-for="n in 2" :key="n + 1"></i> ít nhất 3 sao )
             </p>
-            <p>
+            <p @click="filterStar(2)">
               <i class="fas fa-star" v-for="n in 2" :key="n + 3"></i><i class="far fa-star" v-for="n in 3" :key="n + 1"></i>( ít nhất 2 sao )
             </p>
-            <p>
+            <p @click="filterStar(1)">
               <i class="fas fa-star" v-for="n in 1" :key="n + 4"></i><i class="far fa-star" v-for="n in 4" :key="n + 1"></i>( ít nhất 1 sao )
             </p>
           </div>
@@ -51,9 +50,9 @@
           <ul>
             <li>Ưu tiên xem :</li>
             <li>Hàng mới</li>
-            <li>Hàng mới</li>
-            <li>Hàng mới</li>
-            <li>Hàng mới</li>
+            <li>Bán chạy</li>
+            <li>Gia cao đến thấp</li>
+            <li>Gía thấp đến cao</li>
             <!-- <li>Hàng mới</li> -->
           </ul>
         </div>
@@ -93,6 +92,14 @@ export default {
       let val = (value / 1).toFixed(0).replace(".", ",");
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     },
+    filterStar(item){
+      this.$axios.post('/api/product/filterProduct',{
+        value : item,
+        UserId : this.products.user.id
+      }).then( response =>{
+        this.products = response.data
+      })
+    }
   }
 };
 </script>

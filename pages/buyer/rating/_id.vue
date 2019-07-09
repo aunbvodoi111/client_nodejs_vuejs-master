@@ -6,7 +6,8 @@
         <div class="rating-box-left" v-if="ratings.length > 0">
           <p>Đánh giá trung bình</p>
           <p>{{ mediumstar.toFixed(1) }}/5</p>
-          <i class="fas fa-star" v-for=" n in Math.floor(mediumstar)" :key="n + 5"></i><i class="far fa-star" v-for=" n in 5-Math.floor(mediumstar)" :key="n + 1"></i>
+          <i class="fas fa-star" v-for=" n in Math.floor(mediumstar)" :key="n + 5"></i>
+          <i class="far fa-star" v-for=" n in 5-Math.floor(mediumstar)" :key="n + 1"></i>
           <p class="total-rating">( {{ ratings.length }} nhận xét )</p>
         </div>
         <div class="rating-box-center" v-if="ratings.length > 0">
@@ -86,58 +87,66 @@
             <div class="rating-total">{{ totalStarOne.length }}</div>
           </div>
         </div>
-        <div class="rating-box-right">
+        <!-- <div class="rating-box-right">
           <p>Chia sẻ nhận xét về sản phẩm</p>
           <button @click="toggleCmtAc">{{ titleToggle }}</button>
-        </div>
+        </div>-->
       </div>
       <div class="btn-choose-rating">
         <div class="button">
           <button :class="{highlight:7 == selected}" @click="filterRating(7)">Tất cả</button>
-         <button
-              :class="{highlight:5 == selected}"
-              @click="filterRating(5)"
-            >5 sao({{ totalStarFive.length }})</button>
-            <button
-              :class="{highlight:4 == selected}"
-              @click="filterRating(4)"
-            >4 sao({{ totalStarFour.length }})</button>
-            <button
-              :class="{highlight:3 == selected}"
-              @click="filterRating(3)"
-            >3 sao({{ totalStarThree.length }})</button>
-            <button
-              :class="{highlight:2 == selected}"
-              @click="filterRating(2)"
-            >2 sao({{ totalStarTwo.length }})</button>
-            <button
-              :class="{highlight:1 == selected}"
-              @click="filterRating(1)"
-            >1 sao({{ totalStarOne.length }})</button>
+          <button
+            :class="{highlight:5 == selected}"
+            @click="filterRating(5)"
+          >5 sao({{ totalStarFive.length }})</button>
+          <button
+            :class="{highlight:4 == selected}"
+            @click="filterRating(4)"
+          >4 sao({{ totalStarFour.length }})</button>
+          <button
+            :class="{highlight:3 == selected}"
+            @click="filterRating(3)"
+          >3 sao({{ totalStarThree.length }})</button>
+          <button
+            :class="{highlight:2 == selected}"
+            @click="filterRating(2)"
+          >2 sao({{ totalStarTwo.length }})</button>
+          <button
+            :class="{highlight:1 == selected}"
+            @click="filterRating(1)"
+          >1 sao({{ totalStarOne.length }})</button>
         </div>
       </div>
-      <div class="box-rating" v-for=" item in ratingFilter" :key="item.id">
-        <div class="div">
-          <div class="img">
-            <img src="https://cf.shopee.vn/file/e9534ab02c7d1eceae35917a633d533e_tn" alt />
-          </div>
-          <div class="content">
-            <p>{{ item.user.name}}</p>
-            <p>
-              <i class="fas fa-star" v-for="n in item.star" :key="n + 20"></i><i class="far fa-star" v-for="n in 5 - item.star" :key="n"></i>
-            </p>
-            <div class="product-rating">
-              <div class="img-product">
-                <img :src="item.product.image" alt />
-              </div>
-              <div class="name">
-                <p>{{ item.product.name }}</p>
-                <p>₫{{ item.product.price }}</p>
-              </div>
+      <div v-if="ratingFilter.length > 0">
+        <div class="box-rating" v-for=" item in ratingFilter" :key="item.id">
+          <div class="div">
+            <div class="img">
+              <img src="https://cf.shopee.vn/file/e9534ab02c7d1eceae35917a633d533e_tn" alt />
             </div>
-            <div class="date-rating">{{ moment(item.created_at).fromNow()}}</div>
+            <div class="content">
+              <p>{{ item.user.name}}</p>
+              <p>
+                <i class="fas fa-star" v-for="n in item.star" :key="n + 20"></i>
+                <i class="far fa-star" v-for="n in 5 - item.star" :key="n"></i>
+              </p>
+              <nuxt-link :to="`/${item.id}`">
+                <div class="product-rating">
+                  <div class="img-product">
+                    <img :src="item.product.image" alt />
+                  </div>
+                  <div class="name">
+                    <p>{{ item.product.name }}</p>
+                    <p>₫{{ item.product.price }}</p>
+                  </div>
+                </div>
+              </nuxt-link>
+              <div class="date-rating">{{ moment(item.created_at).fromNow()}}</div>
+            </div>
           </div>
         </div>
+      </div>
+      <div v-else>
+        <h4 style='text-align:center;padding-top : 30px;'>Không có đánh giá nào </h4>
       </div>
     </div>
   </div>
@@ -152,7 +161,7 @@ export default {
   async asyncData({ $axios, params }) {
     const data = await $axios.get("/api/rating/buyer/" + params.id);
     console.log(data);
-    return { ratings: data.data ,ratingFilter : data.data };
+    return { ratings: data.data, ratingFilter: data.data };
   },
   components: {
     StarRating
@@ -173,7 +182,7 @@ export default {
       selected: 7,
       items: [],
       idRating: "",
-      contentRepRating: "",
+      contentRepRating: ""
     };
   },
   beforeMount() {
@@ -227,16 +236,15 @@ export default {
   },
   methods: {
     filterRating(item) {
-      console.log(item)
+      console.log(item);
       this.selected = item;
       this.$axios
         .post("/api/rating/filterRatingBuyer", {
           UserId: this.$route.params.id,
-          value: item,
+          value: item
         })
         .then(response => {
-          this.ratingFilter = response.data
-         
+          this.ratingFilter = response.data;
         });
     },
     toggleCmtAc() {
@@ -305,6 +313,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+a {
+  text-decoration: none;
+}
 .highlight {
   border: 1px solid red !important;
   color: red !important;

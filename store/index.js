@@ -7,7 +7,7 @@ export const state = () => ({
   closeAuth: false,
   toggleChat: false,
   rooms: [],
-  carts: []
+  carts: ''
 })
 
 export const mutations = {
@@ -33,16 +33,15 @@ export const mutations = {
     state.toggleChat = !state.toggleChat
   },
   ADD_CART: function (state, cart) {
-    var index = -1;
-    var addCart = cart
-      for (var i = 0; i < state.carts.length; i++) {
-        console.log('adsdsa')
-        for (var j = 0; j < state.carts[i].cart_details.length; j++) {
-          if(state.carts[i].cart_details[j].id == addCart.id ){
-            state.carts[i].cart_details[j].push(addCart)
-          }
-        }
-      }
+    state.carts += 1  
+    console.log(state.carts)
+  },
+  REDUC_CART: function (state, cart) {
+    state.carts -= 1  
+    console.log(state.carts)
+  },
+  DELETE_CART: function (state, cart) {
+    state.carts -= cart  
     console.log(state.carts)
   },
   ROOMS: function (state, rooms) {

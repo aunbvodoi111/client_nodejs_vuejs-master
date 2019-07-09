@@ -153,8 +153,8 @@ export default {
           } 
       });
     }
-    var carts = data.data.carts;
-    store.commit("LIST_CART", carts);
+    var sumQty = data.data.sumQty;
+    store.commit("LIST_CART", sumQty);
     return {
       carts: data.data.carts,
       product: data.data.products,
@@ -236,7 +236,7 @@ export default {
           })
           .then(response => {
             console.log(response);
-            this.$store.commit("ADD_CART", response.data);
+            this.$store.commit("ADD_CART");
           });
       }
     },

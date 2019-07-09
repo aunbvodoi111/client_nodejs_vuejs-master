@@ -42,14 +42,19 @@ router.get('/', async (req, res) => {
             })
         } else {
             carts = []
-            return res.send({ products: products, cates: cates, carts: carts })
+            // return res.send({ products: products, cates: cates, carts: carts })
         }
 
     } else {
         carts = []
     }
-
-    return res.send({ products: products, cates: cates, carts: carts })
+    var sumQty = 0
+    for (var i = 0; i < carts.length; i++) {
+        for (var j = 0; j < carts[i].cart_details.length; j++) {
+            sumQty = sumQty + carts[i].cart_details[j].qty;
+        }
+    }
+    return res.send({ products: products, cates: cates, sumQty: sumQty })
 })
 
 router.get('/danhmuc/:id', async (req, res) => {
@@ -133,9 +138,71 @@ passport.use(new LocalStrategy({
     }
 ));
 
+
+router.post('/filterRating', async (req, res) => {
+    var { UserId, value } = req.body
+    console.log(req.body)
+    if (value < 6) {
+        var listRating = await models.product.findAll({
+            where: {
+                [Op.and]:
+                    [{ star: value }, { UserId: UserId }]
+            },
+            include: [{
+                model: models.ratings,
+                as: 'ratings',
+                include: [{
+                    model: models.users,
+                }]
+            },
+            { model: models.users }
+            ]
+        })
+    }
+    else if (value == 7) {
+        var listRating = await models.ratings.findAll({
+            where: {
+                ProductId: ProductId
+            },
+            include: [{
+                model: models.rep_ratings,
+                as: 'rep_ratings',
+                include: [{
+                    model: models.users,
+                }]
+            },
+            { model: models.users }
+            ]
+        })
+    }
+    else if (value == 8) {
+        var listRating = await models.ratings.findAll({
+            where: {
+                [Op.and]:
+                    [{ ProductId: ProductId }, {
+                        image: { [Op.ne]: "" }
+                    }]
+            },
+            include: [{
+                model: models.rep_ratings,
+                as: 'rep_ratings',
+
+                include: [{
+                    model: models.users,
+                }]
+            },
+            { model: models.users }
+            ]
+        })
+    }
+
+    return res.status(200).json(listRating)
+})
+
+
 router.get('/detailPr/:id', async (req, res) => {
     var id = req.params.id
-   
+
     var products = await models.products.findOne({
         where: { id: id },
         include: [{
@@ -184,7 +251,7 @@ router.get('/detailPr/:id', async (req, res) => {
         }]
     }).then(function (count) {
         // count is an integer
-        console.log( 'dddddddd' + count)
+        console.log('dddddddd' + count)
         totalRating = count
     });
 
@@ -232,15 +299,15 @@ router.get('/detailPr/:id', async (req, res) => {
                     model: models.users,
                 }]
             })
-            return res.send({ 
-                products: products, 
-                count: count, 
-                follows: follows, 
-                carts: carts, 
-                totalProduct : totalProduct , 
-                totalFollow : totalFollow,
-                totalRating : totalRating 
-             })
+            // return res.send({
+            //     products: products,
+            //     count: count,
+            //     follows: follows,
+            //     carts: carts,
+            //     totalProduct: totalProduct,
+            //     totalFollow: totalFollow,
+            //     totalRating: totalRating
+            // })
         } else {
             carts = []
 
@@ -249,7 +316,19 @@ router.get('/detailPr/:id', async (req, res) => {
     } else {
         carts = []
     }
-    return res.send({ products: products, count: count, follows: follows, carts: carts, totalProduct : totalProduct , totalFollow : totalFollow , totalRating : totalRating})
+    var sumQty = 0
+    for (var i = 0; i < carts.length; i++) {
+        for (var j = 0; j < carts[i].cart_details.length; j++) {
+            sumQty = sumQty + carts[i].cart_details[j].qty;
+        }
+    }
+    console.log(sumQty)
+    return res.send({ 
+        products: products, 
+        count: count, 
+        follows: follows, sumQty: sumQty, 
+        totalProduct: totalProduct, totalFollow: totalFollow,
+        totalRating: totalRating })
 })
 // router.post('/login', async (req, res) => {
 //     console.log(req.body)

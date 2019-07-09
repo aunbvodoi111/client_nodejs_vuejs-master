@@ -88,6 +88,7 @@
 <script>
 import NavBar from "./../../../components/navUser/navbar";
 export default {
+  // middleware: 'authenticated',
   async asyncData({ $axios }) {
     var data = await $axios.get("/api/bill/");
     return {

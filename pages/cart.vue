@@ -23,8 +23,14 @@
             </div>
           </div>
           <div style="display:flex;">
-            <button @click="deleteCart(cart)" style="width : 150px;height : 33px;margin : 10px 50px; background:white;color:red;border:1px solid red;">Có</button>
-            <button @click="toggleComfirmCart = false" style="width : 150px;margin : 10px 50px;height : 33px; background:red;color:white;border:none;">Không</button>
+            <button
+              @click="deleteCart(cart)"
+              style="width : 150px;height : 33px;margin : 10px 50px; background:white;color:red;border:1px solid red;"
+            >Có</button>
+            <button
+              @click="toggleComfirmCart = false"
+              style="width : 150px;margin : 10px 50px;height : 33px; background:red;color:white;border:none;"
+            >Không</button>
           </div>
         </div>
         <div v-else>
@@ -37,7 +43,7 @@
       </div>
     </transition>
     <div class="container-cart">
-      <div class="title-cart">
+      <div class="title-cart" v-if="carts.length">
         <div class="check">
           <label class="container">
             sản phẩm
@@ -105,7 +111,7 @@
           </div>
         </div>
       </div>
-      <div class="popup-total-cart">
+      <div class="popup-total-cart" v-if="carts.length">
         <div class="total-cart">
           <!-- <label class="container">
             Chọn tất cả (8)
@@ -191,7 +197,7 @@ export default {
             qty: prod.qty
           })
           .then(response => {
-            console.log(response);
+            this.$store.commit("REDUC_CART");
           });
       }
     },
@@ -199,10 +205,14 @@ export default {
       console.log(item);
       if (item.qty < item.HomeTeam.qty) {
         item.qty = item.qty + 1;
-        this.$axios.post("/api/cart/changeQty", {
-          ProductId: item.ProductId,
-          qty: item.qty
-        });
+        this.$axios
+          .post("/api/cart/changeQty", {
+            ProductId: item.ProductId,
+            qty: item.qty
+          })
+          .then(response => {
+            this.$store.commit("ADD_CART");
+          });
       } else {
         item.qty = item.HomeTeam.qty;
       }
@@ -232,9 +242,13 @@ export default {
         console.log(index);
       }
 
-      this.$axios.post("/api/cart/deleteCart", {
-        ProductId: prod.ProductId
-      });
+      this.$axios
+        .post("/api/cart/deleteCart", {
+          ProductId: prod.ProductId
+        })
+        .then(response => {
+          this.$store.commit("DELETE_CART",prod.qty);
+        });
     },
     formatPrice(value) {
       let val = (value / 1).toFixed(0).replace(".", ",");
