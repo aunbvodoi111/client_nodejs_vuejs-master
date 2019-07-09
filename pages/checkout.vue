@@ -57,7 +57,7 @@
               <h4>Sản phẩm</h4>
               <p>
                 <span>{{ item.user.name }}</span>
-                <span @click="showDivChat(prod)">Chat ngay</span>
+                <span @click="showDivChat(item)">Chat ngay</span>
               </p>
             </div>
             <div class="img-name-pr">
@@ -84,22 +84,22 @@
           <div class="total-money">
             <p>Thành tiền</p>
             <div class="infor">
-              <!-- <p>₫{{ item.users[0].carts.qty * item.discount }}</p> -->
+              <p>₫{{ formatPrice(prod.qty * prod.HomeTeam.discount) }}</p>
             </div>
           </div>
         </div>
-        <!-- <div class="send-saler">
+        <div class="send-saler">
           <span>Lời nhắn:</span>
-          <input type="text" />
-        </div>-->
+          <input type="text" v-model="message"/>
+        </div>
         <!-- <div class="total-money-product">
           <p>
-            Tổng số tiền ({{ item.users[0].carts.qty }} sản phẩm):
+            Tổng số tiền ({{ sumQtyCart }} sản phẩm):
             <span
               style="color :red "
-            >₫{{ formatPrice(item.users[0].carts.qty * item.discount) }}</span>
+            >₫{{ formatPrice(item.qty * item.discount) }}</span>
           </p>
-        </div>-->
+        </div> -->
       </div>
       <div class="check-out">
         <div class="title">
@@ -117,7 +117,7 @@
           <div class="div-right">
             <div class="div">
               <div>Tổng tiền hàng</div>
-              <!-- <div>₫{{ sumMoneyCart }}</div> -->
+              <div>₫{{ sumMoneyCart }}</div>
             </div>
             <div class="div">
               <div>Phí vận chuyển</div>
@@ -132,9 +132,9 @@
         </div>
         <div class="button">
           <div class="btn-action">
-            <nuxt-link to="/user/order/history">
+            <!-- <nuxt-link to="/user/order/history"> -->
               <button @click="checkoutCart">Đặt hàng</button>
-            </nuxt-link>
+            <!-- </nuxt-link> -->
           </div>
         </div>
       </div>
@@ -152,7 +152,8 @@ export default {
       address: "",
       sum: "",
       UserIdSaler: "",
-      note: ""
+      note: "",
+      message:''
     };
   },
 
@@ -174,13 +175,33 @@ export default {
     };
   },
   computed: {
-    // sumMoneyCart() {
-    //   var sum = 0;
-    //   for (var i = 0; i < this.carts.length; i++) {
-    //     var sum = sum + this.carts[i].discount * this.carts[i].users[0].carts.qty;
-    //   }
-    //   return sum;
-    // },
+    sumQtyCart() {
+      var sum = 0;
+      for (var i = 0; i < this.carts.length; i++) {
+        console.log(this.carts[i]);
+        for (var j = 0; j < this.carts[i].cart_details.length; j++) {
+          if (this.carts[i].cart_details[j].checkBuy == 1) {
+            var sum = sum + this.carts[i].cart_details[j].qty;
+          }
+          console.log(this.carts[i].cart_details[j]);
+        }
+      }
+      return sum;
+    },
+    sumMoneyCart() {
+      var sum = 0;
+      for (var i = 0; i < this.carts.length; i++) {
+        for (var j = 0; j < this.carts[i].cart_details.length; j++) {
+          if (this.carts[i].cart_details[j].checkBuy == 1) {
+            var sum =
+              sum +
+              this.carts[i].cart_details[j].HomeTeam.discount *
+                this.carts[i].cart_details[j].qty;
+          }
+        }
+      }
+      return sum;
+    }
   },
   methods: {
     back() {
@@ -188,6 +209,7 @@ export default {
       this.$router.push("/cart");
     },
     showDivChat(item) {
+      console.log(item)
       if (!this.$store.state.authUser) {
         this.$store.commit("OPEN_REGISTER");
       } else {
@@ -225,10 +247,10 @@ export default {
           phone: this.phone,
           address: this.address,
           UserIdSaler: this.UserIdSaler,
-          note: this.note
+          note: this.message,
         })
         .then(response => {
-          console.log(response);
+          this.$router.push('/user/order/history')
         });
     }
   }
