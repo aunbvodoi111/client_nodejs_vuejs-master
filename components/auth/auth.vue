@@ -16,9 +16,10 @@
         >Đăng nhập</div>
       </div>
       <div class="txt" v-if="!login">
+        <p style="margin-top:20px; color:red;" v-if='errorLogin'>Sai tài khoản hoặc mật khẩu vui lòng kiểm tra lại !</p>
         <div class="txt-form">
           <input type="text" class="txt-control" v-model="auth.email" placeholder="Email">
-          <input type="text" class="txt-control" v-model="auth.password" placeholder="Mật khẩu">
+          <input type="password" class="txt-control" v-model="auth.password" placeholder="Mật khẩu">
           <button class="btn-login" @click="loginAuth">Đăng nhập</button>
           <div class="forget-pass" >Quên mật khẩu ?</div>
           <div class="option-login">Hoặc đăng nhập bằng</div>
@@ -28,11 +29,10 @@
       </div>
       <div class="txt" v-if="login">
         <div class="txt-form">
-          <input type="text" class="txt-control">
-          <input type="text" class="txt-control">
-          <input type="text" class="txt-control">
-          <input type="text" class="txt-control">
-          <input type="text" class="txt-control">
+          <input type="text" class="txt-control" placeholder="Tên đăng nhập">
+          <input type="text" class="txt-control" placeholder="Email">
+          <input type="text" class="txt-control" placeholder="Mật khẩu">
+          <input type="text" class="txt-control" placeholder="Xác nhận mật khẩu">
           <button class="btn-login">Đăng nhập</button>
           <div class="forget-pass">Quên mật khẩu ?</div>
           <div class="option-login">Hoặc đăng nhập bằng</div>
@@ -55,7 +55,8 @@ export default {
         password:'',
         
       },
-      show: true
+      show: true,
+      errorLogin:false
     };
   },
   computed: {
@@ -88,6 +89,8 @@ export default {
           // socket.emit('userOnline',res)
           // this.$store.commit("ROOM_LIST", res.listroom);
         }
+      }).catch(error=>{
+        this.errorLogin = true
       })
     }
   }

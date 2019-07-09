@@ -16,19 +16,20 @@
           <div class="filter-rating">
             <h5>Đánh giá</h5>
             <p>
-              <i class="fas fa-star" v-for="n in 5" :key="n + 1"></i>( ít nhất 4 sao )
+              <i class="fas fa-star" v-for="n in 5" :key="n + 1"></i>( ít nhất 5 sao )
+              
             </p>
             <p>
-              <i class="fas fa-star" v-for="n in 5" :key="n + 2"></i>( ít nhất 4 sao )
+              <i class="fas fa-star" v-for="n in 4" :key="n + 1"></i><i class="far fa-star" v-for="n in 1" :key="n + 1"></i>( ít nhất 4 sao )
             </p>
             <p>
-              <i class="fas fa-star" v-for="n in 5" :key="n + 3"></i>( ít nhất 4 sao )
+              <i class="fas fa-star" v-for="n in 3" :key="n + 2"></i><i class="far fa-star" v-for="n in 2" :key="n + 1"></i> ít nhất 3 sao )
             </p>
             <p>
-              <i class="fas fa-star" v-for="n in 5" :key="n + 4"></i>( ít nhất 4 sao )
+              <i class="fas fa-star" v-for="n in 2" :key="n + 3"></i><i class="far fa-star" v-for="n in 3" :key="n + 1"></i>( ít nhất 2 sao )
             </p>
             <p>
-              <i class="fas fa-star" v-for="n in 5" :key="n + 5"></i>( ít nhất 4 sao )
+              <i class="fas fa-star" v-for="n in 1" :key="n + 4"></i><i class="far fa-star" v-for="n in 4" :key="n + 1"></i>( ít nhất 1 sao )
             </p>
           </div>
           <div class="filter-rating">

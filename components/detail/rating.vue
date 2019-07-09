@@ -94,7 +94,7 @@
     <div class="box-comment" v-if="toggleCmt">
       <div class="action-comment">
         <p class="title">GỬI NHẬN XÉT CỦA BẠN</p>
-
+        <p style="color:red; margin : 10px 0px;" v-if="errorSendRating">Xin vui lòng nhập đủ thông tin khi gửi </p>
         <p>
           1. Đánh giá của bạn về sản phẩm này:
           <star-rating v-model="rating.star" v-bind:star-size="20"></star-rating>
@@ -248,7 +248,8 @@ export default {
       selected: 7,
       showDiv: false,
       anhquy: [],
-      moment: moment
+      moment: moment,
+      errorSendRating : false
     };
   },
   beforeMount() {
@@ -393,59 +394,69 @@ export default {
       // if(findUser == 1){
       //   console.log('dsaaaaaaaaaaaaaaa')
       // }else{
-      this.$axios
-        .post("/api/rating/add", {
-          title: this.rating.title,
-          star: this.rating.star,
-          image: this.rating.image,
-          content: this.rating.content,
-          ProductId: this.product.id
-        })
-        .then(response => {
-          this.product.ratings.unshift({
-            id: response.data.id,
-            user: {
-              name: this.$store.state.authUser.name
-            },
-            title: response.data.title,
-            star: response.data.star,
-            image: response.data.image,
-            content: response.data.content,
-            rep_ratings: []
-          });
-          this.product.ratings.forEach(item => {
-            Vue.set(item, "is_rating", false);
-            Vue.set(item, "contentcmt", "");
-          });
+      if (
+        this.rating.star == "" &&
+        this.rating.title == "" &&
+        this.rating.content == ''
+      ) {
+        // console.log("dsadsa");
+        this.errorSendRating = true
+      } else {
+        this.$axios
+          .post("/api/rating/add", {
+            title: this.rating.title,
+            star: this.rating.star,
+            image: this.rating.image,
+            content: this.rating.content,
+            ProductId: this.product.id
+          })
+          .then(response => {
+            this.product.ratings.unshift({
+              id: response.data.id,
+              user: {
+                name: this.$store.state.authUser.name
+              },
+              title: response.data.title,
+              star: response.data.star,
+              image: response.data.image,
+              content: response.data.content,
+              rep_ratings: []
+            });
+            this.product.ratings.forEach(item => {
+              Vue.set(item, "is_rating", false);
+              Vue.set(item, "contentcmt", "");
+            });
 
-          this.productnew.ratings.unshift({
-            id: response.data.id,
-            user: {
-              name: this.$store.state.authUser.name
-            },
-            title: response.data.title,
-            star: response.data.star,
-            image: response.data.image,
-            content: response.data.content,
-            rep_ratings: []
-          });
+            this.productnew.ratings.unshift({
+              id: response.data.id,
+              user: {
+                name: this.$store.state.authUser.name
+              },
+              title: response.data.title,
+              star: response.data.star,
+              image: response.data.image,
+              content: response.data.content,
+              rep_ratings: []
+            });
 
-          this.productnew.ratings.forEach(item => {
-            Vue.set(item, "is_rating", false);
-            Vue.set(item, "contentcmt", "");
+            this.productnew.ratings.forEach(item => {
+              Vue.set(item, "is_rating", false);
+              Vue.set(item, "contentcmt", "");
+            });
+            var message = {
+              content: "ádasdasd",
+              nameuser: this.product.user.name,
+              roomid: this.product.user.name
+            };
+            socket.emit("send-nofi-cmt", message);
           });
-          var message = {
-            content: "ádasdasd",
-            nameuser: this.product.user.name,
-            roomid: this.product.user.name
-          };
-          socket.emit("send-nofi-cmt", message);
-        });
-      this.toggleCmt = false;
-      this.rating.star = 0;
-      this.rating.name = "";
-      this.rating.title = "";
-      this.rating.content = "";
+        this.toggleCmt = false;
+        this.rating.star = 0;
+        this.rating.name = "";
+        this.rating.title = "";
+        this.rating.content = "";
+        this.errorSendRating = false
+      }
     }
     // }
   }
