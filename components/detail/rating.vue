@@ -109,9 +109,9 @@
         </div>
         <div>
           <span>Thêm hình sản phẩm nếu có :</span>
-          <input type="file" id="upload-file" @change="onImageChange" ref="file">
+          <input type="file" id="upload-file" @change="onImageChange" ref="file" />
           <div class="img-upload">
-            <img :src="rating.image" style="width : 15%">
+            <img :src="rating.image" style="width : 15%" />
             <div class="close" @click="rating.image = ''" v-show="rating.image">x</div>
           </div>
         </div>
@@ -154,68 +154,74 @@
               :class="{highlight:1 == selected}"
               @click="filterRating(1)"
             >1 sao({{ totalStarOne.length }})</button>
-            <button
-              :class="{highlight:7 == selected}"
-              @click="filterRating(7)"
-            >có bình luận({{ totalStarOne.length }})</button>
+            <!-- <button
+              :class="{highlight:9 == selected}"
+              @click="filterRating(9)"
+            >có bình luận({{ totalStarOne.length }})</button>-->
             <button
               :class="{highlight:8 == selected}"
               @click="filterRating(8)"
-            >có hình ảnh({{ totalStarOne.length }})</button>
+            >có hình ảnh({{ isRatingImage.length }})</button>
           </div>
         </div>
       </div>
-      <div class="rating-cmt" v-for="item in productnew.ratings" :key="item.id">
-        <div class="avatar">
-          <div class="inclue-avatar">
-            <div class="div-avatar"></div>
-            <div class="name-customer">{{ item.user.name }}</div>
-            <div class="time">{{ moment(item.created_at).fromNow()}}</div>
+      <div v-if="productnew.ratings.length">
+        <div class="rating-cmt" v-for="item in productnew.ratings" :key="item.id">
+          <div class="avatar">
+            <div class="inclue-avatar">
+              <div class="div-avatar"></div>
+              <div class="name-customer">{{ item.user.name }}</div>
+              <div class="time">{{ moment(item.created_at).fromNow()}}</div>
+            </div>
           </div>
-        </div>
-        <div class="content-cmt">
-          <div>
-            <p>
-              <i class="fas fa-star" v-for="n in item.star" :key=" n + 4"></i>
-              <i class="far fa-star" v-for="n in 5-item.star" :key=" n + 5"></i> Cực Kì Hài Lòng
-            </p>
-            <p class="buy-alredy">Đã mua sản phẩm này tại Tiki</p>
-            <p>{{ item.content }}</p>
-          </div>
-          <div class>
-            <a @click=" item.is_rating = !item.is_rating">Gui trả lời</a>
-          </div>
-
-          <div class="img-cmt">
-            <img
-              :src="item.image"
-              alt
-            >
-          </div>
-          <div class="txt-reply" v-if="item.is_rating">
+          <div class="content-cmt">
+            <div>
+              <p>
+                <i class="fas fa-star" v-for="n in item.star" :key=" n + 4"></i>
+                <i class="far fa-star" v-for="n in 5-item.star" :key=" n + 5"></i> Cực Kì Hài Lòng
+              </p>
+              <p class="buy-alredy">Đã mua sản phẩm này tại Tiki</p>
+              <p>{{ item.content }}</p>
+            </div>
             <div class>
-              <textarea v-model="item.contentcmt"></textarea>
-              <div class="btn-send-rep">
-                <button @click="send_reprating(item)">Gửi câu trả lời</button>
-                <button>Hủy bỏ</button>
+              <a @click=" item.is_rating = !item.is_rating">Gui trả lời</a>
+            </div>
+
+            <div class="img-cmt">
+              <img :src="item.image" alt />
+            </div>
+            <div class="txt-reply" v-if="item.is_rating">
+              <div class>
+                <textarea v-model="item.contentcmt"></textarea>
+                <div class="btn-send-rep">
+                  <button @click="send_reprating(item)">Gửi câu trả lời</button>
+                  <button>Hủy bỏ</button>
+                </div>
+              </div>
+            </div>
+            <div class="rep-rating" v-for="prod in item.rep_ratings" :key="prod.id">
+              <div class="avatar-rep"></div>
+              <div class="content-rep">
+                <p v-if="product.user.id == prod.UserId">
+                  <span>Phản Hồi Của Người Bán</span>
+                </p>
+                <p v-if="product.user.id != prod.UserId">
+                  <span>{{ prod.user.name }}</span>
+                </p>
+                <p>{{ prod.content }}</p>
               </div>
             </div>
           </div>
-          <div class="rep-rating" v-for="prod in item.rep_ratings" :key="prod.id">
-            <div class="avatar-rep"></div>
-            <div class="content-rep">
-              <p v-if="product.user.id == prod.UserId"> <span >Phản Hồi Của Người Bán</span></p>
-              <p v-if="product.user.id != prod.UserId"> <span >{{ prod.user.name }}</span></p>
-              <p>{{ prod.content }}</p>
-            </div>
-          </div>
         </div>
+      </div>
+      <div class style="padding : 10px;" v-else>
+        <h4>Chưa có đánh giá</h4>
       </div>
     </div>
   </div>
 </template>
 <script>
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from "lodash";
 import StarRating from "vue-star-rating";
 import Vue from "vue";
 import moment from "moment";
@@ -225,7 +231,7 @@ export default {
   components: {
     StarRating
   },
-  props: ["product","productnew"],
+  props: ["product", "productnew"],
   data() {
     return {
       toggleCmt: false,
@@ -240,9 +246,9 @@ export default {
       idRating: "",
       contentRepRating: "",
       selected: 7,
-      showDiv:false,
-      anhquy : [],
-      moment : moment
+      showDiv: false,
+      anhquy: [],
+      moment: moment
     };
   },
   beforeMount() {
@@ -290,6 +296,9 @@ export default {
     totalStarOne() {
       return this.product.ratings.filter(star => star.star === 1);
     },
+    isRatingImage() {
+      return this.product.ratings.filter(star => star.image !== "");
+    },
     titleToggle() {
       return this.toggleCmt === true ? "Đóng" : "Viết nhận xét của bạn";
     },
@@ -326,24 +335,24 @@ export default {
     },
     filterRating(item) {
       this.selected = item;
-      this.showDiv = true
+      this.showDiv = true;
       this.$axios
         .post("/api/rating/filterRating", {
-          UserId : this.$store.state.authUser.id,
+          // UserId : this.$store.state.authUser.id,
           ProductId: this.product.id,
-          value: item,
+          value: item
         })
         .then(response => {
-          console.log(response.data)
+          console.log(response.data);
           // this.product = _.cloneDeep(response.data)
           // this.product.ratings =  response.data
 
-          this.productnew.ratings = response.data
+          this.productnew.ratings = response.data;
           this.productnew.ratings.forEach(item => {
             Vue.set(item, "is_rating", false);
-            Vue.set(item, "contentcmt", ""); 
+            Vue.set(item, "contentcmt", "");
           });
-          console.log(this.product.ratings)
+          console.log(this.product.ratings);
         });
     },
     toggleCmtAc() {
@@ -361,21 +370,22 @@ export default {
       this.$axios
         .post("/api/rating/add_reprating", {
           image: "",
-          UserId : this.$store.state.authUser.id,
+          UserId: this.$store.state.authUser.id,
           content: item.contentcmt,
           RatingId: item.id
         })
         .then(response => {
-          item.is_rating = false
-          item.contentcmt = ''
+          item.is_rating = false;
+          item.contentcmt = "";
         });
     },
     sendRating() {
-      
-      var findUser 
-      for( var i = 0 ; i < this.product.ratings.length ; i++){
-        if( this.product.ratings[i].user.name == this.$store.state.authUser.name){
-          findUser = 1
+      var findUser;
+      for (var i = 0; i < this.product.ratings.length; i++) {
+        if (
+          this.product.ratings[i].user.name == this.$store.state.authUser.name
+        ) {
+          findUser = 1;
         }
       }
       // if(findUser == 1){
@@ -390,7 +400,6 @@ export default {
           ProductId: this.product.id
         })
         .then(response => {
-          
           this.product.ratings.unshift({
             id: response.data.id,
             user: {
@@ -430,25 +439,25 @@ export default {
           };
           socket.emit("send-nofi-cmt", message);
         });
-        this.toggleCmt =  false
-          this.rating.star = 0
-          this.rating.name = ''
-          this.rating.title = ''
-          this.rating.content = ''
-      }
+      this.toggleCmt = false;
+      this.rating.star = 0;
+      this.rating.name = "";
+      this.rating.title = "";
+      this.rating.content = "";
+    }
     // }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-.img-upload{
+.img-upload {
   position: relative;
-  margin-top: 20px; 
-  .close{
+  margin-top: 20px;
+  .close {
     position: absolute;
     top: 0;
-    left:14%;
+    left: 14%;
     background: #dfdfdf;
     width: 14px;
     height: 16px;
@@ -456,7 +465,7 @@ export default {
     cursor: pointer;
     font-size: 13px;
   }
-  img{
+  img {
     border: 1px solid#eee;
     padding: 4px;
   }

@@ -1,20 +1,22 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
-  const Notification = sequelize.define('notifications', {
-    content: DataTypes.STRING,
+  const Address = sequelize.define('addresses', {
+    name: DataTypes.STRING,
+    phone: DataTypes.STRING,
+    address: DataTypes.INTEGER,
     UserId: DataTypes.INTEGER,
-    BillId: DataTypes.INTEGER,
   }, {
     updatedAt: 'updated_at',
     createdAt: 'created_at'
   });
-  Notification.associate = function(models) {
+  Address.associate = function(models) {
     // models.Product.belongsTo(models.Cate, {
     //   onDelete: "CASCADE",
     //   foreignKey: {
     //     allowNull: false
     //   }
     // });
+    // Comment.hasMany(models.rep_comments,{ as: 'req_comments', foreignKey: 'CommentId'})
   };
-  return Notification;
+  return Address;
 };

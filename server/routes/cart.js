@@ -33,13 +33,13 @@ router.post('/add', async (req, res) => {
             })
             return res.status(200).json(cartDetail)
         } else {
-            var cart_detail = await models.cart_details.create({ UserIdSaler: UserIdSaler, ProductId: ProductId, qty: qty, UserIdBuyer: req.user.id });
+            var cart_detail = await models.cart_details.create({ UserIdSaler: UserIdSaler, ProductId: ProductId, qty: qty, UserIdBuyer: req.user.id ,CartId : wishesFind.id });
             return res.status(200).json(cart_detail)
         }
     } else {
         var cart = await models.carts.create({ UserIdSaler: UserIdSaler, UserIdBuyer: req.user.id });
         cart.save()
-        var cart_detail = await models.cart_details.create({ UserIdSaler: UserIdSaler, ProductId: ProductId, qty: qty, UserIdBuyer: req.user.id });
+        var cart_detail = await models.cart_details.create({ UserIdSaler: UserIdSaler, ProductId: ProductId, qty: qty, UserIdBuyer: req.user.id, CartId : cart.id });
         cart_detail.save()
     }
     return res.status(200).json(wishesFind)

@@ -35,7 +35,7 @@ router.get('/buyer/:id', async (req, res) => {
 
 router.post('/filterRatingBuyer', async (req, res) => {
     var { UserId, value } = req.body
-    if (value < 6 ) {
+    if (value < 6) {
         var listRating = await models.ratings.findAll({
             where:
                 { star: value }
@@ -47,7 +47,7 @@ router.post('/filterRatingBuyer', async (req, res) => {
             { model: models.users }
             ]
         })
-    }else if (value == 7) {
+    } else if (value == 7) {
         var listRating = await models.ratings.findAll({
             include: [{
                 where: { UserId: UserId },
@@ -71,25 +71,73 @@ router.post('/filterRating', async (req, res) => {
             },
             include: [{
                 model: models.rep_ratings,
-                as: 'rep_ratings'
-            },
-            { model: models.users }
-            ]
-        })
-    } 
-    else if (value == 7) {
-        var listRating = await models.ratings.findAll({
-            where: {
-                ProductId: ProductId 
-            },
-            include: [{
-                model: models.rep_ratings,
-                as: 'rep_ratings'
+                as: 'rep_ratings',
+                include: [{
+                    model: models.users,
+                }]
             },
             { model: models.users }
             ]
         })
     }
+    else if (value == 7) {
+        var listRating = await models.ratings.findAll({
+            where: {
+                ProductId: ProductId
+            },
+            include: [{
+                model: models.rep_ratings,
+                as: 'rep_ratings',
+                include: [{
+                    model: models.users,
+                }]
+            },
+            { model: models.users }
+            ]
+        })
+    }
+    else if (value == 8) {
+        var listRating = await models.ratings.findAll({
+            where:{
+                [Op.and]:
+                    [{ ProductId: ProductId }, { image: {[Op.ne]: "" } 
+                }]
+            },
+            include: [{
+                model: models.rep_ratings,
+                as: 'rep_ratings',
+                
+                include: [{
+                    model: models.users,
+                }]
+            },
+            { model: models.users }
+            ]
+        })
+    }
+    // else if (value == 9) {
+    //     var listRating = await models.ratings.findAll({
+    //         where: {
+    //             ProductId: ProductId
+    //         },
+    //         include: [{
+    //             model: models.rep_ratings,
+    //             as: 'rep_ratings',
+    //             include: [{
+    //                 model: models.users,
+    //             }]
+    //         },
+    //         { model: models.users }
+    //         ]
+    //     })
+    //     var isCheck = listRating.filters(ratings => ratings.rep_ratings.lemh)
+    //     if( listRating.rep_ratings ){
+    //         return res.status(200).json(listRating)
+    //     }else{
+    //         listRating = []
+    //         return res.status(200).json(listRating)
+    //     }
+    // }
     return res.status(200).json(listRating)
 })
 

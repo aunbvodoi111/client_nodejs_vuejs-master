@@ -6,6 +6,7 @@ module.exports = (sequelize, DataTypes) => {
         ProductId: DataTypes.UUID,
         UserIdSaler: DataTypes.UUID,
         UserIdBuyer: DataTypes.UUID,
+        CartId: DataTypes.UUID,
     }, {
             updatedAt: 'updated_at',
             createdAt: 'created_at'
@@ -18,6 +19,9 @@ module.exports = (sequelize, DataTypes) => {
         });
         Cart_detail.hasOne(models.products, {
             as: 'HomeTeam', foreignKey: 'id', sourceKey: 'ProductId'
+        });
+        Cart_detail.belongsTo(models.carts, {
+            foreignKey: 'UserIdSaler', onDelete: "CASCADE"
         });
     };
     return Cart_detail;
