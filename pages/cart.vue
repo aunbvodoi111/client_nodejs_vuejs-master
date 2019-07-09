@@ -8,7 +8,7 @@
             <div class="img">
               <img :src="cart.HomeTeam.image" alt />
             </div>
-            <div class="infor-product-cart">
+            <div class="infor-product-cart" style="padding-left : 20px;">
               <p>{{ cart.HomeTeam.name }}</p>
               <!-- <div class="qty">
                 số lượng sp trong giỏ hàng :
@@ -22,12 +22,17 @@
               </div>
             </div>
           </div>
-          <p @click="deleteCart(cart)">Có</p>
-          <p @click="toggleComfirmCart = false">Không</p>
+          <div style="display:flex;">
+            <button @click="deleteCart(cart)" style="width : 150px;height : 33px;margin : 10px 50px; background:white;color:red;border:1px solid red;">Có</button>
+            <button @click="toggleComfirmCart = false" style="width : 150px;margin : 10px 50px;height : 33px; background:red;color:white;border:none;">Không</button>
+          </div>
         </div>
         <div v-else>
           <p>Bạn chưa chọn sản phẩm nào để mua</p>
-          <button @click="nofiCartBlank" style="width : 100%;    background: #ee4d2d; height : 30px; color : white; margin-top : 30%; border :none;  ">OK</button>
+          <button
+            @click="nofiCartBlank"
+            style="width : 100%;    background: #ee4d2d; height : 30px; color : white; margin-top : 30%; border :none;  "
+          >OK</button>
         </div>
       </div>
     </transition>
@@ -54,7 +59,6 @@
           <label class="container">
             <i class="fas fa-close"></i>Phamquy
             <input type="checkbox" checked="checked" />
-            
           </label>
         </div>
         <div class="cart-main" v-for=" prod in item.cart_details " :key="prod.id">
@@ -103,17 +107,22 @@
       </div>
       <div class="popup-total-cart">
         <div class="total-cart">
-          <label class="container">
+          <!-- <label class="container">
             Chọn tất cả (8)
             <input type="checkbox" checked="checked" />
             <span class="checkmark"></span>
-          </label>
+          </label>-->
           <div>
-            <p>Tổng tiền hàng ({{ sumQtyCart }} sản phẩm): ₫{{ formatPrice(sumMoneyCart) }}</p>
+            <p>
+              Tổng tiền hàng ({{ sumQtyCart }} sản phẩm):
+              <span
+                class="sum-money"
+              >₫{{ formatPrice(sumMoneyCart) }}</span>
+            </p>
           </div>
           <div class="btn-action">
             <nuxt-link to="/checkout" v-if="sumMoneyCart > 0">
-              <button>Thanh toán</button>
+              <button class="btn-buy">Thanh toán</button>
             </nuxt-link>
             <button v-if="sumMoneyCart == 0" @click=" nofiCartBlank">Thanh 11toán</button>
           </div>
@@ -149,12 +158,12 @@ export default {
       cart: {},
       toggleComfirmCart: false,
       item: "",
-      addCartNofi : false
+      addCartNofi: false
     };
   },
   methods: {
-    nofiCartBlank(){
-      this.toggleComfirmCart = !this.toggleComfirmCart
+    nofiCartBlank() {
+      this.toggleComfirmCart = !this.toggleComfirmCart;
     },
     changeStatus(prod) {
       if (prod.checkBuy == 1) {
@@ -202,7 +211,7 @@ export default {
       this.cart = prod;
       this.item = item;
       this.toggleComfirmCart = true;
-      this.addCartNofi = true
+      this.addCartNofi = true;
     },
     deleteCart(prod) {
       console.log(prod);
@@ -264,6 +273,24 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.total-cart {
+  margin-left: 40%;
+  .sum-money {
+    font-size: 1.875rem;
+    line-height: 1.875rem;
+    margin-left: 0.3125rem;
+    color: #ee4d2d;
+  }
+}
+.btn-buy {
+  width: 230px;
+  background: red;
+  color: white;
+  border: none;
+  margin-left: 10px;
+  height: 50px;
+  margin-left: 30px;
+}
 .img-blank {
   width: 1200px;
   background: white;
@@ -411,13 +438,13 @@ button {
     width: 1200px;
     margin: auto;
     .popup-total-cart {
-      position: fixed;
-      align-items: center;
-      -webkit-box-shadow: 3px 4px 29px -10px rgba(0, 0, 0, 0.75);
-      -moz-box-shadow: 3px 4px 29px -10px rgba(0, 0, 0, 0.75);
-      box-shadow: 3px 4px 29px -10px rgba(0, 0, 0, 0.75);
-      z-index: 999;
-      bottom: 0;
+      // position: fixed;
+      // align-items: center;
+      // -webkit-box-shadow: 3px 4px 29px -10px rgba(0, 0, 0, 0.75);
+      // -moz-box-shadow: 3px 4px 29px -10px rgba(0, 0, 0, 0.75);
+      // box-shadow: 3px 4px 29px -10px rgba(0, 0, 0, 0.75);
+      // z-index: 999;
+      // bottom: 0;
       width: 1200px;
       margin: auto;
       height: 120px;
