@@ -108,7 +108,7 @@
       :online ="online"
     />
     <Quesiton :product="product " :follows="follows" />
-    <Rating :product=" product " @totalRating="totalRating" :productnew="productnew" />
+    <Rating :product=" product " @totalRating="totalRating" :productnew="productnew" @mediumstar ="summediumstar" />
     <ProductRelate />
   </div>
 </template>
@@ -255,6 +255,9 @@ export default {
     totalRating(e) {
       this.total = e.total;
       this.mediumstar = e.mediumstar;
+    },
+    summediumstar(e){
+     this.mediumstar = e;
     },
     increment() {
       if (this.qtyProduct == this.product.qty) {

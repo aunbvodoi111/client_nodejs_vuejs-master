@@ -314,6 +314,9 @@ export default {
       );
     }
   },
+  created(){
+    this.$emit('mediumstar', this.mediumstar)
+  },
   methods: {
     onImageChange(e) {
       console.log("1");
