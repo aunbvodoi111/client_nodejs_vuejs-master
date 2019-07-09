@@ -44,6 +44,13 @@ router.get('/listRating', async (req, res) => {
     return res.json(carts)
 })
 
+router.get('/address', async (req, res) => {
+    var provinces = await models.provinces.findAll({})
+    var districts = await models.districts.findAll({})
+    return res.send({ provinces: provinces , districts : districts})
+})
+
+
 router.get('/listFollow', async (req, res) => {
     if (req.user) {
         var follows = await models.follows.findAll({
@@ -53,7 +60,7 @@ router.get('/listFollow', async (req, res) => {
                 ]
             },
             include: [{
-                model : models.users
+                model: models.users
             }]
         });
     }
@@ -157,7 +164,7 @@ router.get('/', async (req, res) => {
 })
 
 router.get('/checkout', async (req, res) => {
-    var carts , provinces, districts
+    var carts, provinces, districts
     if (req.user) {
         provinces = await models.provinces.findAll({})
         districts = await models.districts.findAll({})
@@ -181,7 +188,7 @@ router.get('/checkout', async (req, res) => {
         provinces = []
         districts = []
     }
-    return res.send({ carts:carts , provinces : provinces , districts : districts })
+    return res.send({ carts: carts, provinces: provinces, districts: districts })
 })
 
 router.get('/anhquy', async (req, res) => {

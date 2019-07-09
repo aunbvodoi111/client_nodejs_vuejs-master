@@ -32,6 +32,7 @@ const ratingApi = require('./routes/rating')
 const commentApi = require('./routes/comment')
 const checkoutApi = require('./routes/checkout')
 const billApi = require('./routes/bill')
+const addressApi = require('./routes/address')
 const uploadImage = require('./routes/uploadImage')
 // Import and Set Nuxt.js options
 
@@ -49,6 +50,7 @@ app.use('/api/rating',ratingApi)
 app.use('/api/comment',commentApi)
 app.use('/api/checkout',checkoutApi)
 app.use('/api/upload',uploadImage)
+app.use('/api/address',addressApi)
 app.use('/api/bill',billApi)
 app.use(express.static('public'))
 
