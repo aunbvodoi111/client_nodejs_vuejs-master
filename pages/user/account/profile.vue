@@ -1,29 +1,85 @@
 <template>
   <div class="container-fruid">
     <div class="container">
-        <NavBar/>
+      <NavBar />
       <div class="content-right">
         <div class="content-main">
-          <h1>Thông báo của tôi</h1>
-          <div class="choose-nofi">
-            <div class="btn-act">
-              <button>Cập nhật đơn hàng</button>
-            </div>
-            <div class="btn-act">
-              <button>Cập nhật đánh giá</button>
-            </div>
-            <div class="btn-act">
-              <button>Hoạt động</button>
-            </div>
-            <div class="btn-act">
-              <button>Cập nhật sản phẩm</button>
-            </div>
-          </div>
-          <div class="content-nofi">
+          <h1>Hồ Sơ Của Tôi</h1>
+          <!-- <div class="content-nofi">
             <div class="img">
               <img src="/img/anhdep.png" alt />
               <p>Bạn chưa có thông báo</p>
               <button>Tiếp tục mua sắm</button>
+            </div>
+          </div>-->
+          <div class="content">
+            <div class="content-left">
+              <div class="email">
+                <div class="title-email">
+                  <label>Email</label>
+                </div>
+                <div class="name-email">
+                  <p>phamquycntta@gmail.com</p>
+                </div>
+              </div>
+              <div class="email">
+                <div class="title-email">
+                  <label>Tên Shop</label>
+                </div>
+                <div class="name-email">
+                  <input type="text" class="txt-name-shop">
+                </div>
+              </div>
+              <div class="email">
+                <div class="title-email">
+                  <label>giới tính</label>
+                </div>
+                <div class="name-email">
+                   <input type="radio" name="gender" class="radio">Nam
+                   <input type="radio" name="gender" class="radio"> Nữ
+                </div>
+              </div>
+              <div class="email">
+                <div class="title-email">
+                  <label>Ngày sinh</label>
+                </div>
+                <div class="name-email">
+                  
+                    <div class="from-control">
+                      <select name id class="form-input" v-model="provide">
+                        <option value v-for="(index,n)  in 30">{{ index }}</option>
+                      </select>
+                    </div>
+                    <div class="from-control">
+                      <select name id class="form-input" v-model="provide">
+                        <option value v-for="(index,n)  in 12">{{ index }}</option>
+                      </select>
+                    </div>
+                    <div class="from-control">
+                      <select name id class="form-input" v-model="provide">
+                        <option value v-for="(index,n)  in 30">{{ index }}</option>
+                      </select>
+                    </div>
+                  
+                </div>
+              </div>
+              <div class="email">
+                <div class="title-email">
+                  <button class="save">Lưu</button>
+                </div>
+              </div>
+            </div>
+            <div class="content-right">
+              <div class="img">
+                <img
+                  src="https://cdn.tgdd.vn/Products/Images/42/200438/TimerThumb/oppo-reno-hpbd.jpg"
+                  alt
+                />
+              </div>
+              <label for="file-input">
+                <button class="btn-upload" >Chọn ảnh</button>
+              </label>
+              <input  id="file-input" type="file"/>
             </div>
           </div>
         </div>
@@ -32,12 +88,12 @@
   </div>
 </template>
 <script>
-import NavBar from './../../../components/navUser/navbar' 
+import NavBar from "./../../../components/navUser/navbar";
 export default {
-    components:{
-        NavBar
-    }
-}
+  components: {
+    NavBar
+  }
+};
 </script>
 
 <style lang="scss" scoped>
@@ -57,67 +113,9 @@ ul li {
   display: flex;
   height: auto;
   margin: auto;
-//   .content-left {
-//     width: 20%;
-//     .title {
-//       display: flex;
-//       width: 100%;
-//       .img {
-//         width: 20%;
-//         img {
-//           width: 100%;
-//           border-radius: 100%;
-//         }
-//       }
-//       .name-user {
-//         width: 70%;
-//         margin-left: 10px;
-//         p {
-//           font-size: 13px;
-//           margin-bottom: 5px;
-//           color: #242424;
-//           margin-top: 5px;
-//           font-family: Roboto;
-//           font-weight: 300;
-//         }
-//         span {
-//           margin: 0;
-//           font-family: Roboto;
-//           font-size: 17px;
-//           font-weight: 400;
-//           font-style: normal;
-//           font-stretch: normal;
-//           color: #242424;
-//         }
-//       }
-//     }
-//     .nav-tab {
-//       width: 100%;
-//       ul {
-//         width: 100%;
-//         padding: 0px;
-//         margin-top: 15px;
-//         li {
-//           margin-top: 15px;
-//           i {
-//             width: 10%;
-//             color: #999;
-//           }
-//           a {
-//             width: 85%;
-//             color: #4a4a4a;
-//             font-size: 15px;
-//             font-weight: 400;
-//             font-style: normal;
-//             font-stretch: normal;
-//             text-align: left;
-//           }
-//         }
-//       }
-//     }
-//   }
   .content-right {
     width: 80%;
+    padding: 10px;
     .content-main {
       h1 {
         margin-bottom: 15px;
@@ -164,6 +162,70 @@ ul li {
             height: 40px;
             color: black;
             border: none;
+          }
+        }
+      }
+      .content {
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.13);
+        display: flex;
+        padding: 20px;
+        .content-left {
+          width: 70%;
+          .email {
+            display: flex;
+            margin-top: 18px; 
+            .title-email {
+              width: 25%;
+              label {
+                text-align: right;
+                color: rgba(85, 85, 85, 0.8);
+                font-size: 15px; 
+              }
+              .save{
+                width: 100px;
+                height: 30px;
+                background: red;
+                color: white;
+                border: 1px solid red;
+                cursor: pointer;
+              }
+            }
+            .name-email{
+              width: 80%;
+              display: flex;
+              .form-input{
+                width:  80%;
+                margin-left: 20px; 
+                height: 25px;
+              }
+              .radio{
+                margin-left: 13px; 
+              }
+              p{
+                font-size: 15px; 
+                margin-left: 20px; 
+              }
+              .txt-name-shop{
+                margin-left: 20px; 
+                outline: none;
+                padding: 10px;
+                width: 60%;
+                height: 35px;
+                border-radius: 5px; 
+              }
+            }
+          }
+        }
+        .content-right {
+          width: 30%;
+          .img {
+            width: 50%;
+            img {
+              width: 100%;
+            }
+          }
+          #file-input{
+            display: none;
           }
         }
       }

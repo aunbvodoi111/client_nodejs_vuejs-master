@@ -11,11 +11,6 @@
             </div>
           </div>
           <div class="content-nofi">
-            <!-- <div class="img">
-              <img src="/img/anhdep.png" alt />
-              <p>Bạn chưa có thông báo</p>
-              <button>Tiếp tục mua sắm</button>
-            </div>-->
             <div class="content">
               <div class="popup-infor-customer" v-if="showPop">
                 <div class="pop">
