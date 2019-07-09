@@ -119,21 +119,29 @@ import saler from "./../components/detail/saler";
 import Quesiton from "./../components/detail/question";
 import socket from "~/plugins/socket.io.js";
 import Vue from "vue";
+import { cloneDeep } from 'lodash'
 export default {
   transition: "bounceok",
   async asyncData({ params, $axios, req, store }) {
     const data = await $axios.get("/api/product/detailPr/" + params.id);
     var rating1 = [];
+    console.log(data.data)
     data.data.products.ratings.forEach(item => {
       Vue.set(item, "is_rating", false);
       Vue.set(item, "contentcmt", "");
     });
+
     data.data.products.comments.forEach(item => {
       Vue.set(item, "is_comments", false);
       Vue.set(item, "rep_comment", "");
     });
     var product = data.data.products
     var online = 0
+    var productnew = cloneDeep(data.data.products)
+    productnew.ratings.forEach(item => {
+      Vue.set(item, "is_rating", false);
+      Vue.set(item, "contentcmt", "");
+    });
     if (store.state.authUser) {
       await socket.emit("joinRoom", store.state.authUser.name);
       socket.on("userOnline", async (data) => {
@@ -142,7 +150,7 @@ export default {
             if (data[socketId].data === product.user.name) {
               var online = 1;
             }
-          }
+          } 
       });
     }
     var carts = data.data.carts;
@@ -150,7 +158,7 @@ export default {
     return {
       carts: data.data.carts,
       product: data.data.products,
-      productnew: data.data.products,
+      productnew: productnew,
       count: data.data.count,
       follows: data.data.follows,
       online : online,

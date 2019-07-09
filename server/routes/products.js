@@ -144,9 +144,11 @@ router.get('/detailPr/:id', async (req, res) => {
             include: [{
                 model: models.rep_ratings,
                 as: 'rep_ratings',
+                include: [{
+                    model: models.users,
+                }]
             },
             { model: models.users },
-
             ]
         }, { model: models.users },
         {
@@ -155,7 +157,7 @@ router.get('/detailPr/:id', async (req, res) => {
             include: [{
                 model: models.rep_comments,
                 as: 'req_comments',
-            },
+            }
             ]
         }
         ],

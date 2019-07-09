@@ -108,11 +108,12 @@
           <textarea name id cols="30" rows="8" class="txt-content-main" v-model="rating.content"></textarea>
         </div>
         <div>
-          <span>Thêm hình sản phẩm nếu có (tối đa 5 hình):</span>
-          <input type="file" id="upload-image" />
-          <label for="upload-image">
-            <button>Chọn hình ảnh</button>
-          </label>
+          <span>Thêm hình sản phẩm nếu có :</span>
+          <input type="file" id="upload-file" @change="onImageChange" ref="file">
+          <div class="img-upload">
+            <img :src="rating.image" style="width : 15%">
+            <div class="close" @click="rating.image = ''" v-show="rating.image">x</div>
+          </div>
         </div>
         <div class="btn-send-rating">
           <button @click="sendRating">Gửi nhận xét</button>
@@ -164,7 +165,7 @@
           </div>
         </div>
       </div>
-      <div class="rating-cmt" v-for="item in anhquy" :key="item.id">
+      <div class="rating-cmt" v-for="item in productnew.ratings" :key="item.id">
         <div class="avatar">
           <div class="inclue-avatar">
             <div class="div-avatar"></div>
@@ -186,10 +187,10 @@
           </div>
 
           <div class="img-cmt">
-            <!-- <img
-              :src="product.image"
+            <img
+              :src="item.image"
               alt
-            >-->
+            >
           </div>
           <div class="txt-reply" v-if="item.is_rating">
             <div class>
@@ -203,7 +204,8 @@
           <div class="rep-rating" v-for="prod in item.rep_ratings" :key="prod.id">
             <div class="avatar-rep"></div>
             <div class="content-rep">
-              <p>Phản Hồi Của Người Bán <span v-if="product.user.id == prod.UserId">dddddđ</span></p>
+              <p v-if="product.user.id == prod.UserId"> <span >Phản Hồi Của Người Bán</span></p>
+              <p v-if="product.user.id != prod.UserId"> <span >{{ prod.user.name }}</span></p>
               <p>{{ prod.content }}</p>
             </div>
           </div>
@@ -223,7 +225,7 @@ export default {
   components: {
     StarRating
   },
-  props: ["product"],
+  props: ["product","productnew"],
   data() {
     return {
       toggleCmt: false,
@@ -303,6 +305,25 @@ export default {
     }
   },
   methods: {
+    onImageChange(e) {
+      console.log("1");
+      let file;
+      file = this.$refs.file.files[0];
+      let formData = new FormData();
+      console.log(file);
+      formData.append("file", file);
+      this.$axios
+        .post("/api/upload", formData, {
+          headers: { "Content-Type": "multipart/form-data" }
+        })
+        .then(response => {
+          this.rating.image = "/img/" + response.data;
+          console.log(response.data);
+        })
+        .catch(function() {
+          console.log("FAILURE!!");
+        });
+    },
     filterRating(item) {
       this.selected = item;
       this.showDiv = true
@@ -317,10 +338,10 @@ export default {
           // this.product = _.cloneDeep(response.data)
           // this.product.ratings =  response.data
 
-          this.anhquy = response.data
-          this.anhquy.forEach(item => {
+          this.productnew.ratings = response.data
+          this.productnew.ratings.forEach(item => {
             Vue.set(item, "is_rating", false);
-            Vue.set(item, "contentcmt", "");
+            Vue.set(item, "contentcmt", ""); 
           });
           console.log(this.product.ratings)
         });
@@ -334,12 +355,13 @@ export default {
     },
     send_reprating(item) {
       console.log(item);
-      var rating = this.anhquy.find(star => star.id === item.id);
+      var rating = this.productnew.ratings.find(star => star.id === item.id);
       console.log(rating);
       rating.rep_ratings.push({ content: item.contentcmt });
       this.$axios
         .post("/api/rating/add_reprating", {
           image: "",
+          UserId : this.$store.state.authUser.id,
           content: item.contentcmt,
           RatingId: item.id
         })
@@ -356,9 +378,9 @@ export default {
           findUser = 1
         }
       }
-      if(findUser == 1){
-        console.log('dsaaaaaaaaaaaaaaa')
-      }else{
+      // if(findUser == 1){
+      //   console.log('dsaaaaaaaaaaaaaaa')
+      // }else{
       this.$axios
         .post("/api/rating/add", {
           title: this.rating.title,
@@ -385,7 +407,7 @@ export default {
             Vue.set(item, "contentcmt", "");
           });
 
-          this.anhquy.unshift({
+          this.productnew.ratings.unshift({
             id: response.data.id,
             user: {
               name: this.$store.state.authUser.name
@@ -397,7 +419,7 @@ export default {
             rep_ratings: []
           });
 
-          this.anhquy.forEach(item => {
+          this.productnew.ratings.forEach(item => {
             Vue.set(item, "is_rating", false);
             Vue.set(item, "contentcmt", "");
           });
@@ -414,13 +436,31 @@ export default {
           this.rating.title = ''
           this.rating.content = ''
       }
-    }
+    // }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-
+.img-upload{
+  position: relative;
+  margin-top: 20px; 
+  .close{
+    position: absolute;
+    top: 0;
+    left:14%;
+    background: #dfdfdf;
+    width: 14px;
+    height: 16px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  img{
+    border: 1px solid#eee;
+    padding: 4px;
+  }
+}
 .highlight {
   border: 1px solid red !important;
   color: red !important;

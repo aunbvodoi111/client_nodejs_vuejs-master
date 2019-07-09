@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
     //     allowNull: false
     //   }
     // });
+    Rep_rating.belongsTo(models.users, {foreignKey: 'UserId'});
   };
   return Rep_rating;
 };
