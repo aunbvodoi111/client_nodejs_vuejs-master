@@ -44,7 +44,11 @@
                     <div class="from-control">
                       <select name id class="form-input" v-model="district">
                         <option value>Quận/huyện</option>
-                        <option v-for="item in listDistrict" :key="item.id">{{ item.district_name }}</option>
+                        <option
+                          v-for="item in listDistrict"
+                          :key="item.id"
+                          :value="item.id"
+                        >{{ item.district_name }}</option>
                       </select>
                     </div>
                     <div class="from-control">
@@ -59,6 +63,42 @@
                   <div class="btn-action">
                     <button @click="showPop = false">Trở lại</button>
                     <button @click="add">Hoàn thành</button>
+                  </div>
+                </div>
+              </div>
+              <div class="address-list">
+                <div class="div-left">
+                  <div class="row-ct">
+                    <div class="title">
+                      <label for>Tên</label>
+                    </div>
+                    <div class="content">Đỗ Ngọc Hoa</div>
+                  </div>
+                  <div class="row-ct">
+                    <div class="title">
+                      <label for>Số Điện Thoại</label>
+                    </div>
+                    <div class="content">(+84) 354389544</div>
+                  </div>
+                  <div class="row-ct">
+                    <div class="title">
+                      <label for>Địa Chỉ</label>
+                    </div>
+                    <div class="content">
+                      Toà hei tower số 1 Nguỵ Như Kon Tum
+                      Phường Nhân Chính
+                      Quận Thanh Xuân
+                      Hà Nội
+                    </div>
+                  </div>
+                </div>
+                <div class="div-right">
+                  <div class="action">
+                    <p>Sửa</p>
+                    <p>Xóa</p>
+                  </div>
+                  <div class="button">
+                    <button>Thiết lập mặc định</button>
                   </div>
                 </div>
               </div>
@@ -91,7 +131,8 @@ export default {
 
     return {
       provinces: data.data.provinces,
-      districts: data.data.districts
+      districts: data.data.districts,
+      addresss: data.data.addresss
     };
   },
   computed: {
@@ -106,19 +147,18 @@ export default {
 
   methods: {
     add() {
-      var id = this.provinces.find(
-        item => item.id == this.provide
-      );
-      this.$axios.post('/api/address/add',{
-          name : this.name,
-          phone : this.phone,
-          provide : this.provide,
-          district : this.district,
-          address : this.address,
-      }).then(response=>{
-          console.log('ok')
-      })
-
+      var id = this.provinces.find(item => item.id == this.provide);
+      this.$axios
+        .post("/api/address/add", {
+          name: this.name,
+          phone: this.phone,
+          ProvideId: this.provide,
+          DistrictId: this.district,
+          address: this.address
+        })
+        .then(response => {
+          console.log("ok");
+        });
     }
   }
 };
@@ -194,6 +234,54 @@ ul li {
         }
       }
       .content {
+        display: flex;
+
+        .address-list {
+          display: flex;
+          padding: 20px;
+          border-bottom: 1px solid #efefef;
+          width: 100%;
+          .div-left {
+            width: 70%;
+            .row-ct {
+              width: 100%;
+              display: flex;
+              margin-top: 20px;
+              .title {
+                width: 20%;
+              }
+              .content {
+                width: 80%;
+              }
+            }
+          }
+          .div-right {
+            width: 30%;
+            padding-left: 20px;
+            .action {
+              display: flex;
+              p {
+                margin-right: 15px;
+                text-decoration: underline;
+                cursor: pointer;
+              }
+            }
+            .button {
+              width: 130px;
+              height: 35px;
+              margin-top: 30px;
+              button {
+                width: 100%;
+                background: white;
+                color: black;
+                height: 100%;
+
+                border: 1px solid rgba(0, 0, 0, 0.09);
+                box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.03);
+              }
+            }
+          }
+        }
         .popup-infor-customer {
           position: fixed;
           width: 100vw;

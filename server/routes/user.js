@@ -46,8 +46,18 @@ router.get('/listRating', async (req, res) => {
 
 router.get('/address', async (req, res) => {
     var provinces = await models.provinces.findAll({})
-    var districts = await models.districts.findAll({})
-    return res.send({ provinces: provinces , districts : districts})
+    var districts = await models.districts.findAll({}) 
+    var addresss = await models.addresses.findAll({
+        include: [{
+            model: models.districts,
+            as: 'district'
+        }],
+        include: [{
+            model: models.provinces,
+            as: 'province'
+        }]
+    })
+    return res.send({ provinces: provinces , districts : districts, addresss : addresss})
 })
 
 

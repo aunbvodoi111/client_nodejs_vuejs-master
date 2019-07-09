@@ -8,8 +8,9 @@ const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 var models = require('../models');
 router.post('/add', async (req, res) => {
-    var { phone , name , provide , district , address } = req.body
-    var addresseNew = await models.addresses.create({ phone: phone, UserId : req.user.id ,name: name ,address :  address +','+ district +','+ provide  });
+    var { phone , name , ProvinceId , DistrictId , address } = req.body
+    console.log( req.body )
+    var addresseNew = await models.addresses.create({ phone: phone, UserId : req.user.id ,name: name ,address :  address , ProvinceId : ProvinceId , DistrictId : DistrictId});
     addresseNew.save()
     return res.status(200).json('ok')
 })
