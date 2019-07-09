@@ -344,9 +344,6 @@ export default {
         })
         .then(response => {
           console.log(response.data);
-          // this.product = _.cloneDeep(response.data)
-          // this.product.ratings =  response.data
-
           this.productnew.ratings = response.data;
           this.productnew.ratings.forEach(item => {
             Vue.set(item, "is_rating", false);
@@ -366,7 +363,12 @@ export default {
       console.log(item);
       var rating = this.productnew.ratings.find(star => star.id === item.id);
       console.log(rating);
-      rating.rep_ratings.push({ content: item.contentcmt });
+      rating.rep_ratings.push({
+        content: item.contentcmt,
+        user: {
+          name: this.$store.state.authUser.name
+        }
+      });
       this.$axios
         .post("/api/rating/add_reprating", {
           image: "",
