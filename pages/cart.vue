@@ -63,7 +63,7 @@
         </div>-->
         <div class="saler-cart">
           <label class="container">
-            <i class="fas fa-close"></i>Phamquy
+            <i class="fas fa-close"></i>{{ item.user.name }}
             <input type="checkbox" checked="checked" />
           </label>
         </div>
@@ -88,7 +88,7 @@
             </div>
           </div>
           <div class="price">
-            <p>₫190.000 ₫ {{ formatPrice(prod.HomeTeam.price) }}</p>
+            <p>₫{{ formatPrice(prod.HomeTeam.price) }} ₫ {{ formatPrice(prod.HomeTeam.discount) }}</p>
           </div>
           <div class="price">
             <div class="qty-action">
@@ -104,7 +104,7 @@
             </div>
           </div>
           <div class="price-sum">
-            <p>₫396.000</p>
+            <p>₫{{ formatPrice(prod.qty * prod.HomeTeam.discount) }}</p>
           </div>
           <div class="action">
             <p @click="showPopCart(prod,item)">Xóa</p>
@@ -130,7 +130,7 @@
             <nuxt-link to="/checkout" v-if="sumMoneyCart > 0">
               <button class="btn-buy">Thanh toán</button>
             </nuxt-link>
-            <button v-if="sumMoneyCart == 0" @click=" nofiCartBlank">Thanh 11toán</button>
+            <button v-if="sumMoneyCart == 0" @click=" nofiCartBlank" class="btn-buy" >Thanh toán</button>
           </div>
         </div>
       </div>
@@ -514,6 +514,9 @@ button {
         }
         .action {
           width: 13.65%;
+          p{
+            cursor: pointer;
+          }
         }
       }
     }

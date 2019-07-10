@@ -61,12 +61,11 @@ router.get('/danhmuc/:id', async (req, res) => {
     var cates = await models.cates.findOne({
         where: { id: req.params.id },
         include: [{
+            model: models.products,
+            as: 'products',
+        },{
             model: models.subcates,
             as: 'subcates',
-            include: [{
-                model: models.products,
-                as: 'products',
-            }]
         }]
     });
     // var products = await models.products.findAll({
@@ -218,6 +217,7 @@ router.get('/detailPr/:id', async (req, res) => {
             { model: models.users },
             ]
         }, { model: models.users },
+           { model: models.subcates },
         {
             model: models.comments,
             as: 'comments',

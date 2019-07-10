@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
     //   }
     // });
     Cate.hasMany(models.subcates,{ as: 'subcates', foreignKey: 'CateId'})
+    Cate.hasMany(models.products,{ as: 'products', foreignKey: 'CateId'})
     
   };
   return Cate;

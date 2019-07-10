@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
     khuyenmai: DataTypes.STRING,
     qty: DataTypes.INTEGER,
     image: DataTypes.STRING,
+    sold: DataTypes.INTEGER,
   }, {
       updatedAt: 'updated_at',
       createdAt: 'created_at'
@@ -18,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
   Product.associate = function (models) {
     Product.hasMany(models.ratings,{ as: 'ratings', foreignKey: 'ProductId'})
     Product.hasMany(models.comments,{ as: 'comments', foreignKey: 'ProductId'})
+    Product.belongsTo(models.subcates,{ foreignKey: 'SubcateId'})
     Product.belongsTo(models.users, {foreignKey: 'UserId'});
     // Product.belongsToMany(models.users, {  
     //   as: 'users',

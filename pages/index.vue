@@ -1,22 +1,22 @@
 <template>
   <div class="container-content">
     <div class="container">
-      <div class="title-content">
-        
-      </div>
+      <div class="title-content"></div>
       <div class="swiper-container">
         <h4>Sản phẩm nổi bật</h4>
         <div class="swiper-wrapper">
           <div class="swiper-slide" v-for="item in products" :key="item.id">
             <div class="product-div">
-              <div class="img">
-                <img :src="item.image" alt />
-              </div>
+              <nuxt-link :to="`/${item.id}`">
+                <div class="img">
+                  <img :src="item.image" alt />
+                </div>
+              </nuxt-link>
               <div class="name">
                 <a href>{{ item.name }}</a>
               </div>
               <div class="price">
-                <p>₫{{ formatPrice(item.price) }}</p>
+                <p>₫{{ formatPrice(item.discount) }}</p>
               </div>
             </div>
           </div>
@@ -27,8 +27,8 @@
         <div class="swiper-button-next"></div>
         <div class="swiper-button-prev"></div>
       </div>
-        <h4 style="margin-top : 30px;">Danh mục</h4>
-      <div class="product-content">
+      <h4 style="margin-top : 30px;">Danh mục</h4>
+      <div class="cate-content">
         <div class="cate" v-for="item in cates" :key="item.id">
           <div class="cate-div">
             <nuxt-link :to="`/danhmuc/${item.id}`">
@@ -41,9 +41,9 @@
         </div>
         <div style=" clear:both;"></div>
       </div>
-      
-        <h4 style="margin-top : 30px;">Gợi ý hôm nay</h4>
-     
+
+      <h4 style="margin-top : 30px;">Gợi ý hôm nay</h4>
+
       <div class="product-content">
         <div class="product" v-for="item in products" :key="item.id">
           <div class="product-div" @click="submit(item)">
@@ -56,7 +56,7 @@
               <nuxt-link :to="`/${item.name}`">{{ item.name }}</nuxt-link>
             </div>
             <div class="price">
-              <p>₫{{ formatPrice(item.price) }}</p>
+              <p>₫{{ formatPrice(item.discount) }}</p>
             </div>
           </div>
         </div>
@@ -82,7 +82,7 @@ export default {
     if (store.state.authUser) {
       socket.emit("joinRoom", store.state.authUser.name);
     }
-    console.log(data)
+    console.log(data);
     store.commit("LIST_CART", data.data.sumQty);
     return { products: data.data.products, cates: data.data.cates };
   },
@@ -223,7 +223,7 @@ a:hover {
         width: 100%;
         height: 50px;
       }
-      .product-content {
+      .cate-content {
         width: 100%;
         display: flex;
         .cate {
@@ -233,17 +233,22 @@ a:hover {
             background: white;
             border-right: 1px solid rgba(0, 0, 0, 0.05);
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            padding-bottom: 10px; 
+            padding-bottom: 10px;
             .img {
               img {
                 width: 100%;
               }
             }
-            p{
+            p {
               text-align: center;
             }
           }
         }
+      }
+      .product-content {
+        width: 100%;
+        // display: flex;
+
         .product {
           float: left;
           width: 16.6%;

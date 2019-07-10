@@ -94,7 +94,10 @@
     <div class="box-comment" v-if="toggleCmt">
       <div class="action-comment">
         <p class="title">GỬI NHẬN XÉT CỦA BẠN</p>
-        <p style="color:red; margin : 10px 0px;" v-if="errorSendRating">Xin vui lòng nhập đủ thông tin khi gửi </p>
+        <p
+          style="color:red; margin : 10px 0px;"
+          v-if="errorSendRating"
+        >Xin vui lòng nhập đủ thông tin khi gửi</p>
         <p>
           1. Đánh giá của bạn về sản phẩm này:
           <star-rating v-model="rating.star" v-bind:star-size="20"></star-rating>
@@ -249,7 +252,7 @@ export default {
       showDiv: false,
       anhquy: [],
       moment: moment,
-      errorSendRating : false
+      errorSendRating: false
     };
   },
   beforeMount() {
@@ -314,8 +317,10 @@ export default {
       );
     }
   },
-  created(){
-    this.$emit('mediumstar', this.mediumstar)
+  created() {
+    if (this.mediumstar) {
+      this.$emit("mediumstar", this.mediumstar);
+    }
   },
   methods: {
     onImageChange(e) {
@@ -383,6 +388,9 @@ export default {
         .then(response => {
           item.is_rating = false;
           item.contentcmt = "";
+          if (this.mediumstar) {
+            this.$emit("mediumstar", this.mediumstar);
+          }
         });
     },
     sendRating() {
@@ -400,10 +408,10 @@ export default {
       if (
         this.rating.star == "" &&
         this.rating.title == "" &&
-        this.rating.content == ''
+        this.rating.content == ""
       ) {
         // console.log("dsadsa");
-        this.errorSendRating = true
+        this.errorSendRating = true;
       } else {
         this.$axios
           .post("/api/rating/add", {
@@ -458,7 +466,7 @@ export default {
         this.rating.name = "";
         this.rating.title = "";
         this.rating.content = "";
-        this.errorSendRating = false
+        this.errorSendRating = false;
       }
     }
     // }

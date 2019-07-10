@@ -7,28 +7,25 @@
           <div class="filter-cate">
             <p>Theo danh mục</p>
             <ul>
-              <li>điển thoại</li>
-              <li>điển thoại</li>
-              <li>điển thoại</li>
-              <li>điển thoại</li>
+              <li v-for="item in products.subcates" @click="filter(item.id)" :key="item.id">{{ item.name }}</li>
             </ul>
           </div>
           <div class="filter-rating">
             <h5>Đánh giá</h5>
             <p>
-              <i class="fas fa-star" v-for="n in 5"></i>( ít nhất 4 sao )
+              <i class="fas fa-star" v-for="n in 5"></i>( ít nhất 5 sao )
             </p>
             <p>
               <i class="fas fa-star" v-for="n in 5"></i>( ít nhất 4 sao )
             </p>
             <p>
-              <i class="fas fa-star" v-for="n in 5"></i>( ít nhất 4 sao )
+              <i class="fas fa-star" v-for="n in 5"></i>( ít nhất 3 sao )
             </p>
             <p>
-              <i class="fas fa-star" v-for="n in 5"></i>( ít nhất 4 sao )
+              <i class="fas fa-star" v-for="n in 5"></i>( ít nhất 2 sao )
             </p>
             <p>
-              <i class="fas fa-star" v-for="n in 5"></i>( ít nhất 4 sao )
+              <i class="fas fa-star" v-for="n in 5"></i>( ít nhất 1 sao )
             </p>
           </div>
           <div class="filter-rating">
@@ -50,32 +47,33 @@
           <ul>
             <li>Ưu tiên xem :</li>
             <li>Hàng mới</li>
-            <li>Hàng mới</li>
-            <li>Hàng mới</li>
-            <li>Hàng mới</li>
-            <!-- <li>Hàng mới</li> -->
+            <li>Gía thâp đến cao</li>
+            <li>Gía cao đến thấp</li>
           </ul>
         </div>
       </div>
-      <div class="product-content">
-        <div class="product" v-for="item in products.subcates" :key="item.id">
-          <div class="product-div" v-for="prod in item.products" :key="prod.id">
-            <nuxt-link :to="`/${prod.id}`">
+      <div class="product-content" v-if="listProduct.length > 0 ">
+        <div class="product" v-for="item in listProduct" :key="item.id">
+          <div class="product-div">
+            <nuxt-link :to="`/${item.id}`">
               <div class="img">
-                <img :src="prod.image" alt />
+                <img :src="item.image" alt />
               </div>
             </nuxt-link>
-            <nuxt-link :to="`/${prod.id}`">
+            <nuxt-link :to="`/${item.id}`">
               <div class="name">
-                <a href>{{ prod.name }}</a>
+                <a href>{{ item.name }}</a>
               </div>
             </nuxt-link>
             <div class="price">
-              <p>{{ prod.price }} đ</p>
+              <p>₫{{ formatPrice(item.discount) }} </p>
             </div>
           </div>
         </div>
         <div style=" clear:both;"></div>
+      </div>
+      <div v-else>
+        <h4 style="text-align:center;">Không tìm thấy sản phẩm nào phù hợp</h4>
       </div>
     </div>
   </div>
@@ -86,6 +84,29 @@ export default {
     var data = await $axios.get("/api/product/danhmuc/" + params.id);
     console.log(data.data.cates);
     return { products: data.data.cates };
+  },
+  computed: {
+    listProduct() {
+      if (this.CateId) {
+        return this.products.products.filter(
+          product => product.CateId === product.CateId
+        );
+      } else {
+        return this.products.products;
+      }
+    },
+    formatPrice(value) {
+      let val = (value / 1).toFixed(0).replace(".", ",");
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+  },
+  data() {
+    return {
+      CateId: ""
+    };
+  },
+  filter(value) {
+    this.CateId = value;
   }
 };
 </script>

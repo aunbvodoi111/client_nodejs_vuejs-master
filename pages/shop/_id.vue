@@ -19,23 +19,27 @@
               <i class="fas fa-star" v-for="n in 5" :key="n + 1"></i>( ít nhất 5 sao )
             </p>
             <p @click="filterStar(4)">
-              <i class="fas fa-star" v-for="n in 4" :key="n + 1"></i><i class="far fa-star" v-for="n in 1" :key="n + 1"></i>( ít nhất 4 sao )
+              <i class="fas fa-star" v-for="n in 4" :key="n + 1"></i>
+              <i class="far fa-star" v-for="n in 1" :key="n + 1"></i>( ít nhất 4 sao )
             </p>
             <p @click="filterStar(3)">
-              <i class="fas fa-star" v-for="n in 3" :key="n + 2"></i><i class="far fa-star" v-for="n in 2" :key="n + 1"></i> ít nhất 3 sao )
+              <i class="fas fa-star" v-for="n in 3" :key="n + 2"></i>
+              <i class="far fa-star" v-for="n in 2" :key="n + 1"></i> ít nhất 3 sao )
             </p>
             <p @click="filterStar(2)">
-              <i class="fas fa-star" v-for="n in 2" :key="n + 3"></i><i class="far fa-star" v-for="n in 3" :key="n + 1"></i>( ít nhất 2 sao )
+              <i class="fas fa-star" v-for="n in 2" :key="n + 3"></i>
+              <i class="far fa-star" v-for="n in 3" :key="n + 1"></i>( ít nhất 2 sao )
             </p>
             <p @click="filterStar(1)">
-              <i class="fas fa-star" v-for="n in 1" :key="n + 4"></i><i class="far fa-star" v-for="n in 4" :key="n + 1"></i>( ít nhất 1 sao )
+              <i class="fas fa-star" v-for="n in 1" :key="n + 4"></i>
+              <i class="far fa-star" v-for="n in 4" :key="n + 1"></i>( ít nhất 1 sao )
             </p>
           </div>
           <div class="filter-rating">
             <h5>Gía</h5>
             <div class="input">
-              <input type="text" class="txt-form" placeholder="Từ">
-              <input type="text" class="txt-form" placeholder="Đến">
+              <input type="text" class="txt-form" placeholder="Từ" />
+              <input type="text" class="txt-form" placeholder="Đến" />
             </div>
             <div class="btn">
               <button>áp dụng</button>
@@ -62,7 +66,7 @@
           <div class="product-div">
             <nuxt-link :to="`/${item.id}`">
               <div class="img">
-                <img :src="item.image" alt>
+                <img :src="item.image" alt />
               </div>
             </nuxt-link>
             <nuxt-link :to="`/${item.id}`">
@@ -71,7 +75,7 @@
               </div>
             </nuxt-link>
             <div class="price">
-              <p>{{ formatPrice(item.price) }} đ</p>
+              <p>₫{{ formatPrice(item.discount) }} </p>
             </div>
           </div>
         </div>
@@ -84,22 +88,28 @@
 export default {
   async asyncData({ $axios, params }) {
     var products = await $axios.get("/api/product/shop/" + params.id);
-    console.log(products)
+    console.log(products);
     return { products: products.data };
   },
-  methods:{
+  methods: {
     formatPrice(value) {
       let val = (value / 1).toFixed(0).replace(".", ",");
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     },
-    filterStar(item){
-      this.$axios.post('/api/product/filterProduct',{
-        value : item,
-        UserId : this.products.user.id
-      }).then( response =>{
-        this.products = response.data
-      })
+    filterStar(item) {
+      this.$axios
+        .post("/api/product/filterProduct", {
+          value: item,
+          UserId: this.products.user.id
+        })
+        .then(response => {
+          this.products = response.data;
+        });
     }
+  },
+  formatPrice(value) {
+    let val = (value / 1).toFixed(0).replace(".", ",");
+    return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }
 };
 </script>

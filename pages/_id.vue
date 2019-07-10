@@ -1,6 +1,6 @@
 <template>
   <div class="container-detail">
-    <div class="container">
+    <div class="container" >
       <transition name="bounce" leave-active-class="animated bounceOutRight">
         <div class="add-cart-notification" v-show="showNofication" v-if="$store.state.authUser ">
           <p>Bạn vừa thêm sản phẩm :</p>
@@ -25,8 +25,8 @@
           <p>Vào giỏ hàng</p>
         </div>
       </transition>
-      <div class="title-content">
-        <h4>Trang chủ > Năm sinh</h4>
+      <div class="title-content" >
+        <h4>Trang chủ > {{ product.subcate.name}}</h4>
       </div>
       <div class="content-detail-pr">
         <div class="content-left">
@@ -63,7 +63,7 @@
               <i class="far fa-star" v-for=" n in 5-Math.floor(mediumstar)" :key=" n + 200"></i>
             </div>
             <div class="number-rating">{{ product.ratings.length }} đánh giá</div>
-            <div class="number-rating">45 đã bán</div>
+            <div class="number-rating">{{ product.sold }} đã bán</div>
           </div>
           <div class="price-detail">
             <span class="payment">₫ {{ formatPrice(product.price) }}</span>

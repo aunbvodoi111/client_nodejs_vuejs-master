@@ -105,6 +105,7 @@
         <div class="title">
           <div class="title-pay">
             <p>Phương thức thanh toán</p>
+            <p style="color :red ; margin : 20px 0px;">Thanh toán khi nhận hàng</p>
           </div>
           <div class="title-choose-pay">
             <p>Thanh toán khi nhận hàng</p>
@@ -270,7 +271,7 @@ button {
     margin: auto;
     .check-out {
       width: 100%;
-      height: 300px;
+      height: auto;
       padding: 20px 10px;
       margin: 20px 0px;
       background: white;
@@ -326,7 +327,7 @@ button {
     }
     .product-checkout {
       width: 100%;
-      height: 300px;
+      height: auto;
       padding: 20px 10px;
       margin: 20px 0px;
       background: white;

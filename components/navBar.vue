@@ -81,8 +81,6 @@
           <nuxt-link to="/cart">
             <i
               class="fas fa-shopping-cart"
-              @mouseover="hover = true"
-              @mouseleave="hover = false"
               @click="checkAuth"
             >
               <!-- <template v-if="carts.length">

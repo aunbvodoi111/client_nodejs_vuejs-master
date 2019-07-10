@@ -92,7 +92,7 @@
           <button @click="toggleCmtAc">{{ titleToggle }}</button>
         </div>-->
       </div>
-      <div class="btn-choose-rating">
+      <div class="btn-choose-rating" v-if="ratings.length > 0">
         <div class="button">
           <button :class="{highlight:7 == selected}" @click="filterRating(7)">Tất cả</button>
           <button
