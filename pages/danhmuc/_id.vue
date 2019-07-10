@@ -7,7 +7,11 @@
           <div class="filter-cate">
             <p>Theo danh mục</p>
             <ul>
-              <li v-for="item in products.subcates" @click="filter(item.id)" :key="item.id">{{ item.name }}</li>
+              <li
+                v-for="item in products.subcates"
+                @click="filter(item.id)"
+                :key="item.id"
+              >{{ item.name }}</li>
             </ul>
           </div>
           <div class="filter-rating">
@@ -66,7 +70,7 @@
               </div>
             </nuxt-link>
             <div class="price">
-              <p>₫{{ formatPrice(item.discount) }} </p>
+              <p>₫{{ formatPrice(item.discount) }}</p>
             </div>
           </div>
         </div>
@@ -87,17 +91,14 @@ export default {
   },
   computed: {
     listProduct() {
-      if (this.CateId) {
+      console.log('sad')
+      if (this.CateId !='') {
         return this.products.products.filter(
-          product => product.CateId === product.CateId
+          product => product.SubcateId === this.CateId
         );
       } else {
         return this.products.products;
       }
-    },
-    formatPrice(value) {
-      let val = (value / 1).toFixed(0).replace(".", ",");
-      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
   },
   data() {
@@ -105,8 +106,15 @@ export default {
       CateId: ""
     };
   },
-  filter(value) {
-    this.CateId = value;
+  methods: {
+    filter(value) {
+      
+      this.CateId = value;
+    },
+    formatPrice(value) {
+      let val = (value / 1).toFixed(0).replace(".", ",");
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
   }
 };
 </script>

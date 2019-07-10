@@ -32,6 +32,10 @@ export const mutations = {
   TOGGLE_CHAT: function (state) {
     state.toggleChat = !state.toggleChat
   },
+  ADD_TO_CART: function (state, cart) {
+    state.carts += cart  
+    console.log(state.carts)
+  },
   ADD_CART: function (state, cart) {
     state.carts += 1  
     console.log(state.carts)

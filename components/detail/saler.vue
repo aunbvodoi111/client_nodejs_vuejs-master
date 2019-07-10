@@ -8,9 +8,9 @@
         <div class="chat-saler">
           <p class="name-saler">{{ product.user.name }}</p>
           <p class="online" v-if="online == 1">Đang online</p>
-          <p class="online" v-if="online == 0">Online 5 Giờ Trước</p>
+          <p class="online" v-if="online == 0">Offline {{ moment(product.user.updated_at).fromNow()}}</p>
           <button @click="showDivChat">Chat ngay</button>
-          <button @click="followSaler" >{{ checkFollow === undefined ? 'Follow' : 'Đã Follow' }}</button>
+          <button @click="followSaler">{{ checkFollow === undefined ? 'Follow' : 'Đã Follow' }}</button>
           <nuxt-link :to="`/shop/${product.user.id}`">
             <button>Xem shop</button>
           </nuxt-link>
@@ -26,8 +26,8 @@
           </li>
           <li>
             <nuxt-link :to="`/shop/${product.user.id}`">
-            Sản phẩm :
-            <span>{{ totalProduct }}</span>
+              Sản phẩm :
+              <span>{{ totalProduct }}</span>
             </nuxt-link>
           </li>
           <li>
@@ -79,9 +79,23 @@ export default {
         this.index = newValue;
       }
     },
+
   },
   created(){
     this.anhquy()
+    
+        if (this.$store.state.authUser) {
+        socket.emit("joinRoom", this.$store.state.authUser.name);
+        socket.on("userOnline", async (data) => {
+        var socketId
+            for (socketId in data) {
+              console.log(data[socketId].data)
+              if (data[socketId].data === this.product.user.name) {
+                 this.online = 1;
+              }
+            } 
+        });
+      }
   },
   methods: {
     anhquy(){
@@ -196,7 +210,7 @@ ul li {
       ul {
         width: 100%;
         li {
-          a{
+          a {
             color: rgba(0, 0, 0, 0.4);
             text-decoration: none;
           }

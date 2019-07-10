@@ -236,7 +236,7 @@ export default {
           })
           .then(response => {
             console.log(response);
-            this.$store.commit("ADD_CART");
+            this.$store.commit("ADD_TO_CART",this.qtyProduct);
           });
       }
     },
