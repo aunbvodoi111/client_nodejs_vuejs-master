@@ -36,8 +36,10 @@
                       <p>{{ item.user.name }}</p>
                     </div>
                     <div class="btn-action-user">
-                      <button>chat</button>
-                      <button>xem shop</button>
+                      <button @click="showDivChat( item )">chat</button>
+                      <nuxt-link :to="`/shop/${item.user.id}`">
+                        <button>xem shop</button>
+                      </nuxt-link>
                     </div>
                   </div>
                 </div>
@@ -109,6 +111,34 @@ export default {
     // this.getLocal();
   },
   methods: {
+    chatUser(item) {
+      this.selected = item.id;
+      this.roomname = item.id;
+      this.room = this.rooms.find(room => room.id === item.id);
+      this.count = "";
+      if (item.UserName1 == this.$store.state.authUser.name) {
+        this.idUserSend = item.UserName2;
+      } else if (item.UserName2 == this.$store.state.authUser.name) {
+        this.idUserSend = item.UserName1;
+      }
+    },
+    showDivChat(item) {
+      if (!this.$store.state.authUser) {
+        this.$store.commit("OPEN_REGISTER");
+      } else {
+        this.$axios
+          .post("/api/room/add", {
+            user: item.user
+          })
+          .then(response => {
+            console.log(response);
+            this.rooms = response.data;
+            this.$store.commit("ROOMS", response.data);
+            this.chatUser(this.rooms[0]);
+          });
+        this.$store.commit("TOGGLE_CHAT");
+      }
+    },
     formatPrice(value) {
       let val = (value / 1).toFixed(0).replace(".", ",");
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");

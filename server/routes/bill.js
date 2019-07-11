@@ -35,4 +35,24 @@ router.get('/', async (req, res) => {
     return res.json('ok')
 })
 
+router.get('/detail/:id', async (req, res) => {
+    var { id } = req.params
+    if (req.user) {
+
+        var anhquy = await models.bill_details.findAll({
+            where: { BillId: id },
+            include: [{
+                model: models.products,
+                as: 'product'
+
+            }, {
+                model: models.users,
+            }]
+        })
+        return res.json(anhquy)
+    } else {
+        carts = []
+    }
+    return res.json('ok')
+})
 module.exports = router;

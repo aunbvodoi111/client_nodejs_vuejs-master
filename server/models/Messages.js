@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
     //     allowNull: false
     //   }
     // });
+    Messages.belongsTo(models.users,{ foreignKey: 'UserId'})
   };
   return Messages;
 };

@@ -2,13 +2,19 @@
   <div class="container">
     <div class="saler">
       <div class="saler-left">
-        <div class="img">
-          <img :src="$store.state.authUser.avatar" alt />
+        <div class="img" v-if="product.user.avatar != 0">
+          <img :src="product.user.avatar" alt />
+        </div>
+        <div class="img" v-if="product.user.avatar == 0">
+          <img src="/img/images.png" alt />
         </div>
         <div class="chat-saler">
           <p class="name-saler">{{ product.user.name }}</p>
           <p class="online" v-if="online == 1">Đang online</p>
-          <p class="online" v-if="online == 0">Offline {{ moment(product.user.updated_at).fromNow()}}</p>
+          <p
+            class="online"
+            v-if="online == 0"
+          >Offline {{ moment(product.user.updated_at).fromNow()}}</p>
           <button @click="showDivChat">Chat ngay</button>
           <button @click="followSaler">{{ checkFollow === undefined ? 'Follow' : 'Đã Follow' }}</button>
           <nuxt-link :to="`/shop/${product.user.id}`">
@@ -49,12 +55,12 @@ moment.locale("vi");
 import socket from "~/plugins/socket.io.js";
 
 export default {
-  props: ["product", "follows", "totalProduct", "totalFollow", "sumRating" ,],
+  props: ["product", "follows", "totalProduct", "totalFollow", "sumRating"],
   data() {
     return {
       rooms: [],
       moment: moment,
-      online:0
+      online: 0
     };
   },
   async asyncData({ $axios }) {
@@ -65,52 +71,40 @@ export default {
   computed: {
     checkFollow: {
       get: function() {
-        console.log('online' + this.online);
-        var index;
-        if (this.$store.state.authUser && this.follows.length > 0) {
-          index = this.follows.find(
-            follow => follow.UserIdFollow === this.product.user.id
-          );
+        if (this.follows) {
+          console.log("online" + this.online);
+          var index;
+          if (this.$store.state.authUser && this.follows.length > 0) {
+            index = this.follows.find(
+              follow => follow.UserIdFollow === this.product.user.id
+            );
+          }
+          return index;
         }
-        
-        return index;
       },
       set: function(newValue) {
         this.index = newValue;
       }
-    },
-
+    }
   },
-  created(){
-    this.anhquy()
-    
-        if (this.$store.state.authUser) {
-        socket.emit("joinRoom", this.$store.state.authUser.name);
-        socket.on("userOnline", async (data) => {
-        var socketId
-            for (socketId in data) {
-              console.log(data[socketId].data)
-              if (data[socketId].data === this.product.user.name) {
-                 this.online = 1;
-              }
-            } 
-        });
-      }
+  created() {
+    this.anhquy();
+
+    if (this.$store.state.authUser) {
+      socket.emit("joinRoom", this.$store.state.authUser.name);
+      socket.on("userOnline", async data => {
+        var socketId;
+        for (socketId in data) {
+          console.log(data[socketId].data);
+          if (data[socketId].data === this.product.user.name) {
+            this.online = 1;
+          }
+        }
+      });
+    }
   },
   methods: {
-    anhquy(){
-      // console.log('vao nhge');
-      // var data = this.product.user.name
-      // socket.on("userOnline", function (data){
-      //  var socketId
-      //     for (socketId in data) {
-      //       if (data[socketId].data === data) {
-      //          this.online = 1;
-      //          console.log('vao nhge');
-      //       }
-      //     }
-      // });
-    },
+    anhquy() {},
     followSaler(product) {
       if (!this.$store.state.authUser) {
         this.$store.commit("OPEN_REGISTER");
@@ -137,6 +131,17 @@ export default {
           .then(response => {});
       }
     },
+    chatUser(item) {
+      this.selected = item.id;
+      this.roomname = item.id;
+      this.room = this.rooms.find(room => room.id === item.id);
+      this.count = "";
+      if (item.UserName1 == this.$store.state.authUser.name) {
+        this.idUserSend = item.UserName2;
+      } else if (item.UserName2 == this.$store.state.authUser.name) {
+        this.idUserSend = item.UserName1;
+      }
+    },
     showDivChat() {
       if (!this.$store.state.authUser) {
         this.$store.commit("OPEN_REGISTER");
@@ -149,10 +154,8 @@ export default {
             console.log(response);
             this.rooms = response.data;
             this.$store.commit("ROOMS", response.data);
+            this.chatUser(this.rooms[0])
           });
-        // this.$axios.$get("/api/room/").then(response => {
-        //   console.log(response);
-        // });
         this.$store.commit("TOGGLE_CHAT");
       }
     }

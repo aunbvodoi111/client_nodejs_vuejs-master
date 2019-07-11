@@ -48,6 +48,16 @@ router.post('/add', async (req, res) => {
         include: [{
             model: models.messagers,
             as: 'messagers',
+            include: [{
+                model: models.users,
+            }]
+        },{
+            model: models.users,
+            
+        },
+        {
+            model: models.users,
+           
         }]
     })
     return res.json(rooms)

@@ -21,6 +21,9 @@ module.exports = (sequelize, DataTypes) => {
     //     allowNull: false
     //   }
     // });
+    Bill_detail.belongsTo(models.users, {
+      foreignKey: 'UserIdSaler',
+    });
     Bill_detail.belongsTo(models.bills, {
       foreignKey: 'UserIdSaler', onDelete: "CASCADE"
     });

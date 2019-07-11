@@ -11,15 +11,26 @@
         <div class="input-chat">
           <input type="text" class="txt-filter" placeholder="Tìm người chat" />
         </div>
-        <div class="people-pm" v-for="item in rooms " :key="item.id" @click="chatUser(item)" :class="{highlight:item.id == selected}" >
+        <div
+          class="people-pm"
+          v-for="item in rooms "
+          :key="item.id"
+          @click="chatUser(item)"
+          :class="{highlight:item.id == selected}"
+        >
           <div class="avatar">
             <img
               src="https://media3.scdn.vn/img3/2019/5_14/nEZOmN_simg_ab1f47_250x250_maxb.jpg"
               alt
             />
+            <!-- <img v-if="item.UserName1 != $store.state.authUser.name"
+              :src="item"
+              alt
+            />-->
           </div>
           <div class="name-buyer">
             <p v-if="item.UserName1 != $store.state.authUser.name">{{ item.UserName1 }} {{ count }}</p>
+            <p v-if="item.UserName1 == item.UserName2">{{ item.UserName1 }} {{ count }}</p>
             <p v-if="item.UserName2 != $store.state.authUser.name">{{ item.UserName2 }} {{ count }}</p>
           </div>
         </div>
@@ -35,15 +46,21 @@
                 <div class="content">
                   <p>{{ item.content }}</p>
                 </div>
-                <div class="img">
-                  <img src="https://cf.shopee.vn/file/aaa24a79e7015ab1d6c73392b4b54c93_tn" alt />
+                <div class="img" v-if="item.user.avatar != 0">
+                  <img :src="item.user.avatar" alt />
+                </div>
+                <div class="img" v-if="item.user.avatar == 0">
+                  <img src="/img/images.png" alt />
                 </div>
               </div>
             </div>
             <div class="buyer" v-if="item.UserId != $store.state.authUser.id">
               <div class="div-right">
-                <div class="img">
-                  <img src="https://cf.shopee.vn/file/aaa24a79e7015ab1d6c73392b4b54c93_tn" alt />
+                <div class="img" v-if="item.user.avatar != 0">
+                  <img :src="item.user.avatar" alt />
+                </div>
+                <div class="img" v-if="item.user.avatar == 0">
+                  <img src="/img/images.png" alt />
                 </div>
                 <div class="content-right">
                   <p>{{ item.content }}</p>
@@ -51,8 +68,18 @@
               </div>
             </div>
           </div>
-          {{ typing }}
+
+          <!-- {{ typing }} -->
         </div>
+
+        <div class="bubble-chat" v-if="typing">
+          <div class="container-circle">
+            <div class="circle cc1" id="circle1"></div>
+            <div class="circle cc2" id="circle2"></div>
+            <div class="circle cc3" id="circle3"></div>
+          </div>
+        </div>
+
         <div class="bottom-chat-right">
           <input type="text" class="txt-input-chat" v-model="message" @keyup="triggerMessageSend" />
           <div>
@@ -76,8 +103,8 @@ export default {
       room: {},
       count: "",
       scrollToTop: true,
-      scrollHeight : true,
-      selected : ''
+      scrollHeight: true,
+      selected: ""
     };
   },
   computed: {
@@ -130,12 +157,13 @@ export default {
             console.log(response);
             this.rooms = response.data;
             this.$store.commit("ROOMS", response.data);
+            this.chatUser(this.rooms[0]);
           });
         this.$store.commit("TOGGLE_CHAT");
       }
     },
     chatUser(item) {
-      this.selected = item.id
+      this.selected = item.id;
       this.roomname = item.id;
       this.room = this.rooms.find(room => room.id === item.id);
       this.count = "";
@@ -169,11 +197,20 @@ export default {
       }
     },
     sendMessages() {
+      var avatar;
+      if (this.$store.state.authUser.avatar != 0) {
+        avatar = this.$store.state.authUser.avatar;
+      } else {
+        avatar = 0;
+      }
       var message = {
         content: this.message,
         nameuser: this.idUserSend,
         roomid: this.roomname,
-        UserId: this.$store.state.authUser.id
+        UserId: this.$store.state.authUser.id,
+        user: {
+          avatar: avatar
+        }
       };
       this.room.messagers.push(message);
       socket.emit("send-message", message);
@@ -189,7 +226,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.highlight{
+.highlight {
   color: white !important;
   background: grey;
 }
@@ -278,7 +315,7 @@ export default {
     }
     .content-chat {
       width: 100%;
-      height: 320px;
+      height: 400px;
       .messager {
         width: 100%;
         .saler {
@@ -418,6 +455,148 @@ export default {
     right: 0;
     z-index: 99;
     display: flex;
+  }
+}
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #0084ff;
+}
+
+.bubble-chat {
+  background-color: #e6e7ec;
+  width: 50px;
+  height: 30px;
+  border-radius: 30% / 50%;
+  margin: 4px;
+  position: relative;
+}
+
+.container-circle {
+  width: 100px;
+  position: relative;
+  margin: 0 auto;
+}
+
+.circle {
+  height: 5px;
+  padding-left: 3px; 
+  width: 5px;
+  margin: 0 2px 0px 4px;
+  background-color: #b6b5ba;
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+  top: 0px;
+  -webkit-animation-duration: 2s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+#circle1 {
+  -webkit-animation-name: circle1;
+}
+
+#circle2 {
+  -webkit-animation-name: circle2;
+}
+
+#circle3 {
+  -webkit-animation-name: circle3;
+}
+
+#circle1 {
+  animation-name: circle1;
+}
+
+#circle2 {
+  animation-name: circle2;
+}
+
+#circle3 {
+  animation-name: circle3;
+}
+
+.cc1 {
+  background-color: #9e9da2;
+}
+
+@-webkit-keyframes circle1 {
+  0% {
+    top: 10px;
+  }
+  15% {
+    top: 10px;
+  }
+  25% {
+    top: 10px;
+  }
+}
+
+@-webkit-keyframes circle2 {
+  10% {
+    top: 30px;
+  }
+  25% {
+    top: 20px;
+  }
+  35% {
+    top: 30px;
+  }
+}
+
+@-webkit-keyframes circle3 {
+  15% {
+    top: 30px;
+  }
+  30% {
+    top: 20px;
+  }
+  40% {
+    top: 30px;
+  }
+}
+
+@keyframes circle1 {
+  0% {
+    top: 10px;
+  }
+  15% {
+    top: 10px;
+  }
+  25% {
+    top: 10px;
+  }
+}
+
+@keyframes circle2 {
+  10% {
+    top: 10px;
+  }
+  25% {
+    top: 5px;
+  }
+  35% {
+    top: 10px;
+  }
+}
+
+@keyframes circle3 {
+  15% {
+    top: 10px;
+  }
+  30% {
+    top: 10px;
+  }
+  40% {
+    top: 5px;
   }
 }
 </style>

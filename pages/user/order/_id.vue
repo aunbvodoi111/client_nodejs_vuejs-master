@@ -99,25 +99,27 @@
               </div>
             </div>
             <div class="bill-content">
-              <div class="bill-div" v-for="item in bills" :key="item.id">
+              <div class="bill-div">
                 <div class="title">
                   <div class="div-name">
                     <div class="img">
                       <img src="https://cf.shopee.vn/file/aaa24a79e7015ab1d6c73392b4b54c93_tn" alt />
                     </div>
                     <div class="name">
-                      <p>{{ item.user.name }}</p>
+                      <p>{{ bills[0].user.name }}</p>
                     </div>
                     <div class="btn-action-user">
                       <button>chat</button>
-                      <button>xem shop</button>
+                      <nuxt-link :to="`/shop/${bills[0].user.id}`">
+                        <button>xem shop</button>
+                      </nuxt-link>
                     </div>
                   </div>
                 </div>
                 <div class="content-main-product">
-                  <div class="include-div" v-for="prod in item.bill_details" :key="prod.id">
+                  <div class="include-div" v-for="prod in bills" :key="prod.id">
                     <div class="img-bill">
-                      <img :src="prod.image" alt />
+                      <img :src="prod.product.image" alt />
                     </div>
                     <div class="detail-bill">
                       <p>{{ prod.product.name }}</p>
@@ -132,17 +134,17 @@
                   <div class="div-right">
                     <div class="sum-bill">
                       <div class="title-sum">Tổng tiền hàng</div>
-                      <div class="content">₫{{ formatPrice(item.sum) }}</div>
+                      <div class="content">₫{{ formatPrice(sum) }}</div>
                     </div>
                     <div class="sum-bill">
                       <div class="title-sum">Vận chuyển</div>
                       <div class="content">
-                        <span>₫{{ formatPrice(item.sum) }}</span>
+                        <span>₫ 30.000</span>
                       </div>
                     </div>
                     <div class="sum-bill">
                       <div class="title-sum">Tổng số tiền</div>
-                      <div class="content">₫{{ formatPrice(item.sum) }}</div>
+                      <div class="content"><span>₫{{ formatPrice(sum - 30000) }}</span></div>
                     </div>
                     <div class="sum-bill">
                       <div class="title-sum">Phương thức Thanh toán</div>
@@ -169,8 +171,9 @@
 import NavBar from "./../../../components/navUser/navbar";
 export default {
   // middleware: 'authenticated',
-  async asyncData({ $axios }) {
-    var data = await $axios.get("/api/bill/");
+  async asyncData({ $axios , params }) {
+    var data = await $axios.get("/api/bill/detail/"+ params.id );
+    console.log(data)
     return {
       bills: data.data
     };
@@ -182,6 +185,17 @@ export default {
     return {
       local: []
     };
+  },
+  computed:{
+      sum(){
+        var sum = 0 
+        if(this.bills){
+          for( var i = 0 ; i < this.bills.length ; i++){
+            sum = sum + this.bills[i].qty * this.bills[i].product.discount
+          }
+        }
+        return sum 
+      }
   },
   created() {
     // this.getLocal();

@@ -16,6 +16,8 @@ module.exports = (sequelize, DataTypes) => {
     //   }
     // });
     Room.hasMany(models.messagers,{ as: 'messagers', foreignKey: 'RoomId'})
+    Room.belongsTo(models.users,{  foreignKey: 'UserName1'})
+    Room.belongsTo(models.users,{  foreignKey: 'UserName2'})
   };
   return Room;
 };

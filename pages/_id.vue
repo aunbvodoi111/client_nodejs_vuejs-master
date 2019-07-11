@@ -90,10 +90,8 @@
                 Thêm Vào Giỏ Hàng
               </button>
             </div>
-            <div class="btn-add-to-buy" @click="buyProduct">
-              <nuxt-link to="/cart">
-                <button>Mua ngay</button>
-              </nuxt-link>
+            <div class="btn-add-to-buy" >
+                <button @click="buyProduct">Mua ngay</button>
             </div>
           </div>
         </div>
@@ -240,9 +238,37 @@ export default {
           });
       }
     },
+    buyer() {
+      if (!this.$store.state.authUser) {
+        this.$store.commit("OPEN_REGISTER");
+      } else {
+        this.$axios
+          .post("/api/cart/add", {
+            ProductId: this.product.id,
+            qty: this.qtyProduct,
+            UserIdSaler: this.product.user.id
+          })
+          .then(response => {
+            console.log(response);
+            this.$store.commit("ADD_TO_CART",this.qtyProduct);
+          });
+      }
+    },
     buyProduct() {
       if (!this.$store.state.authUser) {
         this.$store.commit("OPEN_REGISTER");
+      } else {
+        this.$axios
+          .post("/api/cart/add", {
+            ProductId: this.product.id,
+            qty: this.qtyProduct,
+            UserIdSaler: this.product.user.id
+          })
+          .then(response => {
+            this.$router.push('/cart')
+            console.log(response);
+            this.$store.commit("ADD_TO_CART",this.qtyProduct);
+          });
       }
     },
     changeQty() {
