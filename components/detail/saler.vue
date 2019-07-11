@@ -3,7 +3,7 @@
     <div class="saler">
       <div class="saler-left">
         <div class="img">
-          <img src="https://cf.shopee.vn/file/c241a1c7f04749a0b9b55b53b5619425_tn" alt />
+          <img :src="$store.state.authUser.avatar" alt />
         </div>
         <div class="chat-saler">
           <p class="name-saler">{{ product.user.name }}</p>

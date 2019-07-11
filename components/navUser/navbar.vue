@@ -2,7 +2,7 @@
     <div class="content-left">
         <div class="title">
           <div class="img">
-            <img src="https://cf.shopee.vn/file/aaa24a79e7015ab1d6c73392b4b54c93_tn" alt />
+            <img :src="$store.state.authUser.avatar" alt />
           </div>
           <div class="name-user">
             <p>Tài khoản của bạn</p>
