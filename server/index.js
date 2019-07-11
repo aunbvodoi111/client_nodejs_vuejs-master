@@ -40,21 +40,21 @@ const uploadImage = require('./routes/uploadImage')
 app.use(bodyParser.json())
 // app.use(expressValidator())
 app.use(bodyParser.urlencoded({ extended: false }))
-app.use('/api/product',productApi)
-app.use('/api/cart',cartApi)
-app.use('/api/wishe',wisheApi)
-app.use('/api/follow',followApi)
-app.use('/api/user',userApi)
-app.use('/api/room',roomApi)
-app.use('/api/rating',ratingApi)
-app.use('/api/comment',commentApi)
-app.use('/api/checkout',checkoutApi)
-app.use('/api/upload',uploadImage)
-app.use('/api/address',addressApi)
-app.use('/api/bill',billApi)
+app.use('/api/product', productApi)
+app.use('/api/cart', cartApi)
+app.use('/api/wishe', wisheApi)
+app.use('/api/follow', followApi)
+app.use('/api/user', userApi)
+app.use('/api/room', roomApi)
+app.use('/api/rating', ratingApi)
+app.use('/api/comment', commentApi)
+app.use('/api/checkout', checkoutApi)
+app.use('/api/upload', uploadImage)
+app.use('/api/address', addressApi)
+app.use('/api/bill', billApi)
 app.use(express.static('public'))
 
-const { ADD_MESSAGE } = require('./socket/socket') 
+const { ADD_MESSAGE } = require('./socket/socket')
 const port = process.env.PORT || 3000
 const isProd = process.env.NODE_ENV === 'production'
 
@@ -76,39 +76,54 @@ console.log('Server listening on localhost:' + port) // eslint-disable-line no-c
 const messages = []
 const userOnline = []
 const tata = []
- sockets = [];
- people = {};
+sockets = [];
+people = {};
 io.on('connection', (socket) => {
-  socket.on('joinRoom', function(data){
-    people[socket.id] = {data: data};
+  socket.on('joinRoom', function (data) {
+    people[socket.id] = { data: data };
     console.log(people)
-    socket.emit('userOnline',people)
+    socket.emit('userOnline', people)
   })
-  socket.on('disconnect', function(){
+  socket.on('disconnect', function () {
     delete people[socket.id];
     sockets.splice(sockets.indexOf(socket), 1);
     console.log(people)
+    // app.get('/update', async (req, res) => {
+    //   var users = await models.users.findOne({ where: { id: 2 } })
+    //   // users.set('updatedAt', new Date())
+    //   users.update({
+    //     phone: 2
+    //   });
+    //   users.save()
+    //   const nDate = new Date().toLocaleString('en-US', {
+    //     timeZone: 'Asia/Ho_Chi_Minh'
+    //   });
+
+    //   console.log(nDate);
+    //   var date = new Date()
+    //   return res.json({ nDate: nDate, user: users })
+    // })
   });
   socket.on('send-message', async (message) => {
     console.log(people)
     console.log(message)
     var name = message.nameuser
     var receiverSocketId = findUserById(name);
-    if(receiverSocketId){
+    if (receiverSocketId) {
       // var receiver = people[receiverSocketId];
       var room = message.roomid;
       socket.join(room);
       io.sockets.connected[receiverSocketId].join(room);
       //notify the client of thisss
-      socket.broadcast.to(room).emit('new-message',room,message);
-      await ADD_MESSAGE({ data : message})
-    }else{
+      socket.broadcast.to(room).emit('new-message', room, message);
+      await ADD_MESSAGE({ data: message })
+    } else {
       console.log('vao day')
       var room = message.roomid;
-      socket.broadcast.to(room).emit('new-message',room,message);
-      await ADD_MESSAGE({ data : message})
+      socket.broadcast.to(room).emit('new-message', room, message);
+      await ADD_MESSAGE({ data: message })
     }
-    
+
   })
 
   socket.on('send-nofi-cmt', async (message) => {
@@ -116,21 +131,21 @@ io.on('connection', (socket) => {
     console.log(message)
     var name = message.nameuser
     var receiverSocketId = findUserById(name);
-    if(receiverSocketId){
+    if (receiverSocketId) {
       // var receiver = people[receiverSocketId];
       var room = message.roomid;
       socket.join(room);
       io.sockets.connected[receiverSocketId].join(room);
       //notify the client of thisss
-      socket.broadcast.to(room).emit('nhannhe',room,message);
+      socket.broadcast.to(room).emit('nhannhe', room, message);
       // await ADD_MESSAGE({ data : message})
-    }else{
+    } else {
       console.log('vao day')
       var room = message.roomid;
-      socket.broadcast.to(room).emit('new-message',room,message);
+      socket.broadcast.to(room).emit('new-message', room, message);
       // await ADD_MESSAGE({ data : message})
     }
-    
+
   })
 
   socket.on('userTyping', data => {
@@ -145,10 +160,10 @@ io.on('connection', (socket) => {
       .to(data.room)
       .emit('receivedUserTyping', anhquy);
   });
-  function findUserById(name){
+  function findUserById(name) {
     console.log(people)
-    for(socketId in people){
-      if(people[socketId].data === name){
+    for (socketId in people) {
+      if (people[socketId].data === name) {
         console.log('anhquy')
         console.log(people[socketId])
         return socketId;

@@ -44,6 +44,22 @@ router.get('/listRating', async (req, res) => {
     return res.json(carts)
 })
 
+router.get('/update', async (req, res) => {
+    var users = await models.users.findOne({ where : {id : 2}})
+    // users.set('updatedAt', new Date())
+    users.update({
+        phone : 2
+      });
+    users.save()
+    const nDate = new Date().toLocaleString('en-US', {
+        timeZone: 'Asia/Ho_Chi_Minh'
+      });
+      
+      console.log(nDate);
+    var date = new Date()
+    return res.json({nDate : nDate,user : users})
+})
+
 router.get('/address', async (req, res) => {
     var provinces = await models.provinces.findAll({})
     var districts = await models.districts.findAll({}) 

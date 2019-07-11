@@ -64,7 +64,9 @@
                       </p>
                     </div>
                     <div class="btn-choose">
-                      <button>Chi tiết</button>
+                      <nuxt-link :to="`/user/order/${item.id}`">
+                        <button>Chi tiết</button>
+                      </nuxt-link>
                       <button>Mua lần nữa</button>
                     </div>
                   </div>
