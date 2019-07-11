@@ -44,9 +44,21 @@ router.get('/listRating', async (req, res) => {
     return res.json(carts)
 })
 
+router.post('/edit', async (req, res) => {
+    var { avatar } = req.body
+    var users = await models.users.findOne({ where : {id : req.user.id }})
+    // users.set('updatedAt', new Date()) 
+    users.update({
+        avatar : avatar
+      });
+    users.save()
+    return res.json('ok')
+})
+
 router.get('/update', async (req, res) => {
     var users = await models.users.findOne({ where : {id : 2}})
     // users.set('updatedAt', new Date())
+    var start = new Date();
     users.update({
         phone : 2
       });
@@ -56,8 +68,8 @@ router.get('/update', async (req, res) => {
       });
       
       console.log(nDate);
-    var date = new Date()
-    return res.json({nDate : nDate,user : users})
+    var date = new Date() - start
+    return res.json({date : date,user : users})
 })
 
 router.get('/address', async (req, res) => {

@@ -35,11 +35,11 @@
           <div class="filter-rating">
             <h5>Gía</h5>
             <div class="input">
-              <input type="text" class="txt-form" placeholder="Từ" />
-              <input type="text" class="txt-form" placeholder="Đến" />
+              <input type="text" class="txt-form" placeholder="Từ"  v-model="minprice"/>
+              <input type="text" class="txt-form" placeholder="Đến"  v-model="maxprice"/>
             </div>
             <div class="btn">
-              <button>áp dụng</button>
+              <button @click="filterPrice = 1">áp dụng</button>
             </div>
           </div>
         </div>
@@ -51,10 +51,18 @@
           <ul>
             <li>Ưu tiên xem :</li>
             <li>Hàng mới</li>
-            <li>Gía thâp đến cao</li>
-            <li>Gía cao đến thấp</li>
+            <li @click="sort = 1">Gía thâp đến cao</li>
+            <li  @click="sort = -1">Gía cao đến thấp</li>
           </ul>
         </div>
+      </div>
+      <div class="btn-filer">
+        <span v-for="item in products.subcates" :key="item.id">
+          <button v-if="item.id == CateId">{{ item.name }}  <i class="far fa-star" @click="CateId = ''"></i></button>
+        </span>
+        <button v-if="sort == 1" >Từ thấp đến cao <i class="far fa-star" @click="sort = ''"></i></button>
+        <button v-if="sort == -1">Từ cao đến thấp <i class="far fa-star" @click="sort = ''"></i></button>
+        <button v-if="maxprice  && minprice && filterPrice">{{ minprice }} - {{ maxprice }} <i class="far fa-star" @click="filterPrice = '', minprice ='',maxprice =''"></i></button>
       </div>
       <div class="product-content" v-if="listProduct.length > 0 ">
         <div class="product" v-for="item in listProduct" :key="item.id">
@@ -92,18 +100,31 @@ export default {
   computed: {
     listProduct() {
       console.log('sad')
-      if (this.CateId !='') {
+      if (this.CateId) {
         return this.products.products.filter(
           product => product.SubcateId === this.CateId
         );
-      } else {
+      }else if(this.sort == 1){
+        return this.products.products.sort((a, b) => a.discount - b.discount);
+      }
+      else if(this.sort == -1){
+        return this.products.products.sort((a, b) => b.discount - a.discount  );
+      }
+      else if(this.maxprice  && this.minprice && this.filterPrice){
+        return this.products.products.filter(product => product.discount  >= this.minprice &&  product.discount  <= this.maxprice );
+      }
+       else {
         return this.products.products;
       }
     }
   },
   data() {
     return {
-      CateId: ""
+      CateId: "",
+      sort : '',
+      minprice :'',
+      maxprice : '',
+      filterPrice : ''
     };
   },
   methods: {

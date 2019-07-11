@@ -27,7 +27,7 @@
                   <label>Tên Shop</label>
                 </div>
                 <div class="name-email">
-                  <input type="text" class="txt-name-shop" :value="$store.state.authUser.name">
+                  <input type="text" class="txt-name-shop" :value="$store.state.authUser.name" />
                 </div>
               </div>
               <div class="email">
@@ -35,8 +35,8 @@
                   <label>giới tính</label>
                 </div>
                 <div class="name-email">
-                   <input type="radio" name="gender" class="radio">Nam
-                   <input type="radio" name="gender" class="radio"> Nữ
+                  <input type="radio" name="gender" class="radio" />Nam
+                  <input type="radio" name="gender" class="radio" /> Nữ
                 </div>
               </div>
               <div class="email">
@@ -44,43 +44,55 @@
                   <label>Ngày sinh</label>
                 </div>
                 <div class="name-email">
-                  
-                    <div class="from-control">
-                      <select name id class="form-input" v-model="provide">
-                        <option value v-for="(index,n)  in 30">{{ index }}</option>
-                      </select>
-                    </div>
-                    <div class="from-control">
-                      <select name id class="form-input" v-model="provide">
-                        <option value v-for="(index,n)  in 12">{{ index }}</option>
-                      </select>
-                    </div>
-                    <div class="from-control">
-                      <select name id class="form-input" v-model="provide">
-                        <option value v-for="(index,n)  in 30">{{ index }}</option>
-                      </select>
-                    </div>
-                  
+                  <div class="from-control">
+                    <select name id class="form-input" v-model="provide">
+                      <option value v-for="(index,n)  in 30">{{ index }}</option>
+                    </select>
+                  </div>
+                  <div class="from-control">
+                    <select name id class="form-input" v-model="provide">
+                      <option value v-for="(index,n)  in 12">{{ index }}</option>
+                    </select>
+                  </div>
+                  <div class="from-control">
+                    <select name id class="form-input" v-model="provide">
+                      <option value v-for="(index,n)  in 30">{{ index }}</option>
+                    </select>
+                  </div>
                 </div>
               </div>
               <div class="email">
                 <div class="title-email">
-                  <button class="save">Lưu</button>
+                  <button class="save" @click="save">Lưu</button>
                 </div>
               </div>
             </div>
             <div class="content-right">
               <div class="img">
                 <img
-                  src="https://cdn.tgdd.vn/Products/Images/42/200438/TimerThumb/oppo-reno-hpbd.jpg"
+                  :src="$store.state.authUser.avatar"
                   alt
+                  v-if="$store.state.authUser.avatar"
                 />
+                <img
+                  :src="image"
+                  alt
+                  v-if="!image || $store.state.authUser.avatar == ''"
+                />
+                <!-- <img
+                  :src="image"
+                  alt
+                  v-if="image || $store.state.authUser.avatar"
+                /> -->
+                <div class="no-avatar" v-else>
+
+                </div>
               </div>
               <label for="file-input">
-                <img src="https://goo.gl/pB9rpQ" alt="">
+                <img src="https://goo.gl/pB9rpQ" alt />
               </label>
               <p>Thay đổi ảnh đại diện</p>
-              <input  id="file-input" type="file" class="upload"/>
+              <input type="file" id="file-input" @change="onImageChange" ref="file" />
             </div>
           </div>
         </div>
@@ -93,11 +105,54 @@ import NavBar from "./../../../components/navUser/navbar";
 export default {
   components: {
     NavBar
+  },
+  data(){
+    return{
+      image:'',
+      provide:''
+    }
+  },  
+  methods: {
+    onImageChange(e) {
+      this.$store.state.authUser.avatar = ''
+      console.log("1");
+      let file;
+      file = this.$refs.file.files[0];
+      let formData = new FormData();
+      console.log(file);
+      formData.append("file", file);
+      this.$axios
+        .post("/api/upload", formData, {
+          headers: { "Content-Type": "multipart/form-data" }
+        })
+        .then(response => {
+          this.image = "/img/" + response.data;
+          console.log(response.data);
+        })
+        .catch(function() {
+          console.log("FAILURE!!");
+        });
+    },
+    save(){
+      this.$axios
+        .post("/api/user/edit",{
+          avatar : this.image
+        })
+        .then(response => {
+          console.log('ok')
+        })
+        .catch(function() {
+          console.log("FAILURE!!");
+        });
+    }
   }
 };
 </script>
 
 <style lang="scss" scoped>
+#file-input{
+  display: none;
+}
 a {
   text-decoration: none;
 }
@@ -117,6 +172,11 @@ ul li {
   .content-right {
     width: 80%;
     padding: 10px;
+    .no-avatar{
+      width: 100px;
+      height: 100px;
+      border: 1px solid gray;
+    }
     .content-main {
       h1 {
         margin-bottom: 15px;
@@ -174,15 +234,15 @@ ul li {
           width: 70%;
           .email {
             display: flex;
-            margin-top: 18px; 
+            margin-top: 18px;
             .title-email {
               width: 25%;
               label {
                 text-align: right;
                 color: rgba(85, 85, 85, 0.8);
-                font-size: 15px; 
+                font-size: 15px;
               }
-              .save{
+              .save {
                 width: 100px;
                 height: 30px;
                 background: red;
@@ -191,28 +251,28 @@ ul li {
                 cursor: pointer;
               }
             }
-            .name-email{
+            .name-email {
               width: 80%;
               display: flex;
-              .form-input{
-                width:  80%;
-                margin-left: 20px; 
+              .form-input {
+                width: 80%;
+                margin-left: 20px;
                 height: 25px;
               }
-              .radio{
-                margin-left: 13px; 
+              .radio {
+                margin-left: 13px;
               }
-              p{
-                font-size: 15px; 
-                margin-left: 20px; 
+              p {
+                font-size: 15px;
+                margin-left: 20px;
               }
-              .txt-name-shop{
-                margin-left: 20px; 
+              .txt-name-shop {
+                margin-left: 20px;
                 outline: none;
                 padding: 10px;
                 width: 60%;
                 height: 35px;
-                border-radius: 5px; 
+                border-radius: 5px;
               }
             }
           }
@@ -225,14 +285,14 @@ ul li {
               width: 100%;
             }
           }
-          .upload{
+          .upload {
             display: none;
           }
-          label{
-            img{
+          label {
+            img {
               width: 30%;
               cursor: pointer;
-              margin:30px 30px; 
+              margin: 30px 30px;
             }
           }
         }
