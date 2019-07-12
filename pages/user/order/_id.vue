@@ -14,12 +14,12 @@
             </div>
             <div class="step">
               <div class="step-one">
-                <div class="step-div">
-                  <div class="step-icon">
+                <div class="step-div" >
+                  <div class="step-icon" :class="{ active :  bills[0].status  < 0 }">
                     <i class="fas fa-check-double"></i>
                   </div>
                   <div class="step-text">
-                    <span>Đã tạo Đơn hàng</span>
+                    <span>Đơn Hàng Đã Đặt</span>
                   </div>
                   <div class="step-date">
                     <span>11:03 07-05-2019</span>
@@ -27,12 +27,12 @@
                 </div>
               </div>
               <div class="step-one">
-                <div class="step-div">
-                  <div class="step-icon">
+                <div class="step-div" >
+                  <div class="step-icon" :class="{ active :  bills[0].status  < 1 }">
                     <i class="fas fa-money-check-alt"></i>
                   </div>
                   <div class="step-text">
-                    <span>Đã tạo Đơn hàng</span>
+                    <span>Đã Xác Nhận Thông Tin Thanh Toán</span>
                   </div>
                   <div class="step-date">
                     <span>11:03 07-05-2019</span>
@@ -40,12 +40,25 @@
                 </div>
               </div>
               <div class="step-one">
-                <div class="step-div">
-                  <div class="step-icon">
+                <div class="step-div" >
+                  <div class="step-icon" :class="{ active :  bills[0].status  < 2 }">
                     <i class="fas fa-truck"></i>
                   </div>
                   <div class="step-text">
-                    <span>Đã tạo Đơn hàng</span>
+                    <span>Đã giao cho ĐVVC</span>
+                  </div>
+                  <div class="step-date">
+                    <span>11:03 07-05-2019</span>
+                  </div>
+                </div>
+              </div>
+              <div class="step-one">
+                <div class="step-div"  >
+                  <div class="step-icon" :class="{ active :  bills[0].status  < 3 }">
+                    <i class="fas fa-truck"></i>
+                  </div>
+                  <div class="step-text">
+                    <span>Đã Hàng đã nhận</span>
                   </div>
                   <div class="step-date">
                     <span>11:03 07-05-2019</span>
@@ -54,11 +67,11 @@
               </div>
               <div class="step-one">
                 <div class="step-div">
-                  <div class="step-icon">
+                  <div class="step-icon" style="" :class="{ active :  bills[0].status  < 4}">
                     <i class="far fa-star"></i>
                   </div>
                   <div class="step-text">
-                    <span>Đã tạo Đơn hàng</span>
+                    <span>Đã Đánh Giá Sản Phẩm</span>
                   </div>
                   <div class="step-date">
                     <span>11:03 07-05-2019</span>
@@ -68,7 +81,9 @@
               <!-- <div class="step-two"></div>
               <div class="step-three"></div>
               <div class="step-four"></div>-->
-              <div class="step-line"></div>
+              <div class="step-line">
+                <div class="step-line-div"></div>
+              </div>
             </div>
             <div class="infor-bill">
               <div class="address">
@@ -103,14 +118,15 @@
                 <div class="title">
                   <div class="div-name">
                     <div class="img">
-                      <img src="https://cf.shopee.vn/file/aaa24a79e7015ab1d6c73392b4b54c93_tn" alt />
+                      <img src="/img/images.png" alt  v-if="bills[0].user.avatar == 0"/>
+                      <img :src="bills[0].user.avatar" alt  v-if="bills[0].user.avatar != 0"/>
                     </div>
                     <div class="name">
                       <p>{{ bills[0].user.name }}</p>
                     </div>
                     <div class="btn-action-user">
                       <button>chat</button>
-                      <nuxt-link :to="`/shop/${bills[0].user.id}`">
+                      <nuxt-link :to="`/shop/${bills[0].user.id}`" style="margin-left:10px;">
                         <button>xem shop</button>
                       </nuxt-link>
                     </div>
@@ -209,6 +225,17 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+// .step-line-div{
+//   width: 100%;
+//   position: absolute;
+//   z-index: 9;
+//   background: grey;
+//   height: 10px;
+// }
+.active{
+  color: grey !important;
+  border :3px solid  grey !important;
+}
 a {
   text-decoration: none;
 }
@@ -349,13 +376,13 @@ button {
             position: relative;
             background: white;
             .step-div {
-              width: 50%;
+              width: 100%;
               z-index: 20;
               position: absolute;
               .step-icon {
                 border: 3px solid #2dc258;
                 color: #2dc258;
-                margin-left: 16px;
+                    margin-left: 48px;
                 background: white;
                 height: 80px;
                 width: 80px;
@@ -391,7 +418,7 @@ button {
             width: 80%;
             margin: auto;
             top: 53px;
-            left: 36px;
+            left: 80px;
             position: absolute;
             border: 3px solid #2dc258;
             color: #2dc258;

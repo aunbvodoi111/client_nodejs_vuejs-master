@@ -2,7 +2,10 @@
 module.exports = (sequelize, DataTypes) => {
   const Province = sequelize.define('provinces', {
     // province_id	: DataTypes.INTEGER,
-    province_name	: DataTypes.STRING,
+    name	: DataTypes.STRING,
+  }, {
+    updatedAt: 'updated_at',
+    createdAt: 'created_at'
   });
   Province.associate = function(models) {
     // models.Product.belongsTo(models.Cate, {

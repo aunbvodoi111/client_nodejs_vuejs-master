@@ -2,8 +2,10 @@
     <div class="content-left">
         <div class="title">
           <div class="img">
-            <img :src="$store.state.authUser.avatar" alt />
+            <img src="/img/images.png" alt  v-if="$store.state.authUser.avatar == 0"/>
+            <img :src="$store.state.authUser.avatar" alt  v-if="$store.state.authUser.avatar != 0" />
           </div>
+         
           <div class="name-user">
             <p>Tài khoản của bạn</p>
             <span>{{ $store.state.authUser.name }}</span>

@@ -4,25 +4,12 @@
       <NavBar />
       <div class="content-right">
         <div class="content-main">
-          <h1>Thông báo của tôi</h1>
-          <div class="choose-nofi">
-            <div class="btn-act">
-              <button>Cập nhật đơn hàng</button>
-            </div>
-            <div class="btn-act">
-              <button>Cập nhật đánh giá</button>
-            </div>
-            <div class="btn-act">
-              <button>Hoạt động</button>
-            </div>
-            <div class="btn-act">
-              <button>Cập nhật sản phẩm</button>
-            </div>
-          </div>
+          <h1>Sản phẩm yêu thích</h1>
+          
           <div class="content-nofi">
             <div class="img" v-if="wishs.length == 0">
               <img src="/img/anhdep.png" alt />
-              <p>Bạn chưa có thông báo</p>
+              <p>Bạn chưa có sản phẩm </p>
               <button>Tiếp tục mua sắm</button>
             </div>
             <div class="product-content" v-else>

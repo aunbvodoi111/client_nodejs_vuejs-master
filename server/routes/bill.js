@@ -14,25 +14,28 @@ router.get('/', async (req, res) => {
         }).then(function (projects) {
             anhquy = projects
         })
-        var anhquy = await models.bills.findAll({
-            where: { UserIdBuyer: anhquy.UserIdBuyer },
-            include: [{
-                model: models.bill_details,
-                as: 'bill_details',
-                // where: { UserIdBuyer: anhquy.UserIdBuyer },
+        if (anhquy) {
+             anhquy = await models.bills.findAll({
+                where: { UserIdBuyer: anhquy.UserIdBuyer },
                 include: [{
-                    model: models.products,
-                    as: 'product'
+                    model: models.bill_details,
+                    as: 'bill_details',
+                    // where: { UserIdBuyer: anhquy.UserIdBuyer },
+                    include: [{
+                        model: models.products,
+                        as: 'product'
+                    }]
+                }, {
+                    model: models.users,
                 }]
-            }, {
-                model: models.users,
-            }]
-        })
-        return res.json(anhquy)
+            })
+            // return res.json(anhquy)
+        }
+
     } else {
-        carts = []
+        anhquy = []
     }
-    return res.json('ok')
+    return res.json(anhquy)
 })
 
 router.get('/detail/:id', async (req, res) => {

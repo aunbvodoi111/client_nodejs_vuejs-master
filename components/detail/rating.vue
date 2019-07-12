@@ -172,7 +172,14 @@
         <div class="rating-cmt" v-for="item in productnew.ratings" :key="item.id">
           <div class="avatar">
             <div class="inclue-avatar">
-              <div class="div-avatar"></div>
+              <div class="div-avatar">
+                <div class="img" >
+                  <img :src="item.user.avatar " alt v-if="item.user.avatar != 0" width='100%' style="border-radius : 100%;"/>
+                </div>
+                <div class="img" >
+                  <img src="/img/images.png " alt v-if="item.user.avatar == 0" width='100%' style="border-radius : 100%;"/>
+                </div>
+              </div>
               <div class="name-customer">{{ item.user.name }}</div>
               <div class="time">{{ moment(item.created_at).fromNow()}}</div>
             </div>
@@ -181,13 +188,18 @@
             <div>
               <p>
                 <i class="fas fa-star" v-for="n in item.star" :key=" n + 4"></i>
-                <i class="far fa-star" v-for="n in 5-item.star" :key=" n + 5"></i> Cực Kì Hài Lòng
+                <i class="far fa-star" v-for="n in 5-item.star" :key=" n + 5"></i> 
+                <span v-if ="item.star == 5 ">Cực Kì Hài Lòng</span>
+                <span v-if ="item.star == 4 ">Hài Lòng</span>
+                <span v-if ="item.star == 3 ">Tạm Ổn</span>
+                <span v-if ="item.star == 2 ">Không Hài Lòng</span>
+                <span v-if ="item.star == 1 ">Rất Không Hài Lòng</span>
               </p>
-              <p class="buy-alredy">Đã mua sản phẩm này tại Tiki</p>
-              <p>{{ item.content }}</p>
+              <!-- <p class="buy-alredy">Đã mua sản phẩm này tại Pham Qúy</p> -->
+              <p style="margin-top : 5px;">{{ item.content }}</p>
             </div>
             <div class>
-              <a @click=" item.is_rating = !item.is_rating">Gui trả lời</a>
+              <a @click=" item.is_rating = !item.is_rating" style="margin-top : 5px;">Gui trả lời</a>
             </div>
 
             <div class="img-cmt">
@@ -422,10 +434,17 @@ export default {
             ProductId: this.product.id
           })
           .then(response => {
+            var avatar
+            if( this.$store.state.authUser.avatar == 0){
+              avatar = 0
+            }else{
+              avatar = this.$store.state.authUser.avatar
+            }
             this.product.ratings.unshift({
               id: response.data.id,
               user: {
-                name: this.$store.state.authUser.name
+                name: this.$store.state.authUser.name,
+                avatar : avatar
               },
               title: response.data.title,
               star: response.data.star,
@@ -441,7 +460,8 @@ export default {
             this.productnew.ratings.unshift({
               id: response.data.id,
               user: {
-                name: this.$store.state.authUser.name
+                name: this.$store.state.authUser.name,
+                avatar : avatar
               },
               title: response.data.title,
               star: response.data.star,
@@ -460,13 +480,13 @@ export default {
               roomid: this.product.user.name
             };
             socket.emit("send-nofi-cmt", message);
+            this.toggleCmt = false;
+            this.rating.star = 0;
+            this.rating.name = "";
+            this.rating.title = "";
+            this.rating.content = "";
+            this.errorSendRating = false;
           });
-        this.toggleCmt = false;
-        this.rating.star = 0;
-        this.rating.name = "";
-        this.rating.title = "";
-        this.rating.content = "";
-        this.errorSendRating = false;
       }
     }
     // }

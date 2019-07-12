@@ -4,8 +4,8 @@
       <NavBar />
       <div class="content-right">
         <div class="content-main">
-          <h1>Thông báo của tôi</h1>
-          <div class="choose-nofi">
+          <h1>Sản phẩm đã xem</h1>
+          <!-- <div class="choose-nofi">
             <div class="btn-act">
               <button>Cập nhật đơn hàng</button>
             </div>
@@ -18,7 +18,7 @@
             <div class="btn-act">
               <button>Cập nhật sản phẩm</button>
             </div>
-          </div>
+          </div> -->
           <div class="content-nofi">
             <div class="img" v-if="local.length == 0">
               <img src="/img/anhdep.png" alt />

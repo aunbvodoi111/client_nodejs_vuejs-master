@@ -7,36 +7,40 @@
           <h1>Hóa đơn</h1>
           <div class="choose-nofi">
             <div class="btn-act">
-              <button>Cập nhật đơn hàng</button>
+              <button :class="{active:0 == status }" @click="chooseOrder(0)">Chờ thanh toán</button>
             </div>
             <div class="btn-act">
-              <button>Cập nhật đánh giá</button>
+              <button :class="{active:1 == status }" @click="chooseOrder(1)">Chờ lấy hàng</button>
             </div>
             <div class="btn-act">
-              <button>Hoạt động</button>
+              <button :class="{active:2 == status }" @click="chooseOrder(2)">Đang giao</button>
             </div>
             <div class="btn-act">
-              <button>Cập nhật sản phẩm</button>
+              <button :class="{active:3 == status }" @click="chooseOrder(3)">Đã giao</button>
+            </div>
+            <div class="btn-act">
+              <button :class="{active:4 == status }" @click="chooseOrder(4)">Đã hủy</button>
             </div>
           </div>
           <div class="content-nofi">
-            <div class="img" v-if="bills.length == 0">
+            <div class="img" v-if="billList == null ">
               <img src="/img/anhdep.png" alt />
-              <p>Bạn chưa có thông báo</p>
+              <p>Bạn chưa có đơn hàng</p>
               <button>Tiếp tục mua sắm</button>
             </div>
             <div class="bill-content" v-else>
-              <div class="bill-div" v-for="item in bills" :key="item.id">
+              <div class="bill-div" v-for="item in billList" :key="item.id">
                 <div class="title">
                   <div class="div-name">
                     <div class="img">
-                      <img src="https://cf.shopee.vn/file/aaa24a79e7015ab1d6c73392b4b54c93_tn" alt />
+                      <img src="/img/images.png" alt  v-if="item.user.avatar == 0"/>
+                      <img :src="item.user.avatar" alt  v-if="item.user.avatar != 0"/>
                     </div>
                     <div class="name">
                       <p>{{ item.user.name }}</p>
                     </div>
                     <div class="btn-action-user">
-                      <button @click="showDivChat( item )">chat</button>
+                      <button @click="showDivChat( item )" style="margin-right : 10px;">chat</button>
                       <nuxt-link :to="`/shop/${item.user.id}`">
                         <button>xem shop</button>
                       </nuxt-link>
@@ -95,6 +99,7 @@ export default {
   // middleware: 'authenticated',
   async asyncData({ $axios }) {
     var data = await $axios.get("/api/bill/");
+    console.log(data);
     return {
       bills: data.data
     };
@@ -104,13 +109,26 @@ export default {
   },
   data() {
     return {
-      local: []
+      local: [],
+      status: ""
     };
   },
   created() {
     // this.getLocal();
   },
+  computed: {
+    billList() {
+      if (this.status) {
+        return this.bills.filter(item => item.status === this.status);
+      } else {
+        return this.bills;
+      }
+    }
+  },
   methods: {
+    chooseOrder(item) {
+      this.status = item;
+    },
     chatUser(item) {
       this.selected = item.id;
       this.roomname = item.id;
@@ -155,6 +173,11 @@ ul li {
 }
 button {
   cursor: pointer;
+}
+.active {
+  border: 1px solid #2b3278 !important;
+  color: #2b3278 !important;
+  background: white !important;
 }
 .container-fruid {
   height: 500px;

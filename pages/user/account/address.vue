@@ -7,7 +7,7 @@
           <h1>Địa chỉ của tôi</h1>
           <div class="choose-nofi">
             <div class="btn-act">
-              <button @click="showPop = true">Thêm địa chỉ mới</button>
+              <button @click="showPopAc ">Thêm địa chỉ mới</button>
             </div>
           </div>
           <div class="content-nofi">
@@ -15,12 +15,12 @@
               <div class="popup-infor-customer" v-if="showPop">
                 <div class="pop">
                   <div class="title">
-                    <h3>Thêm 1 địa chỉ mới</h3>
+                    <h3>{{ title }}</h3>
                   </div>
                   <div class="form">
                     <p>Để đặt hàng, vui lòng thêm địa chỉ nhận hàng</p>
                     <div class="from-control">
-                      <input type="text" class="form-input" v-model="name" placeholder="Tên" />
+                      <input type="text" class="form-input" v-model="edit.name" placeholder="Tên" />
                     </div>
                     <!-- <span v-show="errorName">{{ errorName }}</span> -->
                     <div class="from-control">
@@ -28,27 +28,27 @@
                         type="number"
                         class="form-input"
                         placeholder="Số điện thoại"
-                        v-model="phone"
+                        v-model="edit.phone"
                       />
                     </div>
                     <div class="from-control">
-                      <select name id class="form-input" v-model="provide">
+                      <select name id class="form-input" v-model="edit.ProvinceId">
                         <option value>Tỉnh/Thành phố</option>
                         <option
                           v-for="item in provinces"
                           :value="item.id"
                           :key="item.id"
-                        >{{ item.province_name }}</option>
+                        >{{ item.name }}</option>
                       </select>
                     </div>
                     <div class="from-control">
-                      <select name id class="form-input" v-model="district">
+                      <select name id class="form-input" v-model="edit.DistrictId">
                         <option value>Quận/huyện</option>
                         <option
                           v-for="item in listDistrict"
                           :key="item.id"
                           :value="item.id"
-                        >{{ item.district_name }}</option>
+                        >{{ item.name }}</option>
                       </select>
                     </div>
                     <div class="from-control">
@@ -56,7 +56,7 @@
                         type="text"
                         class="form-input"
                         placeholder="Tòa nhà , Tên đường"
-                        v-model="address"
+                        v-model="edit.address"
                       />
                     </div>
                   </div>
@@ -66,35 +66,34 @@
                   </div>
                 </div>
               </div>
-              <div class="address-list">
+              <div class="address-list" v-for="item in addresss" :key="item.id">
                 <div class="div-left">
                   <div class="row-ct">
                     <div class="title">
                       <label for>Tên</label>
                     </div>
-                    <div class="content">Đỗ Ngọc Hoa</div>
+                    <div class="content">{{ item.name }}</div>
                   </div>
                   <div class="row-ct">
                     <div class="title">
                       <label for>Số Điện Thoại</label>
                     </div>
-                    <div class="content">(+84) 354389544</div>
+                    <div class="content">{{ item.phone }}</div>
                   </div>
                   <div class="row-ct">
                     <div class="title">
                       <label for>Địa Chỉ</label>
                     </div>
                     <div class="content">
-                      Toà hei tower số 1 Nguỵ Như Kon Tum
-                      Phường Nhân Chính
-                      Quận Thanh Xuân
-                      Hà Nội
+                      {{ item.address }} -
+                      {{ item.district.name }} -
+                      {{ item.province.name }}
                     </div>
                   </div>
                 </div>
                 <div class="div-right">
                   <div class="action">
-                    <p>Sửa</p>
+                    <p @click="editAddress(item)">Sửa</p>
                     <p>Xóa</p>
                   </div>
                   <div class="button">
@@ -118,11 +117,14 @@ export default {
   data() {
     return {
       showPop: false,
-      name: "",
-      phone: "",
-      provide: "",
-      district: "",
-      address: ""
+      edit: {
+        name: "",
+        phone: "",
+        ProvinceId: "",
+        DistrictId: "",
+        address: ""
+      },
+      index: -1
     };
   },
   async asyncData({ $axios, store }) {
@@ -136,29 +138,76 @@ export default {
     };
   },
   computed: {
+    title() {
+      return this.index === -1 ? "Thêm địa chỉ " : "Sửa địa chỉ";
+    },
     listDistrict() {
-      console.log(this.provide);
+      console.log(this.edit.ProvideId);
       var data = this.districts.filter(
-        item => item.province_id == this.provide
+        item => item.ProvinceId === this.edit.ProvinceId
       );
       return data;
     }
   },
 
   methods: {
-    add() {
-      var id = this.provinces.find(item => item.id == this.provide);
+    showPopAc(){
+      
+      this.showPop = true
+      this.index = -1
+      this.edit.name = ''
+      this.edit.phone = ''
+      this.edit.ProvinceId = ''
+      this.edit.DistrictId = ''
+      this.edit.address = ''
+    },
+    editAddress(item) {
+      this.showPop = true;
+      this.edit = "";
+      this.index = this.addresss.indexOf(item);
+      console.log(this.index);
       this.$axios
-        .post("/api/address/add", {
-          name: this.name,
-          phone: this.phone,
-          ProvideId: this.provide,
-          DistrictId: this.district,
-          address: this.address
+        .post("/api/address/edit", {
+          id: item.id
         })
         .then(response => {
-          console.log("ok");
+          console.log(response);
+          this.edit = response.data;
         });
+    },
+    add() {
+      if (this.index == -1) {
+        var id = this.provinces.find(item => item.id == this.provide);
+        this.$axios
+          .post("/api/address/add", {
+            name: this.edit.name,
+            phone: this.edit.phone,
+            ProvinceId: this.edit.ProvinceId,
+            DistrictId: this.edit.DistrictId,
+            address: this.edit.address
+          })
+          .then(response => {
+            this.showPop = false
+            this.addresss.push(response.data)
+          });
+      } else {
+        this.$axios
+          .post("/api/address/editAddress", {
+            id : this.edit.id,
+            name: this.edit.name,
+            phone: this.edit.phone,
+            ProvinceId: this.edit.ProvinceId,
+            DistrictId: this.edit.DistrictId,
+            address: this.edit.address
+          })
+          .then(response => {
+            console.log(response.data);
+            // this.addresss[this.index] = response.data
+            this.showPop = false
+            location.reload();
+            Object.assign(this.addresss[this.index], response.data)
+          });
+      }
     }
   }
 };
@@ -234,8 +283,6 @@ ul li {
         }
       }
       .content {
-        display: flex;
-
         .address-list {
           display: flex;
           padding: 20px;

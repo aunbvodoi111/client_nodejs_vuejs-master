@@ -4,7 +4,7 @@
       <div class="filter">
         <div class="title-filter">
           <h4>BỘ LỌC TÌM KIẾM</h4>
-          <div class="filter-cate">
+          <!-- <div class="filter-cate">
             <p>Theo danh mục</p>
             <ul>
               <li>điển thoại</li>
@@ -12,8 +12,8 @@
               <li>điển thoại</li>
               <li>điển thoại</li>
             </ul>
-          </div>
-          <div class="filter-rating">
+          </div> -->
+          <!-- <div class="filter-rating">
             <h5>Đánh giá</h5>
             <p @click="filterStar(5)">
               <i class="fas fa-star" v-for="n in 5" :key="n + 1"></i>( ít nhất 5 sao )
@@ -34,7 +34,7 @@
               <i class="fas fa-star" v-for="n in 1" :key="n + 4"></i>
               <i class="far fa-star" v-for="n in 4" :key="n + 1"></i>( ít nhất 1 sao )
             </p>
-          </div>
+          </div> -->
           <div class="filter-rating">
             <h5>Gía</h5>
             <div class="input">

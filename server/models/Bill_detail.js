@@ -8,6 +8,7 @@ module.exports = (sequelize, DataTypes) => {
     image: DataTypes.INTEGER,
     Product_Id: DataTypes.UUID,
     BillId: DataTypes.UUID,
+    status: DataTypes.INTEGER,
     UserIdBuyer: DataTypes.UUID,
     UserIdSaler: DataTypes.UUID,
   }, {
@@ -15,12 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       createdAt: 'created_at'
     });
   Bill_detail.associate = function (models) {
-    // models.Product.belongsTo(models.Cate, {
-    //   onDelete: "CASCADE",
-    //   foreignKey: {
-    //     allowNull: false
-    //   }
-    // });
+    Bill_detail.hasMany(models.billOrder, { as: 'dateOrder',foreignKey: 'BillDetailId'})
     Bill_detail.belongsTo(models.users, {
       foreignKey: 'UserIdSaler',
     });

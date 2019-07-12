@@ -1,8 +1,11 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const District = sequelize.define('districts', {
-    district_name: DataTypes.STRING,
-    province_id: DataTypes.UUID,
+    name: DataTypes.STRING,
+    ProvinceId: DataTypes.UUID,
+  }, {
+    updatedAt: 'updated_at',
+    createdAt: 'created_at'
   });
   District.associate = function(models) {
     // models.Product.belongsTo(models.Cate, {

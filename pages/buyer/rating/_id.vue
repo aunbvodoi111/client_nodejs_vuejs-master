@@ -87,10 +87,6 @@
             <div class="rating-total">{{ totalStarOne.length }}</div>
           </div>
         </div>
-        <!-- <div class="rating-box-right">
-          <p>Chia sẻ nhận xét về sản phẩm</p>
-          <button @click="toggleCmtAc">{{ titleToggle }}</button>
-        </div>-->
       </div>
       <div class="btn-choose-rating" v-if="ratings.length > 0">
         <div class="button">
@@ -121,8 +117,12 @@
         <div class="box-rating" v-for=" item in ratingFilter" :key="item.id">
           <div class="div">
             <div class="img">
-              <img src="https://cf.shopee.vn/file/e9534ab02c7d1eceae35917a633d533e_tn" alt />
+              <img src="/img/images.png" alt v-if="item.user.avatar == 0" />
             </div>
+            <div class="img">
+              <img :src="item.user.avatar " alt v-if="item.user.avatar != 0" />
+            </div>
+            
             <div class="content">
               <p>{{ item.user.name}}</p>
               <p>

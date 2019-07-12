@@ -75,17 +75,16 @@ router.get('/update', async (req, res) => {
 router.get('/address', async (req, res) => {
     var provinces = await models.provinces.findAll({})
     var districts = await models.districts.findAll({}) 
-    var addresss = await models.addresses.findAll({
+    var  addresss = await models.addresses.findAll({
         include: [{
             model: models.districts,
             as: 'district'
-        }],
-        include: [{
+        },{
             model: models.provinces,
             as: 'province'
         }]
     })
-    return res.send({ provinces: provinces , districts : districts, addresss : addresss})
+    return res.send({ provinces: provinces , districts : districts , addresss : addresss})
 })
 
 
