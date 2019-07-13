@@ -76,6 +76,7 @@ router.get('/address', async (req, res) => {
     var provinces = await models.provinces.findAll({})
     var districts = await models.districts.findAll({}) 
     var  addresss = await models.addresses.findAll({
+        where :{ UserId : req.user.id },
         include: [{
             model: models.districts,
             as: 'district'

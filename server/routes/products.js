@@ -92,9 +92,12 @@ router.get('/shop/:id', async (req, res) => {
 router.get('/search/:keyword', async (req, res) => {
     var { keyword } = req.params
     var products = await models.products.findAll({
-        where: { name: { [Op.like]: '%' + keyword + '%' } }, limit: 5
+        where: { name: { [Op.like]: '%' + keyword + '%' } },
     })
-    return res.status(200).json(products)
+    var users = await models.users.findAll({
+        where: { name: { [Op.like]: '%' + keyword + '%' } }
+    })
+    return res.status(200).send({ products : products , users : users })
 })
 
 router.post('/search', async (req, res) => {

@@ -72,7 +72,10 @@
                     <div class="title">
                       <label for>Tên</label>
                     </div>
-                    <div class="content">{{ item.name }}</div>
+                    <div class="content">
+                      {{ item.name }}
+                      <span v-if=" item.checkAddress == 1">Địa chỉ mặc định</span>
+                    </div>
                   </div>
                   <div class="row-ct">
                     <div class="title">
@@ -97,7 +100,14 @@
                     <p>Xóa</p>
                   </div>
                   <div class="button">
-                    <button>Thiết lập mặc định</button>
+                    <button
+                      :class="{ disable : item.checkAddress == 1}"
+                      v-if=" item.checkAddress == 1"
+                    >Thiết lập mặc định</button>
+                    <button
+                      v-if=" item.checkAddress == 0"
+                      @click="changeAddressDefault(item)"
+                    >Thiết lập mặc định</button>
                   </div>
                 </div>
               </div>
@@ -110,6 +120,7 @@
 </template>
 <script>
 import NavBar from "./../../../components/navUser/navbar";
+import Vue from 'vue'
 export default {
   components: {
     NavBar
@@ -149,17 +160,37 @@ export default {
       return data;
     }
   },
-
+  watch: {
+    addresss: {
+      handler: function(val) {
+        console.log("a thing changed");
+      }
+    }
+  },
   methods: {
-    showPopAc(){
-      
-      this.showPop = true
-      this.index = -1
-      this.edit.name = ''
-      this.edit.phone = ''
-      this.edit.ProvinceId = ''
-      this.edit.DistrictId = ''
-      this.edit.address = ''
+    changeAddressDefault(item) {
+      // this.showPop = true
+      this.addresss.forEach(item => {
+        Vue.set(item, "checkAddress", 0);
+      });
+      this.index = this.addresss.indexOf(item);
+      this.$axios
+        .post("/api/address/changeAddressDefault", {
+          id: item.id
+        })
+        .then(response => {
+          console.log(response);
+          Object.assign(this.addresss[this.index], response.data);
+        });
+    },
+    showPopAc() {
+      this.showPop = true;
+      this.index = -1;
+      this.edit.name = "";
+      this.edit.phone = "";
+      this.edit.ProvinceId = "";
+      this.edit.DistrictId = "";
+      this.edit.address = "";
     },
     editAddress(item) {
       this.showPop = true;
@@ -187,13 +218,13 @@ export default {
             address: this.edit.address
           })
           .then(response => {
-            this.showPop = false
-            this.addresss.push(response.data)
+            this.showPop = false;
+            this.addresss.push(response.data);
           });
       } else {
         this.$axios
           .post("/api/address/editAddress", {
-            id : this.edit.id,
+            id: this.edit.id,
             name: this.edit.name,
             phone: this.edit.phone,
             ProvinceId: this.edit.ProvinceId,
@@ -203,9 +234,9 @@ export default {
           .then(response => {
             console.log(response.data);
             // this.addresss[this.index] = response.data
-            this.showPop = false
-            location.reload();
-            Object.assign(this.addresss[this.index], response.data)
+            this.showPop = false;
+            // s
+            Object.assign(this.addresss[this.index], response.data);
           });
       }
     }
@@ -219,6 +250,9 @@ a {
 }
 ul li {
   list-style-type: none;
+}
+.disable {
+  color: grey !important;
 }
 .container-fruid {
   height: 500px;

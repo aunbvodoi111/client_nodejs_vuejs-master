@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
     UserId: DataTypes.INTEGER,
     ProvinceId: DataTypes.INTEGER,
     DistrictId: DataTypes.INTEGER,
+    checkAddress : DataTypes.INTEGER,
   }, {
       updatedAt: 'updated_at',
       createdAt: 'created_at'

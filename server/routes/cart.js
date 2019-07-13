@@ -181,6 +181,17 @@ router.get('/checkout', async (req, res) => {
     var carts
     var anhquy
     if (req.user) {
+        var provinces = await models.provinces.findAll({})
+        var districts = await models.districts.findAll({})  
+        var  addresss = await models.addresses.findAll({
+            include: [{
+                model: models.districts,
+                as: 'district'
+            },{
+                model: models.provinces,
+                as: 'province'
+            }]
+        })
         // provinces = await models.provinces.findAll({})
         // districts = await models.districts.findAll({})
         await models.carts.findOne({
@@ -212,12 +223,23 @@ router.get('/checkout', async (req, res) => {
 
     } else {
         carts = []
-        var provinces = []
-        var districts = []
+
     }
-    var provinces = []
-    var districts = []
-    return res.send({ carts: carts, provinces: provinces, districts: districts })
+    var users = await models.users.findOne({
+        where: { id: req.user.id },
+        include: [{
+            model: models.addresses,
+            as: 'addresses',
+            include: [{
+                model: models.districts,
+                as: 'district'
+            },{
+                model: models.provinces,
+                as: 'province'
+            }]
+        }]
+    }) 
+    return res.send({ carts: carts, provinces: provinces, districts: districts , users : users})
 })
 
 router.get('/anhquy', async (req, res) => {

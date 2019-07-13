@@ -18,6 +18,7 @@
               <div class="price">
                 <p>₫{{ formatPrice(item.discount) }}</p>
               </div>
+              
             </div>
           </div>
         </div>
@@ -57,6 +58,9 @@
             </div>
             <div class="price">
               <p>₫{{ formatPrice(item.discount) }}</p>
+            </div>
+            <div class="star">
+              <i class="fas fa-star" v-for="n in 5"></i> <span>(5 nhận xét)</span> 
             </div>
           </div>
         </div>
@@ -252,7 +256,7 @@ a:hover {
         .product {
           float: left;
           width: 16.6%;
-          height: 275px;
+          height: 300px;
           padding: 3px;
 
           .product-div {
@@ -280,6 +284,17 @@ a:hover {
               padding: 4px;
               color: red;
               margin-top: 10px;
+            }
+            .star{
+              padding: 4px;
+              i {
+                font-size: 10px; 
+                color: #fd9727;
+              }
+              span{
+                font-size: 11px; 
+                color: grey;
+              }
             }
           }
         }

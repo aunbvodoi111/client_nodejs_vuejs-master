@@ -83,7 +83,18 @@
             </div>
             <span>{{ product.qty }} sản phẩm có sẵn</span>
           </div>
-          <div class="btn-action-detail">
+          <div class="btn-action-detail" v-if=" $store.state.authUser && $store.state.authUser.id != product.user.id">
+            <div class="btn-add-to-cart">
+              <button @click="addCart">
+                <i class="fas fa-shopping-cart"></i>
+                Thêm Vào Giỏ Hàng
+              </button>
+            </div>
+            <div class="btn-add-to-buy" >
+                <button @click="buyProduct">Mua ngay</button>
+            </div>
+          </div>
+          <div class="btn-action-detail" v-if=" $store.state.authUser == null ">
             <div class="btn-add-to-cart">
               <button @click="addCart">
                 <i class="fas fa-shopping-cart"></i>

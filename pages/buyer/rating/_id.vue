@@ -92,7 +92,7 @@
         <div class="button">
           <button :class="{highlight:7 == selected}" @click="filterRating(7)">Tất cả</button>
           <button
-            :class="{highlight:5 == selected}"
+            :class="{highlight:5 == selected}" 
             @click="filterRating(5)"
           >5 sao({{ totalStarFive.length }})</button>
           <button

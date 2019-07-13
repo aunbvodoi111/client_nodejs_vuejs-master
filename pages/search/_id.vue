@@ -87,9 +87,9 @@
 export default {
   async asyncData({ $axios, params }) {
       console.log(params)
-    var products = await $axios.get("/api/product/search/" + params.id);
-    console.log(products)
-    return { products: products.data };
+    var data = await $axios.get("/api/product/search/" + params.id);
+    console.log(data)
+    return { products: data.data.products , users: data.data.users };
   }
 };
 </script>

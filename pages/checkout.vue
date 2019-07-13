@@ -4,50 +4,54 @@
       <div class="popup-infor-customer" v-if="showPopInforCustom">
         <div class="pop">
           <div class="title">
-            <h3>Thêm 1 địa chỉ mới</h3>
+            <h3>{{ title }}</h3>
           </div>
-          <!-- <div class="form">
+          <div class="form">
             <p>Để đặt hàng, vui lòng thêm địa chỉ nhận hàng</p>
+            <div class="from-control">
+              <input type="text" class="form-input" v-model="edit.name" placeholder="Tên" />
+            </div>
+            <!-- <span v-show="errorName">{{ errorName }}</span> -->
+            <div class="from-control">
+              <input
+                type="number"
+                class="form-input"
+                placeholder="Số điện thoại"
+                v-model="edit.phone"
+              />
+            </div>
+            <div class="from-control">
+              <select name id class="form-input" v-model="edit.ProvinceId">
+                <option value>Tỉnh/Thành phố</option>
+                <option v-for="item in provinces" :value="item.id" :key="item.id">{{ item.name }}</option>
+              </select>
+            </div>
+            <div class="from-control">
+              <select name id class="form-input" v-model="edit.DistrictId">
+                <option value>Quận/huyện</option>
+                <option v-for="item in listDistrict" :key="item.id" :value="item.id">{{ item.name }}</option>
+              </select>
+            </div>
             <div class="from-control">
               <input
                 type="text"
                 class="form-input"
-                @mousedown="handleItemClick"
-                @mouseover="pointer"
-                v-model="name"
-                placeholder="Tên"
+                placeholder="Tòa nhà , Tên đường"
+                v-model="edit.address"
               />
             </div>
-            <span v-show="errorName">{{ errorName }}</span>
-            <div class="from-control">
-              <input type="number" class="form-input" placeholder="Số điện thoại" />
-            </div>
-            <div class="from-control">
-              <select name id class="form-input" >
-                <option value>Tỉnh/Thành phố</option>
-                <option value v-for="item in provinces" :key="item.id">{{ item.province_name }}</option>
-              </select>
-            </div>
-            <div class="from-control">
-              <select name id class="form-input">
-                <option value>Quận/huyện</option>
-                <option value>anhquy</option>
-              </select>
-            </div>
-            <div class="from-control">
-              <input type="text" class="form-input" placeholder="Tòa nhà , Tên đường"/>
-            </div>
-          </div>-->
+          </div>
           <div class="btn-action">
-            <button @click=" back">Trở lại</button>
-            <button>Hoàn thành</button>
+            <button @click="showPop = false">Trở lại</button>
+            <button @click="add">Hoàn thành</button>
           </div>
         </div>
       </div>
       <div class="infor-customer">
         <p>Địa Chỉ Nhận Hàng</p>
         <p>
-          <strong>quy (+84) 365373705</strong> 123-Cửu Việt 2 , Thị Trấn Trâu Quỳ, Huyện Gia Lâm, Hà Nội
+          <strong>{{ addresseDefault.name }} (+84) {{ addresseDefault.phone }}</strong> {{ addresseDefault.address }} , Thị Trấn Trâu Quỳ,
+           {{ addresseDefault.district.name }}, {{ addresseDefault.province.name }}
         </p>
       </div>
       <div class="product-checkout" v-for="item in carts" :key="item.id">
@@ -90,7 +94,7 @@
         </div>
         <div class="send-saler">
           <span>Lời nhắn:</span>
-          <input type="text" v-model="message"/>
+          <input type="text" v-model="message" />
         </div>
         <!-- <div class="total-money-product">
           <p>
@@ -99,7 +103,7 @@
               style="color :red "
             >₫{{ formatPrice(item.qty * item.discount) }}</span>
           </p>
-        </div> -->
+        </div>-->
       </div>
       <div class="check-out">
         <div class="title">
@@ -134,7 +138,7 @@
         <div class="button">
           <div class="btn-action">
             <!-- <nuxt-link to="/user/order/history"> -->
-              <button @click="checkoutCart">Đặt hàng</button>
+            <button @click="checkoutCart">Đặt hàng</button>
             <!-- </nuxt-link> -->
           </div>
         </div>
@@ -146,7 +150,13 @@
 export default {
   data() {
     return {
-      // showPopInforCustom: false,
+      edit: {
+        name: "",
+        phone: "",
+        ProvinceId: "",
+        DistrictId: "",
+        address: ""
+      },
       name: "",
       errorName: "",
       phone: "",
@@ -154,7 +164,7 @@ export default {
       sum: "",
       UserIdSaler: "",
       note: "",
-      message:''
+      message: ""
     };
   },
 
@@ -162,20 +172,35 @@ export default {
     var data = await $axios.get("/api/cart/checkout");
     console.log(data);
     var showPopInforCustom = false;
-    if (store.state.authUser) {
-      if (store.state.authUser.phone == 0) {
-        showPopInforCustom = false;
-      } else if (store.state.authUser.phone == 0) {
-        showPopInforCustom = false;
-      }
+    if (data.data.users.addresses.length > 0) {
+      showPopInforCustom = false;
+    } else {
+      showPopInforCustom = true;
     }
 
     return {
+      provinces: data.data.provinces,
+      districts: data.data.districts,
       carts: data.data.carts,
+      addresses : data.data.users.addresses,
       showPopInforCustom: showPopInforCustom
     };
   },
   computed: {
+    addresseDefault(){
+      var address = this.addresses.find(
+        item => item.checkAddress === 1
+      );
+      console.log(address)
+      return address;
+    },  
+    listDistrict() {
+      console.log(this.edit.ProvideId);
+      var data = this.districts.filter(
+        item => item.ProvinceId === this.edit.ProvinceId
+      );
+      return data;
+    },
     sumQtyCart() {
       var sum = 0;
       for (var i = 0; i < this.carts.length; i++) {
@@ -205,12 +230,26 @@ export default {
     }
   },
   methods: {
+    add() {
+      this.$axios
+        .post("/api/address/add", {
+          name: this.edit.name,
+          phone: this.edit.phone,
+          ProvinceId: this.edit.ProvinceId,
+          DistrictId: this.edit.DistrictId,
+          address: this.edit.address
+        })
+        .then(response => {
+          this.showPop = false;
+          this.addresses(response.data);
+        });
+    },
     back() {
       this.showPopInforCustom = false;
       this.$router.push("/cart");
     },
     showDivChat(item) {
-      console.log(item)
+      console.log(item);
       if (!this.$store.state.authUser) {
         this.$store.commit("OPEN_REGISTER");
       } else {
@@ -248,10 +287,10 @@ export default {
           phone: this.phone,
           address: this.address,
           UserIdSaler: this.UserIdSaler,
-          note: this.message,
+          note: this.message
         })
         .then(response => {
-          this.$router.push('/user/order/history')
+          this.$router.push("/user/order/history");
         });
     }
   }
