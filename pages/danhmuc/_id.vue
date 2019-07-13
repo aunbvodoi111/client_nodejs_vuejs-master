@@ -73,7 +73,10 @@
         </button>
         <button v-if="maxprice  && minprice && filterPrice">
           {{ minprice }} - {{ maxprice }}
-          <i class="far fa-window-close" @click="filterPrice = '', minprice ='',maxprice =''"></i>
+          <i
+            class="far fa-window-close"
+            @click="filterPrice = '', minprice ='',maxprice =''"
+          ></i>
         </button>
       </div>
       <div class="product-content" v-if="listProduct.length > 0 ">
@@ -111,16 +114,109 @@ export default {
   },
   computed: {
     listProduct() {
-      console.log("sad");
-      if (this.CateId) {
+      if (
+        this.CateId &&
+        this.sort == 1 &&
+        this.maxprice &&
+        this.minprice &&
+        this.filterPrice
+      ) {
+        return this.products.products
+          .filter(product => product.SubcateId === this.CateId)
+          .sort((a, b) => a.discount - b.discount)
+          .filter(
+            product =>
+              product.discount >= this.minprice &&
+              product.discount <= this.maxprice
+          );
+      } else if (
+        this.CateId &&
+        this.sort == "" &&
+        this.sort == "" &&
+        this.maxprice == ""
+      ) {
         return this.products.products.filter(
           product => product.SubcateId === this.CateId
         );
-      } else if (this.sort == 1) {
+      } else if (
+        this.CateId &&
+        this.sort == -1 &&
+        this.maxprice &&
+        this.minprice &&
+        this.filterPrice
+      ) {
+        return this.products.products
+          .filter(product => product.SubcateId === this.CateId)
+          .sort((a, b) => b.discount - a.discount)
+          .filter(
+            product =>
+              product.discount >= this.minprice &&
+              product.discount <= this.maxprice
+          );
+      } else if (this.CateId && this.sort == -1 && this.maxprice == "") {
+        return this.products.products
+          .filter(product => product.SubcateId === this.CateId)
+          .sort((a, b) => b.discount - a.discount);
+      } else if (this.CateId && this.sort == 1 && this.maxprice == "") {
+        return this.products.products
+          .filter(product => product.SubcateId === this.CateId)
+          .sort((a, b) => a.discount - b.discount);
+      } else if (
+        this.CateId &&
+        this.sort == "" &&
+        this.maxprice &&
+        this.minprice &&
+        this.filterPrice
+      ) {
+        console.log("vao day");
+        return this.products.products
+          .filter(product => product.SubcateId === this.CateId)
+          .filter(
+            product =>
+              product.discount >= this.minprice &&
+              product.discount <= this.maxprice
+          );
+      } else if (
+        this.CateId == "" &&
+        this.sort == 1 &&
+        this.maxprice &&
+        this.minprice &&
+        this.filterPrice
+      ) {
+        console.log("vao day");
+        return this.products.products
+          .filter(
+            product =>
+              product.discount >= this.minprice &&
+              product.discount <= this.maxprice
+          )
+          .sort((a, b) => a.discount - b.discount);
+      } else if (
+        this.CateId == "" &&
+        this.sort == -1 &&
+        this.maxprice &&
+        this.minprice &&
+        this.filterPrice
+      ) {
+        console.log("vao day");
+        return this.products.products
+          .filter(
+            product =>
+              product.discount >= this.minprice &&
+              product.discount <= this.maxprice
+          )
+          .sort((a, b) => b.discount - a.discount);
+      } else if (this.sort == 1 && this.CateId == "") {
         return this.products.products.sort((a, b) => a.discount - b.discount);
       } else if (this.sort == -1) {
         return this.products.products.sort((a, b) => b.discount - a.discount);
-      } else if (this.maxprice && this.minprice && this.filterPrice) {
+      } else if (
+        this.maxprice &&
+        this.minprice &&
+        this.filterPrice &&
+        this.CateId == "" &&
+        this.sort == ""
+      ) {
         return this.products.products.filter(
           product =>
             product.discount >= this.minprice &&
@@ -142,6 +238,7 @@ export default {
   },
   methods: {
     filter(value) {
+      console.log(value)
       this.CateId = value;
     },
     formatPrice(value) {
@@ -163,11 +260,11 @@ a {
 a:hover {
   text-decoration: none;
 }
-.btn-filer{
+.btn-filer {
   button {
     height: 100px;
     height: 30px;
-    border : none;
+    border: none;
     background-color: #2b3278;
     color: white;
   }
@@ -192,7 +289,7 @@ a:hover {
                 margin-top: 10px;
                 cursor: pointer;
                 font-size: 14px;
-                color: gray; 
+                color: gray;
               }
             }
           }

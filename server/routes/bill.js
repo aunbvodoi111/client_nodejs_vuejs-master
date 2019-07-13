@@ -15,7 +15,7 @@ router.get('/', async (req, res) => {
             anhquy = projects
         })
         if (anhquy) {
-             anhquy = await models.bills.findAll({
+            anhquy = await models.bills.findAll({
                 where: { UserIdBuyer: anhquy.UserIdBuyer },
                 include: [{
                     model: models.bill_details,
@@ -42,15 +42,31 @@ router.get('/detail/:id', async (req, res) => {
     var { id } = req.params
     if (req.user) {
 
-        var anhquy = await models.bill_details.findAll({
-            where: { BillId: id },
+        var anhquy = await models.bills.findOne({
+            where: { id: id },
             include: [{
-                model: models.products,
-                as: 'product'
-
+                model: models.bill_details,
+                as: 'bill_details',
+                // where: { UserIdBuyer: anhquy.UserIdBuyer },
+                include: [{
+                    model: models.products,
+                    as: 'product'
+                }]
             }, {
                 model: models.users,
-            }]
+            },
+            {
+                model: models.addresses,
+                as: 'addresse',
+                include: [{
+                    model: models.districts,
+                    as: 'district'
+                },{
+                    model: models.provinces,
+                    as: 'province'
+                }]
+            }
+            ]
         })
         return res.json(anhquy)
     } else {

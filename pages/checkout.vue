@@ -47,11 +47,12 @@
           </div>
         </div>
       </div>
-      <div class="infor-customer">
+      <div class="infor-customer" v-if="addresseDefault">
         <p>Địa Chỉ Nhận Hàng</p>
         <p>
-          <strong>{{ addresseDefault.name }} (+84) {{ addresseDefault.phone }}</strong> {{ addresseDefault.address }} , Thị Trấn Trâu Quỳ,
-           {{ addresseDefault.district.name }}, {{ addresseDefault.province.name }}
+          <strong>{{ addresseDefault.name }} (+84) {{ addresseDefault.phone }}</strong>
+          {{ addresseDefault.address }} , Thị Trấn Trâu Quỳ,
+          {{ addresseDefault.district.name }}, {{ addresseDefault.province.name }}
         </p>
       </div>
       <div class="product-checkout" v-for="item in carts" :key="item.id">
@@ -182,18 +183,18 @@ export default {
       provinces: data.data.provinces,
       districts: data.data.districts,
       carts: data.data.carts,
-      addresses : data.data.users.addresses,
+      addresses: data.data.users.addresses,
       showPopInforCustom: showPopInforCustom
     };
   },
   computed: {
-    addresseDefault(){
-      var address = this.addresses.find(
-        item => item.checkAddress === 1
-      );
-      console.log(address)
-      return address;
-    },  
+    addresseDefault() {
+      if (this.addresses.length > 0) {
+        var address = this.addresses.find(item => item.checkAddress === 1);
+        console.log(address);
+        return address;
+      }
+    },
     listDistrict() {
       console.log(this.edit.ProvideId);
       var data = this.districts.filter(
@@ -240,8 +241,8 @@ export default {
           address: this.edit.address
         })
         .then(response => {
-          this.showPop = false;
-          this.addresses(response.data);
+          this.showPopInforCustom = false;
+          this.addresses.push(response.data);
         });
     },
     back() {
@@ -287,7 +288,8 @@ export default {
           phone: this.phone,
           address: this.address,
           UserIdSaler: this.UserIdSaler,
-          note: this.message
+          note: this.message,
+          AddressId : this.addresseDefault.id
         })
         .then(response => {
           this.$router.push("/user/order/history");

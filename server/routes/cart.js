@@ -47,7 +47,7 @@ router.post('/add', async (req, res) => {
 
 
 router.post('/addCartCustomer', async (req, res) => {
-    var { carts } = req.body
+    var { carts , AddressId } = req.body
     console.log(carts)
     for (var i = 0; i < carts.length; i++) {
         var bills = await models.bills.create({
@@ -55,9 +55,9 @@ router.post('/addCartCustomer', async (req, res) => {
             UserIdSaler: carts[i].UserIdSaler,
             sum: 0,
             note: 'aaaa',
+            AddressId : AddressId,
             date_order: '30/1/2019',
             payment: 1,
-            payment: 'anqnh',
         });
         bills.save()
         var sum = 0

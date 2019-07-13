@@ -15,7 +15,7 @@
             <div class="step">
               <div class="step-one">
                 <div class="step-div" >
-                  <div class="step-icon" :class="{ active :  bills[0].status  < 0 }">
+                  <div class="step-icon" :class="{ active :  bills.status  < 0 }">
                     <i class="fas fa-check-double"></i>
                   </div>
                   <div class="step-text">
@@ -28,7 +28,7 @@
               </div>
               <div class="step-one">
                 <div class="step-div" >
-                  <div class="step-icon" :class="{ active :  bills[0].status  < 1 }">
+                  <div class="step-icon" :class="{ active :  bills.status  < 1 }">
                     <i class="fas fa-money-check-alt"></i>
                   </div>
                   <div class="step-text">
@@ -41,7 +41,7 @@
               </div>
               <div class="step-one">
                 <div class="step-div" >
-                  <div class="step-icon" :class="{ active :  bills[0].status  < 2 }">
+                  <div class="step-icon" :class="{ active :  bills.status  < 2 }">
                     <i class="fas fa-truck"></i>
                   </div>
                   <div class="step-text">
@@ -54,7 +54,7 @@
               </div>
               <div class="step-one">
                 <div class="step-div"  >
-                  <div class="step-icon" :class="{ active :  bills[0].status  < 3 }">
+                  <div class="step-icon" :class="{ active :  bills.status  < 3 }">
                     <i class="fas fa-truck"></i>
                   </div>
                   <div class="step-text">
@@ -67,7 +67,7 @@
               </div>
               <div class="step-one">
                 <div class="step-div">
-                  <div class="step-icon" style="" :class="{ active :  bills[0].status  < 4}">
+                  <div class="step-icon" style="" :class="{ active :  bills.status  < 4}">
                     <i class="far fa-star"></i>
                   </div>
                   <div class="step-text">
@@ -88,9 +88,9 @@
             <div class="infor-bill">
               <div class="address">
                 <h4>Địa chỉ nhận hàng</h4>
-                <p>Đỗ Ngọc Hoa</p>
-                <p>84354389544</p>
-                <p>Toà hei tower số 1 Nguỵ Như Kon Tum, Phường Nhân Chính, Quận Thanh Xuân, Hà Nội</p>
+                <p>{{ bills.addresse.name }}</p>
+                <p>{{ bills.addresse.phone }}</p>
+                <p> {{ bills.addresse.address }}, {{ bills.addresse.district.name }}, {{ bills.addresse.province.name }}</p>
               </div>
               <div class="status-bill">
                 <ul>
@@ -118,22 +118,22 @@
                 <div class="title">
                   <div class="div-name">
                     <div class="img">
-                      <img src="/img/images.png" alt  v-if="bills[0].user.avatar == 0"/>
-                      <img :src="bills[0].user.avatar" alt  v-if="bills[0].user.avatar != 0"/>
+                      <img src="/img/images.png" alt  v-if="bills.user.avatar == 0"/>
+                      <img :src="bills.user.avatar" alt  v-if="bills.user.avatar != 0"/>
                     </div>
                     <div class="name">
-                      <p>{{ bills[0].user.name }}</p>
+                      <p>{{ bills.user.name }}</p>
                     </div>
                     <div class="btn-action-user">
                       <button>chat</button>
-                      <nuxt-link :to="`/shop/${bills[0].user.id}`" style="margin-left:10px;">
+                      <nuxt-link :to="`/shop/${bills.user.id}`" style="margin-left:10px;">
                         <button>xem shop</button>
                       </nuxt-link>
                     </div>
                   </div>
                 </div>
                 <div class="content-main-product">
-                  <div class="include-div" v-for="prod in bills" :key="prod.id">
+                  <div class="include-div" v-for="prod in bills.bill_details" :key="prod.id">
                     <div class="img-bill">
                       <img :src="prod.product.image" alt />
                     </div>
@@ -206,8 +206,8 @@ export default {
       sum(){
         var sum = 0 
         if(this.bills){
-          for( var i = 0 ; i < this.bills.length ; i++){
-            sum = sum + this.bills[i].qty * this.bills[i].product.discount
+          for( var i = 0 ; i < this.bills.bill_details.length ; i++){
+            sum = sum + this.bills.bill_details[i].qty * this.bills.bill_details[i].product.discount
           }
         }
         return sum 
