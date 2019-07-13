@@ -2,6 +2,7 @@
 module.exports = (sequelize, DataTypes) => {
   const Mulimage = sequelize.define('mulimages', {
     image: DataTypes.STRING,
+    ProductId : DataTypes.INTEGER,
   }, {
     updatedAt: 'updated_at',
     createdAt: 'created_at'

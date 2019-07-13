@@ -63,7 +63,7 @@ router.get('/danhmuc/:id', async (req, res) => {
         include: [{
             model: models.products,
             as: 'products',
-        },{
+        }, {
             model: models.subcates,
             as: 'subcates',
         }]
@@ -97,7 +97,7 @@ router.get('/search/:keyword', async (req, res) => {
     var users = await models.users.findAll({
         where: { name: { [Op.like]: '%' + keyword + '%' } }
     })
-    return res.status(200).send({ products : products , users : users })
+    return res.status(200).send({ products: products, users: users })
 })
 
 router.post('/search', async (req, res) => {
@@ -220,17 +220,19 @@ router.get('/detailPr/:id', async (req, res) => {
             { model: models.users },
             ]
         }, { model: models.users },
-           { model: models.subcates },
+        { model: models.subcates },
         {
             model: models.comments,
             as: 'comments',
             include: [{
                 model: models.rep_comments,
                 as: 'req_comments',
-            }
-            ]
-        }
-        ],
+            }]
+        },
+        {
+            model: models.mulimages,
+            as: 'mulimages',
+        }],
 
     })
 
@@ -326,12 +328,13 @@ router.get('/detailPr/:id', async (req, res) => {
         }
     }
     console.log(sumQty)
-    return res.send({ 
-        products: products, 
-        count: count, 
-        follows: follows, sumQty: sumQty, 
+    return res.send({
+        products: products,
+        count: count,
+        follows: follows, sumQty: sumQty,
         totalProduct: totalProduct, totalFollow: totalFollow,
-        totalRating: totalRating })
+        totalRating: totalRating
+    })
 })
 // router.post('/login', async (req, res) => {
 //     console.log(req.body)

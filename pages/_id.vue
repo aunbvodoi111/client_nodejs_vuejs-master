@@ -8,8 +8,9 @@
             <div class="img">
               <img :src="product.image" alt />
             </div>
+            
             <div class="infor-product-cart">
-              <p>{{ product.name }}</p>
+              <p >{{ product.name }}</p>
               <!-- <div class="qty">
                 số lượng sp trong giỏ hàng :
                 <span
@@ -31,7 +32,15 @@
       <div class="content-detail-pr">
         <div class="content-left">
           <div class="img">
-            <img :src="product.image" alt />
+            <img :src="product.image" alt  v-if="idImage == ''"/>
+            <img :src="ImageHover.image" alt  v-if="idImage != ''" />
+          </div>
+          <div class="">
+            <img :src="product.image" alt="" width="100px" height="100px" @mouseover="hoverImage(1)" :class="{ selectImage:'' == idImage}">
+            <div class="" style="width:100px; display : flex;" v-for=" item in product.mulimages">
+              
+              <img :src="item.image" alt="" width="100px" height="100px" @mouseover="hoverImage(item)" :class="{ selectImage:item.id == idImage}">
+            </div>
           </div>
           <div class="icon-share">
             <span>
@@ -188,13 +197,22 @@ export default {
       mediumstar: 0,
       qtyProduct: 1,
       index: undefined,
-      showNofication: false
+      showNofication: false,
+      idImage : ''
     };
   },
   created(){
 
   },
   methods: {
+    hoverImage(item){
+      console.log(item.id)
+      if(item == 1){
+        this.idImage = ''
+      }else{
+        this.idImage = item.id
+      }
+    },
     formatPrice(value) {
       let val = (value / 1).toFixed(0).replace(".", ",");
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -312,6 +330,13 @@ export default {
     }
   },
   computed: {
+    ImageHover(){
+      if(this.idImage){
+        return this.product.mulimages.find( item => item.id === this.idImage)
+      }else{
+        return this.product
+      }
+    },
     checkWishe: {
       get: function() {
         this.index;
@@ -338,6 +363,9 @@ export default {
 <style lang="scss" scoped>
 button {
   cursor: pointer;
+}
+.selectImage{
+  border: 3px solid red !important;
 }
 .bounce-enter-active {
   animation: bounce-in 0.5s;

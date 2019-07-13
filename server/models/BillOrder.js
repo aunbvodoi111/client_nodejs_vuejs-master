@@ -3,7 +3,7 @@ module.exports = (sequelize, DataTypes) => {
   const BillOrder = sequelize.define('billOrder', {
     name: DataTypes.STRING,
     data: DataTypes.DATE                        ,
-    BillDetailId: DataTypes.UUID,
+    BillId : DataTypes.UUID,
   }, {
       updatedAt: 'updated_at',
       createdAt: 'created_at'
