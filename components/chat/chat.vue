@@ -39,7 +39,7 @@
         <div class="title-chat-right">
           <i class="fas fa-minus" @click="$store.commit('TOGGLE_CHAT')"></i>
         </div>
-        <div class="content-chat" id="infinite-list" ref="messages">
+        <div class="content-chat messages" ref="messages">
           <div class="messager" v-for="item in room.messagers" :key="item.id">
             <div class="saler">
               <div class="div-left" v-if="item.UserId == $store.state.authUser.id">
@@ -100,7 +100,7 @@ export default {
       idUserSend: "",
       messages: [],
       typing: "",
-      room: {},
+      // room: {},
       count: "",
       scrollToTop: true,
       scrollHeight: true,
@@ -139,10 +139,13 @@ export default {
     });
   },
   mounted() {
-    this.scrollMessages();
+    this.scrollToBottom();
   },
   updated() {
-    this.scrollMessages();
+    this.scrollToBottom();
+  },
+  watch: {
+    'messages': 'scrollToBottom'
   },
   methods: {
     showDivChat() {
@@ -217,22 +220,30 @@ export default {
       this.message = "";
       this.sendUserNotTyping();
     },
-    scrollMessages() {
-      // var elmnt = document.getElementById("infinite-list");
-      // var y = elmnt.scrollHeight;
+    scrollToBottom() {
+      this.$nextTick(() => {
+        // this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight
+      })
     }
   }
 };
 </script>
 
 <style lang="scss" scoped>
+* {
+  box-sizing: border-box;
+}
+
 .highlight {
   color: white !important;
   background: grey;
 }
-#infinite-list {
-  overflow-y: auto;
-  height: 360px;
+
+.messages {
+  height: 100%;
+  margin: 0;
+  overflow-y: scroll;
+  padding: 10px 20px 10px 20px;
 }
 .btn-chat {
   position: fixed;
@@ -484,7 +495,7 @@ body {
 
 .circle {
   height: 5px;
-  padding-left: 3px; 
+  padding-left: 3px;
   width: 5px;
   margin: 0 2px 0px 4px;
   background-color: #b6b5ba;

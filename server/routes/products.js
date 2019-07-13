@@ -63,6 +63,10 @@ router.get('/danhmuc/:id', async (req, res) => {
         include: [{
             model: models.products,
             as: 'products',
+            include: [{
+                model: models.mulimages,
+                as: 'mulimages',
+            }]
         }, {
             model: models.subcates,
             as: 'subcates',

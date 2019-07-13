@@ -26,6 +26,18 @@
           <p>Vào giỏ hàng</p>
         </div>
       </transition>
+      <div class="image-detail">
+        <div class="div-img-main"> 
+          <img :src="imgMain.image" alt="" v-if="imgMain != ''">
+          <img :src="ImageHover.image" alt v-if="idImage != ''" />
+        </div>
+        <div class="div-img" v-for=" item in product.mulimages">
+          <img :src="item.image" alt="" width="100%"  :class="{ selectImage:item.id == imgMain.id}" @mouseover="hoverImage(item)">
+          <button @click="anhquy()"> tang </button>
+          <button @click="anhquyok()"> Giam</button>
+        </div>
+        <div class=""></div>
+      </div>
       <div class="title-content">
         <h4>Trang chủ > {{ product.subcate.name}}</h4>
       </div>
@@ -52,7 +64,7 @@
                 height="100px"
                 @mouseover="hoverImage(item)"
                 :class="{ selectImage:item.id == idImage}"
-                @click="anhquy()"
+                
               />
             </div>
           </div>
@@ -221,11 +233,31 @@ export default {
       index: undefined,
       showNofication: false,
       idImage: "",
-      anhquyhi : -1
+      anhquyhi : -1,
+      
     };
   },
   created() {},
   methods: {
+    anhquyok(){
+      // increment your counter
+      // the modulus (%) operator resets the counter to 0
+      // when it reaches the length of the array
+      // console.log(counter)
+      
+      console.log(this.anhquyhi )
+      if(this.product.mulimages[this.anhquyhi] == undefined || this.anhquyhi  ==  -1 ){
+        console.log(this.product.mulimages.length )
+        this.anhquyhi =  this.product.mulimages.length - 1
+        console.log(this.anhquyhi )
+        console.log(this.product.mulimages[this.anhquyhi]);
+      }else{
+        console.log('dsadassssss' )
+        this.anhquyhi -=  1
+       console.log(this.product.mulimages[this.anhquyhi]);
+        
+      }
+    },
     anhquy() {
       
       this.anhquyhi +=  1; // increment your counter
@@ -373,6 +405,13 @@ export default {
         return this.product;
       }
     },
+    imgMain(){
+       if (this.anhquyhi > -1) {
+        return this.product.mulimages[this.anhquyhi]
+      } else {
+        return this.product;
+      }
+    },
     checkWishe: {
       get: function() {
         this.index;
@@ -459,6 +498,20 @@ button {
 .container {
   background: white;
   margin-top: 100px;
+  .image-detail{
+    width: 80%;
+    height: 400px;
+    background: white;
+    position: absolute;
+    .div-img-main{
+      width: 200px;
+      height: 200px;
+    } 
+    .div-img{
+      width: 100px;
+      height: 100px;
+    } 
+  }
 }
 .add-cart-notification {
   position: fixed;
