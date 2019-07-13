@@ -1,6 +1,6 @@
 <template>
   <div class="container-detail">
-    <div class="container" >
+    <div class="container">
       <transition name="bounce" leave-active-class="animated bounceOutRight">
         <div class="add-cart-notification" v-show="showNofication" v-if="$store.state.authUser ">
           <p>Bạn vừa thêm sản phẩm :</p>
@@ -8,9 +8,9 @@
             <div class="img">
               <img :src="product.image" alt />
             </div>
-            
+
             <div class="infor-product-cart">
-              <p >{{ product.name }}</p>
+              <p>{{ product.name }}</p>
               <!-- <div class="qty">
                 số lượng sp trong giỏ hàng :
                 <span
@@ -26,20 +26,34 @@
           <p>Vào giỏ hàng</p>
         </div>
       </transition>
-      <div class="title-content" >
+      <div class="title-content">
         <h4>Trang chủ > {{ product.subcate.name}}</h4>
       </div>
       <div class="content-detail-pr">
         <div class="content-left">
           <div class="img">
-            <img :src="product.image" alt  v-if="idImage == ''"/>
-            <img :src="ImageHover.image" alt  v-if="idImage != ''" />
+            <img :src="product.image" alt v-if="idImage == ''" />
+            <img :src="ImageHover.image" alt v-if="idImage != ''" />
           </div>
-          <div class="">
-            <img :src="product.image" alt="" width="100px" height="100px" @mouseover="hoverImage(1)" :class="{ selectImage:'' == idImage}">
-            <div class="" style="width:100px; display : flex;" v-for=" item in product.mulimages">
-              
-              <img :src="item.image" alt="" width="100px" height="100px" @mouseover="hoverImage(item)" :class="{ selectImage:item.id == idImage}">
+          <div class>
+            <img
+              :src="product.image"
+              alt
+              width="100px"
+              height="100px"
+              @mouseover="hoverImage(1)"
+              :class="{ selectImage:'' == idImage}"
+            />
+            <div class style="width:100px; display : flex;" v-for=" item in product.mulimages">
+              <img
+                :src="item.image"
+                alt
+                width="100px"
+                height="100px"
+                @mouseover="hoverImage(item)"
+                :class="{ selectImage:item.id == idImage}"
+                @click="anhquy()"
+              />
             </div>
           </div>
           <div class="icon-share">
@@ -92,15 +106,18 @@
             </div>
             <span>{{ product.qty }} sản phẩm có sẵn</span>
           </div>
-          <div class="btn-action-detail" v-if=" $store.state.authUser && $store.state.authUser.id != product.user.id">
+          <div
+            class="btn-action-detail"
+            v-if=" $store.state.authUser && $store.state.authUser.id != product.user.id"
+          >
             <div class="btn-add-to-cart">
               <button @click="addCart">
                 <i class="fas fa-shopping-cart"></i>
                 Thêm Vào Giỏ Hàng
               </button>
             </div>
-            <div class="btn-add-to-buy" >
-                <button @click="buyProduct">Mua ngay</button>
+            <div class="btn-add-to-buy">
+              <button @click="buyProduct">Mua ngay</button>
             </div>
           </div>
           <div class="btn-action-detail" v-if=" $store.state.authUser == null ">
@@ -110,8 +127,8 @@
                 Thêm Vào Giỏ Hàng
               </button>
             </div>
-            <div class="btn-add-to-buy" >
-                <button @click="buyProduct">Mua ngay</button>
+            <div class="btn-add-to-buy">
+              <button @click="buyProduct">Mua ngay</button>
             </div>
           </div>
         </div>
@@ -123,10 +140,15 @@
       :totalProduct="totalProduct"
       :totalFollow="totalFollow"
       :sumRating="sumRating"
-      :online ="online"
+      :online="online"
     />
     <Quesiton :product="product " :follows="follows" />
-    <Rating :product=" product " @totalRating="totalRating" :productnew="productnew" @mediumstar ="summediumstar" />
+    <Rating
+      :product=" product "
+      @totalRating="totalRating"
+      :productnew="productnew"
+      @mediumstar="summediumstar"
+    />
     <ProductRelate />
   </div>
 </template>
@@ -137,13 +159,13 @@ import saler from "./../components/detail/saler";
 import Quesiton from "./../components/detail/question";
 import socket from "~/plugins/socket.io.js";
 import Vue from "vue";
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from "lodash";
 export default {
   transition: "bounceok",
   async asyncData({ params, $axios, req, store }) {
     const data = await $axios.get("/api/product/detailPr/" + params.id);
     var rating1 = [];
-    console.log(data.data)
+    console.log(data.data);
     data.data.products.ratings.forEach(item => {
       Vue.set(item, "is_rating", false);
       Vue.set(item, "contentcmt", "");
@@ -153,22 +175,22 @@ export default {
       Vue.set(item, "is_comments", false);
       Vue.set(item, "rep_comment", "");
     });
-    var product = data.data.products
-    var online = 0
-    var productnew = cloneDeep(data.data.products)
+    var product = data.data.products;
+    var online = 0;
+    var productnew = cloneDeep(data.data.products);
     productnew.ratings.forEach(item => {
       Vue.set(item, "is_rating", false);
       Vue.set(item, "contentcmt", "");
     });
     if (store.state.authUser) {
       await socket.emit("joinRoom", store.state.authUser.name);
-      socket.on("userOnline", async (data) => {
-       var socketId
-          for (socketId in data) {
-            if (data[socketId].data === product.user.name) {
-              var online = 1;
-            }
-          } 
+      socket.on("userOnline", async data => {
+        var socketId;
+        for (socketId in data) {
+          if (data[socketId].data === product.user.name) {
+            var online = 1;
+          }
+        }
       });
     }
     var sumQty = data.data.sumQty;
@@ -179,7 +201,7 @@ export default {
       productnew: productnew,
       count: data.data.count,
       follows: data.data.follows,
-      online : online,
+      online: online,
       totalProduct: data.data.totalProduct,
       totalFollow: data.data.totalFollow,
       sumRating: data.data.totalRating
@@ -198,19 +220,33 @@ export default {
       qtyProduct: 1,
       index: undefined,
       showNofication: false,
-      idImage : ''
+      idImage: "",
+      anhquyhi : -1
     };
   },
-  created(){
-
-  },
+  created() {},
   methods: {
-    hoverImage(item){
-      console.log(item.id)
-      if(item == 1){
-        this.idImage = ''
+    anhquy() {
+      
+      this.anhquyhi +=  1; // increment your counter
+      // the modulus (%) operator resets the counter to 0
+      // when it reaches the length of the array
+      // console.log(counter)
+      if(this.product.mulimages[this.anhquyhi] == undefined || this.anhquyhi > this.product.mulimages.length){
+        this.anhquyhi =  0
+        console.log(this.product.mulimages[this.anhquyhi]);
       }else{
-        this.idImage = item.id
+        // this.anhquyhi +=  1
+       console.log(this.product.mulimages[this.anhquyhi]);
+        
+      }
+      // console.log(this.product.mulimages[this.anhquyhi]); // the new incremented value
+    },
+    hoverImage(item) {
+      if (item == 1) {
+        this.idImage = "";
+      } else {
+        this.idImage = item.id;
       }
     },
     formatPrice(value) {
@@ -263,7 +299,7 @@ export default {
           })
           .then(response => {
             console.log(response);
-            this.$store.commit("ADD_TO_CART",this.qtyProduct);
+            this.$store.commit("ADD_TO_CART", this.qtyProduct);
           });
       }
     },
@@ -279,7 +315,7 @@ export default {
           })
           .then(response => {
             console.log(response);
-            this.$store.commit("ADD_TO_CART",this.qtyProduct);
+            this.$store.commit("ADD_TO_CART", this.qtyProduct);
           });
       }
     },
@@ -294,9 +330,9 @@ export default {
             UserIdSaler: this.product.user.id
           })
           .then(response => {
-            this.$router.push('/cart')
+            this.$router.push("/cart");
             console.log(response);
-            this.$store.commit("ADD_TO_CART",this.qtyProduct);
+            this.$store.commit("ADD_TO_CART", this.qtyProduct);
           });
       }
     },
@@ -311,8 +347,8 @@ export default {
       this.total = e.total;
       this.mediumstar = e.mediumstar;
     },
-    summediumstar(e){
-     this.mediumstar = e;
+    summediumstar(e) {
+      this.mediumstar = e;
     },
     increment() {
       if (this.qtyProduct == this.product.qty) {
@@ -330,11 +366,11 @@ export default {
     }
   },
   computed: {
-    ImageHover(){
-      if(this.idImage){
-        return this.product.mulimages.find( item => item.id === this.idImage)
-      }else{
-        return this.product
+    ImageHover() {
+      if (this.idImage) {
+        return this.product.mulimages.find(item => item.id === this.idImage);
+      } else {
+        return this.product;
       }
     },
     checkWishe: {
@@ -364,7 +400,7 @@ export default {
 button {
   cursor: pointer;
 }
-.selectImage{
+.selectImage {
   border: 3px solid red !important;
 }
 .bounce-enter-active {
