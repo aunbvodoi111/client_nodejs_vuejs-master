@@ -8,16 +8,15 @@
           <div class="content-nofi">
             <div class="img" v-if="follow.length == 0">
               <img src="/img/anhdep.png" alt />
+              
               <p>Bạn chưa có thông báo</p>
               <button>Tiếp tục mua sắm</button>
             </div>
             <div class="div-shop-follow" v-else>
               <div class="shop" v-for=" item in follow ">
                 <div class="img">
-                  <img
-                    src="https://media3.scdn.vn/img2/2018/5_15/SHZQTq_simg_d13049_158x78_maxb.jpg"
-                    alt
-                  />
+                  <img src="/img/images.png" alt  v-if="item.user.avatar == 0"/>
+                   <img :src="item.user.avatar" alt  v-if="item.user.avatar != 0" />
                 </div>
                 <div class="infor-shop">
                   <p>{{ item.user.name }}</p>
@@ -172,6 +171,7 @@ ul li {
         img {
           width: 100%;
           border-radius: 100%;
+         
         }
       }
       .name-user {
@@ -270,7 +270,8 @@ ul li {
             .img {
               width: 20%;
               img {
-                width: 100%;
+                width: 80%;
+                height: 100px;
               }
             }
             .btn-action-shop {

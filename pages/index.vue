@@ -265,7 +265,10 @@ a:hover {
           width: 16.6%;
           height: 300px;
           padding: 3px;
-
+          transition: 0.2s ease;
+          &:hover {
+            transform: translateY(-4px);
+          }
           .product-div {
             border: 1px solid transparent;
             background: white;
@@ -280,22 +283,22 @@ a:hover {
                 width: 38px;
                 height: 35px;
                 top: 0;
-                right:  0;
+                right: 0;
                 position: absolute;
                 z-index: 22;
                 background: rgba(255, 212, 36, 0.9);
                 padding: 3px;
-                p:nth-child(1){
+                p:nth-child(1) {
                   text-align: center;
                   color: red;
-                  font-size: 12px; 
+                  font-size: 12px;
                 }
-                p:nth-child(2){
+                p:nth-child(2) {
                   color: white;
                   text-transform: uppercase;
                   font-weight: bold;
                   text-align: center;
-                  font-size: 11px;  
+                  font-size: 11px;
                 }
                 // background: red;
               }
@@ -349,7 +352,6 @@ a:hover {
             width: 100%;
             height: 188px;
           }
-          
         }
         .name a {
           padding: 4px;
