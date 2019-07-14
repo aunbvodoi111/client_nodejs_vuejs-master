@@ -18,7 +18,6 @@
               <div class="price">
                 <p>₫{{ formatPrice(item.discount) }}</p>
               </div>
-              
             </div>
           </div>
         </div>
@@ -51,6 +50,10 @@
             <nuxt-link :to="`/${item.id}`">
               <div class="img">
                 <img :src=" `${item.image} `" alt />
+                <div class="percent-discount">
+                  <p>{{ (100 - (item.discount / item.price)*100).toFixed(0) }}%</p>
+                  <p>giảm</p>
+                </div>
               </div>
             </nuxt-link>
             <div class="name">
@@ -60,7 +63,8 @@
               <p>₫{{ formatPrice(item.discount) }}</p>
             </div>
             <div class="star">
-              <i class="fas fa-star" v-for="n in 5"></i> <span>(5 nhận xét)</span> 
+              <i class="fas fa-star" v-for="n in 5"></i>
+              <span>(5 nhận xét)</span>
             </div>
           </div>
         </div>
@@ -182,12 +186,14 @@ a {
 a:hover {
   text-decoration: none;
 }
+
 @media only screen and (min-width: 1200px) {
   .swiper-container {
     width: 100%;
     .swiper-slide {
       padding: 3px;
       .product-div {
+        position: relative;
         border: 1px solid transparent;
         background: white;
         cursor: pointer;
@@ -197,6 +203,7 @@ a:hover {
             height: 188px;
           }
         }
+
         .name a {
           padding: 4px;
           word-wrap: break-word;
@@ -262,13 +269,38 @@ a:hover {
           .product-div {
             border: 1px solid transparent;
             background: white;
+            position: relative;
             cursor: pointer;
             .img {
               img {
                 width: 100%;
                 height: 188px;
               }
+              .percent-discount {
+                width: 38px;
+                height: 35px;
+                top: 0;
+                right:  0;
+                position: absolute;
+                z-index: 22;
+                background: rgba(255, 212, 36, 0.9);
+                padding: 3px;
+                p:nth-child(1){
+                  text-align: center;
+                  color: red;
+                  font-size: 12px; 
+                }
+                p:nth-child(2){
+                  color: white;
+                  text-transform: uppercase;
+                  font-weight: bold;
+                  text-align: center;
+                  font-size: 11px;  
+                }
+                // background: red;
+              }
             }
+
             .name a {
               padding: 4px;
               word-wrap: break-word;
@@ -285,14 +317,14 @@ a:hover {
               color: red;
               margin-top: 10px;
             }
-            .star{
+            .star {
               padding: 4px;
               i {
-                font-size: 10px; 
+                font-size: 10px;
                 color: #fd9727;
               }
-              span{
-                font-size: 11px; 
+              span {
+                font-size: 11px;
                 color: grey;
               }
             }
@@ -317,6 +349,7 @@ a:hover {
             width: 100%;
             height: 188px;
           }
+          
         }
         .name a {
           padding: 4px;

@@ -253,6 +253,8 @@ ul li {
 }
 .disable {
   color: grey !important;
+  border: 1px solid rgba(0, 0, 0, 0.09) !important;
+  outline: none;
 }
 .container-fruid {
   height: 500px;
@@ -313,6 +315,7 @@ ul li {
             height: 40px;
             color: black;
             border: none;
+            
           }
         }
       }
@@ -333,6 +336,15 @@ ul li {
               }
               .content {
                 width: 80%;
+                span{
+                  font-size: 13px;
+                  width: 100px;
+                  height: 30px;
+                  color: white;
+                  padding: 3px 7px;
+                  background: red;
+                  margin-left: 10px; 
+                }
               }
             }
           }
@@ -356,8 +368,8 @@ ul li {
                 background: white;
                 color: black;
                 height: 100%;
-
-                border: 1px solid rgba(0, 0, 0, 0.09);
+                border: 1px solid black;
+                // border: 1px solid rgba(0, 0, 0, 0.09);
                 box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.03);
               }
             }
