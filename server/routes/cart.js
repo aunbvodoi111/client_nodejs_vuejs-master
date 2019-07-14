@@ -91,7 +91,9 @@ router.post('/addCartCustomer', async (req, res) => {
         await models.carts.destroy({ where: { id: carts[i].id }})
     }
     
-
+    await models.date_orders.create({
+        BillId : bills.id
+    })
     return res.status(200).json(bill_details)
 })
 

@@ -61,10 +61,14 @@ router.get('/detail/:id', async (req, res) => {
                 include: [{
                     model: models.districts,
                     as: 'district'
-                },{
+                }, {
                     model: models.provinces,
                     as: 'province'
                 }]
+            },
+            {
+                model: models.date_orders,
+                as: 'date_orders',
             }
             ]
         })

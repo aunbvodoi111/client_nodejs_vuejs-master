@@ -25,6 +25,7 @@ module.exports = (sequelize, DataTypes) => {
       as: 'addresse', foreignKey: 'id', sourceKey: 'AddressId'
     });
     Bill.hasMany(models.bill_details, { as: 'bill_details', foreignKey: 'BillId' })
+    Bill.hasMany(models.date_orders, { as: 'date_orders', foreignKey: 'BillId' })
     Bill.belongsTo(models.users, { foreignKey: 'UserIdSaler' });
   };
   return Bill;

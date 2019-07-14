@@ -22,7 +22,7 @@
                     <span>Đơn Hàng Đã Đặt</span>
                   </div>
                   <div class="step-date">
-                    <span>11:03 07-05-2019</span>
+                    <span v-if="bills.date_orders[0]">{{ moment(bills.date_orders[0].created_at).format('LLLL') }}</span>
                   </div>
                 </div>
               </div>
@@ -35,7 +35,7 @@
                     <span>Đã Xác Nhận Thông Tin Thanh Toán</span>
                   </div>
                   <div class="step-date">
-                    <span>11:03 07-05-2019</span>
+                    <span v-if="bills.date_orders[1]">{{ moment(bills.date_orders[1].created_at).format('LLLL') }}</span>
                   </div>
                 </div>
               </div>
@@ -48,7 +48,7 @@
                     <span>Đã giao cho ĐVVC</span>
                   </div>
                   <div class="step-date">
-                    <span>11:03 07-05-2019</span>
+                    <span v-if="bills.date_orders[2]">{{ moment(bills.date_orders[2].created_at).format('LLLL') }}</span>
                   </div>
                 </div>
               </div>
@@ -61,7 +61,7 @@
                     <span>Đã Hàng đã nhận</span>
                   </div>
                   <div class="step-date">
-                    <span>11:03 07-05-2019</span>
+                    <span v-if="bills.date_orders[3]">{{ moment(bills.date_orders[3].created_at).format('LLLL') }}</span>
                   </div>
                 </div>
               </div>
@@ -74,7 +74,7 @@
                     <span>Đã Đánh Giá Sản Phẩm</span>
                   </div>
                   <div class="step-date">
-                    <span>11:03 07-05-2019</span>
+                    <span v-if="bills.date_orders[4]">{{ moment(bills.date_orders[4].created_at).format('LLLL') }}</span>
                   </div>
                 </div>
               </div>
@@ -185,13 +185,17 @@
 </template>
 <script>
 import NavBar from "./../../../components/navUser/navbar";
+import moment from "moment";
+moment.locale("vi");
+moment().format('LLLL');
 export default {
   // middleware: 'authenticated',
   async asyncData({ $axios , params }) {
     var data = await $axios.get("/api/bill/detail/"+ params.id );
     console.log(data)
     return {
-      bills: data.data
+      bills: data.data,
+       
     };
   },
   components: {
@@ -199,7 +203,8 @@ export default {
   },
   data() {
     return {
-      local: []
+      local: [],
+      moment :moment
     };
   },
   computed:{
@@ -221,6 +226,9 @@ export default {
       let val = (value / 1).toFixed(0).replace(".", ",");
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
+  },
+  head: {
+    title: 'Nodejs_Vuejs'
   }
 };
 </script>
