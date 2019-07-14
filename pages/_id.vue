@@ -26,17 +26,33 @@
           <p>Vào giỏ hàng</p>
         </div>
       </transition>
-      <div class="image-detail">
-        <div class="div-img-main"> 
-          <img :src="imgMain.image" alt="" v-if="imgMain != ''">
-          <img :src="ImageHover.image" alt v-if="idImage != ''" />
+      <div class="image-detail" v-if="showPopDetailImg" >
+        <div class="div-pop-img" >
+          <div class="div-img-main">
+            <img :src="ImageHover.image" alt />
+            <!-- <img :src="ImageHover.image" alt /> -->
+            <button @click="anhquy()" class="btn-left">
+              <i class="fas fa-angle-right"></i>
+            </button>
+            <button @click="anhquyok()" class="btn-right">
+              <i class="fas fa-angle-left"></i>
+            </button>
+          </div>
+          <div class="div-img">
+            <h4>{{ product.name }}</h4>
+            <div class="img-hover" v-for=" item in product.mulimages">
+              <img
+                :src="item.image"
+                alt
+                width="100%"
+                :class="{ selectImage:item.id == ImageHover.id}"
+                @mouseover="hoverImage(item)"
+              />
+            </div>
+            <button @click="showPopDetailImg = false">Đóng</button>
+          </div>
         </div>
-        <div class="div-img" v-for=" item in product.mulimages">
-          <img :src="item.image" alt="" width="100%"  :class="{ selectImage:item.id == imgMain.id}" @mouseover="hoverImage(item)">
-          <button @click="anhquy()"> tang </button>
-          <button @click="anhquyok()"> Giam</button>
-        </div>
-        <div class=""></div>
+        <div class></div>
       </div>
       <div class="title-content">
         <h4>Trang chủ > {{ product.subcate.name}}</h4>
@@ -44,10 +60,10 @@
       <div class="content-detail-pr">
         <div class="content-left">
           <div class="img">
-            <img :src="product.image" alt v-if="idImage == ''" />
-            <img :src="ImageHover.image" alt v-if="idImage != ''" />
+            <img :src="product.image" alt v-if="idImage == ''" @click=" showPopDetailImg = true" />
+            <img :src="ImageHover.image" alt v-if="idImage != ''" @click=" showPopDetailImg = true" />
           </div>
-          <div class>
+          <div class="img-small">
             <img
               :src="product.image"
               alt
@@ -64,7 +80,6 @@
                 height="100px"
                 @mouseover="hoverImage(item)"
                 :class="{ selectImage:item.id == idImage}"
-                
               />
             </div>
           </div>
@@ -89,7 +104,7 @@
           <h2>{{ product.name }}</h2>
           <div class="rating-total-detail">
             <div class="total-rating">
-              {{ mediumstar }}
+              {{ mediumstar.toFixed(1) }}
               <i
                 class="fas fa-star"
                 v-for=" n in Math.floor(mediumstar)"
@@ -233,44 +248,48 @@ export default {
       index: undefined,
       showNofication: false,
       idImage: "",
-      anhquyhi : -1,
-      
+      anhquyhi: -1,
+      showPopDetailImg: false
     };
   },
   created() {},
   methods: {
-    anhquyok(){
+    anhquyok() {
       // increment your counter
       // the modulus (%) operator resets the counter to 0
       // when it reaches the length of the array
       // console.log(counter)
-      
-      console.log(this.anhquyhi )
-      if(this.product.mulimages[this.anhquyhi] == undefined || this.anhquyhi  ==  -1 ){
-        console.log(this.product.mulimages.length )
-        this.anhquyhi =  this.product.mulimages.length - 1
-        console.log(this.anhquyhi )
+      this.idImage = "";
+      console.log(this.anhquyhi);
+      if (
+        this.product.mulimages[this.anhquyhi] == undefined ||
+        this.anhquyhi == -1
+      ) {
+        console.log(this.product.mulimages.length);
+        this.anhquyhi = this.product.mulimages.length - 1;
+        console.log(this.anhquyhi);
         console.log(this.product.mulimages[this.anhquyhi]);
-      }else{
-        console.log('dsadassssss' )
-        this.anhquyhi -=  1
-       console.log(this.product.mulimages[this.anhquyhi]);
-        
+      } else {
+        console.log("dsadassssss");
+        this.anhquyhi -= 1;
+        console.log(this.product.mulimages[this.anhquyhi]);
       }
     },
     anhquy() {
-      
-      this.anhquyhi +=  1; // increment your counter
+      this.idImage = "";
+      this.anhquyhi += 1; // increment your counter
       // the modulus (%) operator resets the counter to 0
       // when it reaches the length of the array
       // console.log(counter)
-      if(this.product.mulimages[this.anhquyhi] == undefined || this.anhquyhi > this.product.mulimages.length){
-        this.anhquyhi =  0
+      if (
+        this.product.mulimages[this.anhquyhi] == undefined ||
+        this.anhquyhi > this.product.mulimages.length
+      ) {
+        this.anhquyhi = 0;
         console.log(this.product.mulimages[this.anhquyhi]);
-      }else{
+      } else {
         // this.anhquyhi +=  1
-       console.log(this.product.mulimages[this.anhquyhi]);
-        
+        console.log(this.product.mulimages[this.anhquyhi]);
       }
       // console.log(this.product.mulimages[this.anhquyhi]); // the new incremented value
     },
@@ -401,13 +420,15 @@ export default {
     ImageHover() {
       if (this.idImage) {
         return this.product.mulimages.find(item => item.id === this.idImage);
+      } else if (this.anhquyhi > -1 && this.idImage == "") {
+        return this.product.mulimages[this.anhquyhi];
       } else {
         return this.product;
       }
     },
-    imgMain(){
-       if (this.anhquyhi > -1) {
-        return this.product.mulimages[this.anhquyhi]
+    imgMain() {
+      if (this.anhquyhi > -1) {
+        return this.product.mulimages[this.anhquyhi];
       } else {
         return this.product;
       }
@@ -498,19 +519,70 @@ button {
 .container {
   background: white;
   margin-top: 100px;
-  .image-detail{
-    width: 80%;
-    height: 400px;
-    background: white;
-    position: absolute;
-    .div-img-main{
-      width: 200px;
-      height: 200px;
-    } 
-    .div-img{
-      width: 100px;
-      height: 100px;
-    } 
+  .image-detail {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1001;
+    left: 0;
+    top: 0;
+    background-color: rgba(0, 0, 0, 0.14);
+    .div-pop-img {
+      width: 64%;
+      display: flex;
+      height: 700px;
+      margin: auto;
+      position: relative;
+      background: white;
+      margin-top: 4%;
+      .div-img-main {
+        width: 60%;
+        position: relative;
+        .btn-left {
+          width: 50px;
+          height: 100px;
+          color: white;
+          position: absolute;
+          z-index: 10;
+          right: 0;
+          top: 50%;
+          background: rgba(0, 0, 0, 0.54);
+          border: none;
+          i {
+            font-size: 40px;
+          }
+        }
+        .btn-right {
+          width: 50px;
+          height: 100px;
+          color: white;
+          position: absolute;
+          z-index: 10;
+          left: 0;
+          top: 50%;
+          background: rgba(0, 0, 0, 0.54);
+          i {
+            font-size: 40px;
+          }
+          border: none;
+        }
+        img {
+          width: 100%;
+          height: 700px;
+        }
+      }
+      .div-img {
+        width: 40%;
+        padding: 10px;
+        .img-hover {
+          margin-top: 15px; 
+          width: 100px;
+          height: 100px;
+          display: flex;
+          float: left;
+        }
+      }
+    }
   }
 }
 .add-cart-notification {
@@ -562,6 +634,9 @@ button {
             img {
               width: 100%;
             }
+          }
+          .img-small {
+            display: flex;
           }
           .icon-share {
             margin: 4% 0%;
