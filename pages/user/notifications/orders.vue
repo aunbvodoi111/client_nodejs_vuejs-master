@@ -23,68 +23,18 @@
             </div>
           </div>
           <div class="content-nofi">
-            <div class="img" v-if="billList.length == 0 ">
+            <div class="img" v-if="bills.length == 0 ">
               <img src="/img/anhdep.png" alt />
               <p>Bạn chưa có đơn hàng</p>
               <button>Tiếp tục mua sắm</button>
             </div>
             <div class="bill-content" v-else>
-              <div class="bill-div" v-for="item in billList" :key="item.id">
-                <div class="title">
-                  <div class="div-name">
-                    <div class="img">
-                      <img src="/img/images.png" alt  v-if="item.user.avatar == 0"/>
-                      <img :src="item.user.avatar" alt  v-if="item.user.avatar != 0"/>
-                    </div>
-                    <div class="name">
-                      <p>{{ item.user.name }}</p>
-                    </div>
-                    <div class="btn-action-user">
-                      <button @click="showDivChat( item )" style="margin-right : 10px;">chat</button>
-                      <nuxt-link :to="`/shop/${item.user.id}`">
-                        <button>xem shop</button>
-                      </nuxt-link>
-                    </div>
-                  </div>
-                </div>
-                <div class="content-main-product">
-                  <div class="include-div" v-for="prod in item.bill_details" :key="prod.id">
-                    <div class="img-bill">
-                      <img :src="prod.image" alt />
-                    </div>
-                    <div class="detail-bill">
-                      <p>{{ prod.product.name }}</p>
-                      <p>x {{ prod.qty }}</p>
-                    </div>
-                    <div class="total-money-pr">
-                      <p>₫{{ formatPrice(prod.product.discount) }}</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="content-bottom">
-                  <div class="div-right">
-                    <div class="sum-bill">
-                      <p>
-                        Tổng số tiền:
-                        <span>₫{{ formatPrice(item.sum) }}</span>
-                      </p>
-                    </div>
-                    <div class="btn-choose">
-                      <nuxt-link :to="`/user/order/${item.id}`">
-                        <button>Chi tiết</button>
-                      </nuxt-link>
-                      <button>Mua lần nữa</button>
-                    </div>
-                  </div>
-                  <div style="clear: bold;"></div>
-                </div>
+              <div class="bill-div" v-for="item in bills" :key="item.id">
+                <a :href="`http://localhost:8000/order/detail/${item.BillId}`">
+                <span v-if=" item.userBy.name != $store.state.authUser.name">{{item.userBy.name}}</span>
+                <span v-if=" item.userSl.name != $store.state.authUser.name">{{item.userSl.name}}</span>
+                {{ item.content }}</a>
               </div>
-              <!-- <div class="" v-for="item in bills">
-                  <h1>{{ item.user.name }}</h1>
-                  <div class="" v-for="prod in item.bill_details">
-                    <img :src="prod.image" alt="">
-                  </div>
-              </div>-->
             </div>
             <div style=" clear:both;"></div>
           </div>
@@ -98,7 +48,7 @@ import NavBar from "./../../../components/navUser/navbar";
 export default {
   // middleware: 'authenticated',
   async asyncData({ $axios }) {
-    var data = await $axios.get("/api/bill/");
+    var data = await $axios.get("/api/notification/");
     console.log(data);
     return {
       bills: data.data
@@ -117,13 +67,13 @@ export default {
     // this.getLocal();
   },
   computed: {
-    billList() {
-      if (this.status > -1) {
-        return this.bills.filter(item => item.status === this.status);
-      } else {
-        return this.bills;
-      }
-    }
+    // billList() {
+    //   if (this.status > -1) {
+    //     return this.bills.filter(item => item.status === this.status);
+    //   } else {
+    //     return this.bills;
+    //   }
+    // }
   },
   methods: {
     chooseOrder(item) {

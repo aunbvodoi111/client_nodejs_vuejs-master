@@ -34,6 +34,7 @@ const checkoutApi = require('./routes/checkout')
 const billApi = require('./routes/bill')
 const addressApi = require('./routes/address')
 const uploadImage = require('./routes/uploadImage')
+const notificationApi = require('./routes/notification')
 // Import and Set Nuxt.js options
 
 // app.use(cors())
@@ -51,6 +52,7 @@ app.use('/api/comment', commentApi)
 app.use('/api/checkout', checkoutApi)
 app.use('/api/upload', uploadImage)
 app.use('/api/address', addressApi)
+app.use('/api/notification', notificationApi)
 app.use('/api/bill', billApi)
 app.use(express.static('public'))
 

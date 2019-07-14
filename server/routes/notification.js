@@ -6,46 +6,31 @@ var models = require('../models');
 
 router.get('/', async (req, res) => {
     var carts
-    var anhquy
+    var notifications
     var bills
     if (req.user) {
-        await models.bills.findOne({
-            where: { UserIdBuyer: req.user.id },
-            attributes: ['UserIdSaler', 'UserIdBuyer'],
-        }).then(function (projects) {
-            anhquy = projects
+        notifications = await models.notifications.findAll({
+            where: { [Op.or]:[{ UserIdSaler: req.user.id },{ UserIdBuyer: req.user.id }] },
+            // attributes: ['UserIdSaler', 'UserIdBuyer'],
+            include:[{
+                model: models.users,
+                as:'userBy'
+            },{
+                model: models.users,
+                as:'userSl'
+            }]
         })
-        if (anhquy) {
-            bills = await models.bills.findAll({
-                where: { UserIdBuyer: anhquy.UserIdBuyer },
-                include: [{
-                    model: models.bill_details,
-                    as: 'bill_details',
-                    // where: { UserIdBuyer: anhquy.UserIdBuyer },
-                    include: [{
-                        model: models.products,
-                        as: 'product'
-                    }]
-                }, {
-                    model: models.users,
-                }]
-            })
-            // return res.json(anhquy)
-        }else{
-            bills = []
-        }
-
     } else {
-            bills = []
+        notifications = []
     }
-    return res.json(bills) ; 
+    return res.json(notifications) ; 
 })
 
 router.get('/detail/:id', async (req, res) => {
     var { id } = req.params
     if (req.user) {
 
-        var anhquy = await models.bills.findOne({
+        var anhquy = await models.bills.findOne({  
             where: { id: id },
             include: [{
                 model: models.bill_details,

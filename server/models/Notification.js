@@ -2,7 +2,8 @@
 module.exports = (sequelize, DataTypes) => {
   const Notification = sequelize.define('notifications', {
     content: DataTypes.STRING,
-    UserId: DataTypes.INTEGER,
+    UserIdSaler: DataTypes.INTEGER,
+    UserIdBuyer: DataTypes.INTEGER,
     BillId: DataTypes.INTEGER,
   }, {
     updatedAt: 'updated_at',
@@ -15,6 +16,8 @@ module.exports = (sequelize, DataTypes) => {
     //     allowNull: false
     //   }
     // });
+    Notification.belongsTo(models.users, {as:'userBy',foreignKey: 'UserIdBuyer'});
+    Notification.belongsTo(models.users, {as:'userSl',foreignKey: 'UserIdSaler'}); 
   };
   return Notification;
 };

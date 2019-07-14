@@ -31,6 +31,10 @@
             </li>
             <li>
               <i class="fas fa-star"></i>
+              <nuxt-link to='/user/notifications/orders'>Thông báo của bạn</nuxt-link>
+            </li>
+            <li>
+              <i class="fas fa-star"></i>
               <nuxt-link to='/user/account/address'>Địa chỉ của tôi</nuxt-link>
             </li>
             <li>

@@ -94,21 +94,25 @@
               </div>
               <div class="status-bill">
                 <ul>
-                  <li>
-                    12:44 07-05-2019
-                    [VN]Đã giao hàng/Chưa đối soát
+                  <li v-if="bills.date_orders[3]">
+                    {{ moment(bills.date_orders[3].created_at).format('LLLL') }}
+                    Đã Hàng đã nhận
                   </li>
-                  <li>
-                    12:44 07-05-2019
-                    [VN]Đã giao hàng/Chưa đối soát
+                  <li v-if="bills.date_orders[2]">
+                    {{ moment(bills.date_orders[2].created_at).format('LLLL') }}
+                    Đã giao cho ĐVVC
                   </li>
-                  <li>
-                    12:44 07-05-2019
-                    [VN]Đã giao hàng/Chưa đối soát
+                  <li v-if="bills.date_orders[1]">
+                    {{ moment(bills.date_orders[1].created_at).format('LLLL') }}
+                    Đã Xác Nhận Thông Tin Thanh Toán
                   </li>
-                  <li>
-                    12:44 07-05-2019
-                    [VN]Đã giao hàng/Chưa đối soát
+                  <li v-if="bills.date_orders[0]">
+                    {{ moment(bills.date_orders[0].created_at).format('LLLL') }}
+                    Thông tin đơn hàng đã gửi tới Người bán
+                  </li>
+                  <li v-if="bills.date_orders[0]">
+                    {{ moment(bills.date_orders[0].created_at).format('LLLL') }}
+                    Đã tạo Đơn hàng
                   </li>
                 </ul>
               </div>

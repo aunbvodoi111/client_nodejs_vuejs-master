@@ -60,6 +60,13 @@ router.post('/addCartCustomer', async (req, res) => {
             payment: 1,
         });
         bills.save()
+        await models.notifications.create({
+            BillId : bills.id,
+            UserIdSaler : bills.UserIdSaler,
+            UserIdBuyer : bills.UserIdBuyer,
+            content : 'đã hủy đơn hàng .Vui lòng liên hệ với người mua để biết thông tin'
+        })
+        
         var sum = 0
         for (var j = 0; j < carts[i].cart_details.length; j++) {
             var bill_details = await models.bill_details.create({
@@ -73,7 +80,7 @@ router.post('/addCartCustomer', async (req, res) => {
                 content: 1,
                 name: 'anqnh',
             });
-            bill_details.save()
+            bill_details.save() 
             sum = sum + carts[i].cart_details[j].HomeTeam.discount * carts[i].cart_details[j].qty;
         }
         const wishesFind = await models.bills.findOne({
@@ -95,6 +102,7 @@ router.post('/addCartCustomer', async (req, res) => {
         BillId : bills.id
     })
     return res.status(200).json(bill_details)
+    
 })
 
 router.post('/changeQty', async (req, res) => {
