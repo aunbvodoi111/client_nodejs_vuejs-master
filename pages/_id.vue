@@ -26,8 +26,8 @@
           <p>Vào giỏ hàng</p>
         </div>
       </transition>
-      <div class="image-detail" v-if="showPopDetailImg" >
-        <div class="div-pop-img" >
+      <div class="image-detail" v-if="showPopDetailImg">
+        <div class="div-pop-img">
           <div class="div-img-main">
             <img :src="ImageHover.image" alt />
             <!-- <img :src="ImageHover.image" alt /> -->
@@ -40,7 +40,7 @@
           </div>
           <div class="div-img">
             <h4>{{ product.name }}</h4>
-            <div class="img-hover" v-for=" item in product.mulimages">
+            <div class="img-hover" v-for=" item in product.mulimages" :key="item.id">
               <img
                 :src="item.image"
                 alt
@@ -62,6 +62,9 @@
           <div class="img">
             <img :src="product.image" alt v-if="idImage == ''" @click=" showPopDetailImg = true" />
             <img :src="ImageHover.image" alt v-if="idImage != ''" @click=" showPopDetailImg = true" />
+            <div class="nofj-out-of-stock" v-if="product.qty == 0">
+              <p >Hết hàng</p>
+            </div>
           </div>
           <div class="img-small">
             <img
@@ -72,7 +75,12 @@
               @mouseover="hoverImage(1)"
               :class="{ selectImage:'' == idImage}"
             />
-            <div class style="width:100px; display : flex;" v-for=" item in product.mulimages">
+            <div
+              class
+              style="width:100px; display : flex;"
+              v-for=" item in product.mulimages"
+              :key="item.id"
+            >
               <img
                 :src="item.image"
                 alt
@@ -138,13 +146,13 @@
             v-if=" $store.state.authUser && $store.state.authUser.id != product.user.id"
           >
             <div class="btn-add-to-cart">
-              <button @click="addCart">
+              <button @click="addCart" >
                 <i class="fas fa-shopping-cart"></i>
                 Thêm Vào Giỏ Hàng
               </button>
             </div>
-            <div class="btn-add-to-buy">
-              <button @click="buyProduct">Mua ngay</button>
+            <div class="btn-add-to-buy" >
+              <button @click="buyProduct" >Mua ngay</button>
             </div>
           </div>
           <div class="btn-action-detail" v-if=" $store.state.authUser == null ">
@@ -575,7 +583,7 @@ button {
         width: 40%;
         padding: 10px;
         .img-hover {
-          margin-top: 15px; 
+          margin-top: 15px;
           width: 100px;
           height: 100px;
           display: flex;
@@ -633,6 +641,22 @@ button {
           .img {
             img {
               width: 100%;
+            }
+            .nofj-out-of-stock {
+              width: 100px;
+              height: 100px;
+              background-color: rgba(0, 0, 0, 0.7);
+              position: absolute;
+              top: 13%;
+              left: 28%;
+              z-index: 88;
+              border-radius: 100%; 
+              p{
+                color: white;
+                line-height: 100px;
+                text-align: center;
+                text-transform: uppercase;
+              }
             }
           }
           .img-small {

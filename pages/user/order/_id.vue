@@ -12,7 +12,7 @@
                 <span>Đã giao</span>
               </p>
             </div>
-            <div class="step">
+            <div class="step" v-if="bills.status < 4">
               <div class="step-one">
                 <div class="step-div" >
                   <div class="step-icon" :class="{ active :  bills.status  < 0 }">
@@ -83,6 +83,40 @@
               <div class="step-four"></div>-->
               <div class="step-line">
                 <div class="step-line-div"></div>
+              </div>
+            </div>
+            <div class="step" v-if="bills.status == 4">
+              <div class="step-one">
+                <div class="step-div" >
+                  <div class="step-icon" :class="{ active :  bills.status  < 0 }">
+                    <i class="fas fa-check-double"></i>
+                  </div>
+                  <div class="step-text">
+                    <span>Đơn Hàng Đã Đặt</span>
+                  </div>
+                  <div class="step-date">
+                    <span v-if="bills.date_orders[0]">{{ moment(bills.date_orders[0].created_at).format('LLLL') }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="step-one">
+                <div class="step-div">
+                  <div class="step-icon" style="" :class="{ active :  bills.status  < 1}">
+                    <i class="far fa-star"></i>
+                  </div>
+                  <div class="step-text">
+                    <span>Đơn hàng đã hủy</span>
+                  </div>
+                  <div class="step-date">
+                    <span v-if="bills.date_orders[1]">{{ moment(bills.date_orders[1].created_at).format('LLLL') }}</span>
+                  </div>
+                </div>
+              </div>
+              <!-- <div class="step-two"></div>
+              <div class="step-three"></div>
+              <div class="step-four"></div>-->
+              <div class="step-line" style="width:230px">
+                <div class="step-line-div" ></div>
               </div>
             </div>
             <div class="infor-bill">

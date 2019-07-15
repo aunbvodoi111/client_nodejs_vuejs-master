@@ -73,7 +73,7 @@
                       <nuxt-link :to="`/user/order/${item.id}`">
                         <button>Chi tiết</button>
                       </nuxt-link>
-                      <button>Mua lần nữa</button>
+                      <button v-if="item.status == 0" @click="cancelOrder(item)">Hủy</button>
                     </div>
                   </div>
                   <div style="clear: bold;"></div>
@@ -126,6 +126,21 @@ export default {
     }
   },
   methods: {
+    cancelOrder(item){
+      console.log(item)
+      this.$axios.post('/api/bill/cancelOrder/',{
+        item : item
+      }).then(response =>{
+        console.log(response)
+        var index = this.billList.indexOf(item)
+        console.log(index)
+        Object.assign(this.billList[index], response.data);
+        // this.billList = [this.billList[index], ...response.data]
+        console.log(this.billList)
+      }).catch(error=>{
+        console.log('error')
+      })
+    },
     chooseOrder(item) {
       this.status = item;
     },

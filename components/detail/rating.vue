@@ -1,6 +1,16 @@
 <template>
   <div class="container">
     <h3>Khách hàng nhận xét</h3>
+    <div class="popup-rated" v-show="errorRating">
+      <div class="pop">
+        <div class="title">
+          <p>Bạn đã đánh giá sản phẩm này !</p>
+        </div>
+        <div class="button">
+          <button @click="errorRating = false">Đồng ý</button>
+        </div>
+      </div>
+    </div>
     <div class="rating-box">
       <div class="rating-box-left" v-if="product.ratings.length > 0">
         <p>Đánh giá trung bình</p>
@@ -173,11 +183,23 @@
           <div class="avatar">
             <div class="inclue-avatar">
               <div class="div-avatar">
-                <div class="img" >
-                  <img :src="item.user.avatar " alt v-if="item.user.avatar != 0" width='100%' style="border-radius : 100%;"/>
+                <div class="img">
+                  <img
+                    :src="item.user.avatar "
+                    alt
+                    v-if="item.user.avatar != 0"
+                    width="100%"
+                    style="border-radius : 100%;"
+                  />
                 </div>
-                <div class="img" >
-                  <img src="/img/images.png " alt v-if="item.user.avatar == 0" width='100%' style="border-radius : 100%;"/>
+                <div class="img">
+                  <img
+                    src="/img/images.png "
+                    alt
+                    v-if="item.user.avatar == 0"
+                    width="100%"
+                    style="border-radius : 100%;"
+                  />
                 </div>
               </div>
               <div class="name-customer">{{ item.user.name }}</div>
@@ -188,12 +210,12 @@
             <div>
               <p>
                 <i class="fas fa-star" v-for="n in item.star" :key=" n + 4"></i>
-                <i class="far fa-star" v-for="n in 5-item.star" :key=" n + 5"></i> 
-                <span v-if ="item.star == 5 ">Cực Kì Hài Lòng</span>
-                <span v-if ="item.star == 4 ">Hài Lòng</span>
-                <span v-if ="item.star == 3 ">Tạm Ổn</span>
-                <span v-if ="item.star == 2 ">Không Hài Lòng</span>
-                <span v-if ="item.star == 1 ">Rất Không Hài Lòng</span>
+                <i class="far fa-star" v-for="n in 5-item.star" :key=" n + 5"></i>
+                <span v-if="item.star == 5 ">Cực Kì Hài Lòng</span>
+                <span v-if="item.star == 4 ">Hài Lòng</span>
+                <span v-if="item.star == 3 ">Tạm Ổn</span>
+                <span v-if="item.star == 2 ">Không Hài Lòng</span>
+                <span v-if="item.star == 1 ">Rất Không Hài Lòng</span>
               </p>
               <!-- <p class="buy-alredy">Đã mua sản phẩm này tại Pham Qúy</p> -->
               <p style="margin-top : 5px;">{{ item.content }}</p>
@@ -264,7 +286,8 @@ export default {
       showDiv: false,
       anhquy: [],
       moment: moment,
-      errorSendRating: false
+      errorSendRating: false,
+      errorRating: false
     };
   },
   beforeMount() {
@@ -414,82 +437,82 @@ export default {
           findUser = 1;
         }
       }
-      // if(findUser == 1){
-      //   console.log('dsaaaaaaaaaaaaaaa')
-      // }else{
-      if (
-        this.rating.star == "" &&
-        this.rating.title == "" &&
-        this.rating.content == ""
-      ) {
-        // console.log("dsadsa");
-        this.errorSendRating = true;
+      if (findUser == 1) {
+        this.errorRating = true;
       } else {
-        this.$axios
-          .post("/api/rating/add", {
-            title: this.rating.title,
-            star: this.rating.star,
-            image: this.rating.image,
-            content: this.rating.content,
-            ProductId: this.product.id
-          })
-          .then(response => {
-            var avatar
-            if( this.$store.state.authUser.avatar == 0){
-              avatar = 0
-            }else{
-              avatar = this.$store.state.authUser.avatar
-            }
-            this.product.ratings.unshift({
-              id: response.data.id,
-              user: {
-                name: this.$store.state.authUser.name,
-                avatar : avatar
-              },
-              title: response.data.title,
-              star: response.data.star,
-              image: response.data.image,
-              content: response.data.content,
-              rep_ratings: []
-            });
-            this.product.ratings.forEach(item => {
-              Vue.set(item, "is_rating", false);
-              Vue.set(item, "contentcmt", "");
-            });
+        if (
+          this.rating.star == "" &&
+          this.rating.title == "" &&
+          this.rating.content == ""
+        ) {
+          // console.log("dsadsa");
+          this.errorSendRating = true;
+        } else {
+          this.$axios
+            .post("/api/rating/add", {
+              title: this.rating.title,
+              star: this.rating.star,
+              image: this.rating.image,
+              content: this.rating.content,
+              ProductId: this.product.id
+            })
+            .then(response => {
+              var avatar;
+              if (this.$store.state.authUser.avatar == 0) {
+                avatar = 0;
+              } else {
+                avatar = this.$store.state.authUser.avatar;
+              }
+              this.product.ratings.unshift({
+                id: response.data.id,
+                user: {
+                  name: this.$store.state.authUser.name,
+                  avatar: avatar
+                },
+                title: response.data.title,
+                star: response.data.star,
+                image: response.data.image,
+                content: response.data.content,
+                rep_ratings: []
+              });
+              this.product.ratings.forEach(item => {
+                Vue.set(item, "is_rating", false);
+                Vue.set(item, "contentcmt", "");
+              });
 
-            this.productnew.ratings.unshift({
-              id: response.data.id,
-              user: {
-                name: this.$store.state.authUser.name,
-                avatar : avatar
-              },
-              title: response.data.title,
-              star: response.data.star,
-              image: response.data.image,
-              content: response.data.content,
-              rep_ratings: []
-            });
+              this.productnew.ratings.unshift({
+                id: response.data.id,
+                user: {
+                  name: this.$store.state.authUser.name,
+                  avatar: avatar
+                },
+                title: response.data.title,
+                star: response.data.star,
+                image: response.data.image,
+                content: response.data.content,
+                rep_ratings: []
+              });
 
-            this.productnew.ratings.forEach(item => {
-              Vue.set(item, "is_rating", false);
-              Vue.set(item, "contentcmt", "");
+              this.productnew.ratings.forEach(item => {
+                Vue.set(item, "is_rating", false);
+                Vue.set(item, "contentcmt", "");
+              });
+              var message = {
+                content: "ádasdasd",
+                nameuser: this.product.user.name,
+                roomid: this.product.user.name
+              };
+              socket.emit("send-nofi-cmt", message);
+              this.toggleCmt = false;
+              this.rating.star = 0;
+              this.rating.name = "";
+              this.rating.title = "";
+              this.rating.content = "";
+              this.errorSendRating = false;
             });
-            var message = {
-              content: "ádasdasd",
-              nameuser: this.product.user.name,
-              roomid: this.product.user.name
-            };
-            socket.emit("send-nofi-cmt", message);
-            this.toggleCmt = false;
-            this.rating.star = 0;
-            this.rating.name = "";
-            this.rating.title = "";
-            this.rating.content = "";
-            this.errorSendRating = false;
-          });
+        }
       }
     }
-    // }
   }
 };
 </script>
@@ -527,6 +550,43 @@ button {
 }
 a {
   cursor: pointer;
+}
+.popup-rated {
+  position: fixed;
+  z-index: 99;
+
+  border-radius: 10px;
+  width: 100%;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  -webkit-box-shadow: 3px 4px 29px -10px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 3px 4px 29px -10px rgba(0, 0, 0, 0.75);
+  box-shadow: 3px 4px 29px -10px rgba(0, 0, 0, 0.75);
+  background-color: rgba(0, 0, 0, 0.14);
+  padding: 20px;
+  text-align: center;
+  .pop{
+    width: 300px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    height: 140px;
+    border-radius: 20px; 
+    .button {
+    margin: auto;
+    width: 50%;
+    button {
+      background: red;
+      width: 100px;
+      height: 30px;
+      margin: 30px 20px;
+      color: white;
+      border: none;
+    }
+  }
+  }
+  
 }
 @media only screen and (min-width: 1200px) {
   .container {

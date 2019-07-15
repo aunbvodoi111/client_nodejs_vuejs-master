@@ -81,4 +81,38 @@ router.get('/detail/:id', async (req, res) => {
     }
     return res.json('ok')
 })
+
+router.post('/cancelOrder', async (req, res) => {
+    var { item } = req.body
+    if (req.user) {
+        var bill = await models.bills.findOne({
+            where :{ id : item.id },
+            include: [{
+                model: models.bill_details,
+                as: 'bill_details',
+                // where: { UserIdBuyer: anhquy.UserIdBuyer },
+                include: [{
+                    model: models.products,
+                    as: 'product'
+                }]
+            }, {
+                model: models.users,
+            }]
+        })
+        await bill.update({
+            status : 4
+        })
+        for( var i = 0; i < item.bill_details.length ; i++){
+            var product = await models.products.findOne({
+                where :{ id : item.bill_details[i].Product_Id }
+            })
+            var qty  =  product.qty
+            product.update({
+                qty : qty + item.bill_details[i].qty
+            })
+        }
+    }
+    return res.json(bill)
+})
+
 module.exports = router;

@@ -80,7 +80,13 @@ router.post('/addCartCustomer', async (req, res) => {
                 content: 1,
                 name: 'anqnh',
             });
+            
             bill_details.save() 
+            var product = await models.products.findOne({ where:{ id : carts[i].cart_details[j].ProductId }})
+            var qty = product.qty
+            product.update({ 
+                qty : qty - carts[i].cart_details[j].qty
+            })
             sum = sum + carts[i].cart_details[j].HomeTeam.discount * carts[i].cart_details[j].qty;
         }
         const wishesFind = await models.bills.findOne({
