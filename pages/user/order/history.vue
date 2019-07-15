@@ -1,7 +1,7 @@
 <template>
   <div class="container-fruid">
     <div class="container">
-      <NavBar />
+      <NavBar :seleted ='seleted'/>
       <div class="content-right">
         <div class="content-main">
           <h1>Hóa đơn</h1>
@@ -110,7 +110,8 @@ export default {
   data() {
     return {
       local: [],
-      status: 0
+      status: 0,
+      seleted : 8
     };
   },
   created() {

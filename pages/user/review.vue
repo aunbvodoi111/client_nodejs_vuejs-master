@@ -1,7 +1,7 @@
 <template>
   <div class="container-fruid">
-    <div class="container">
-      <NavBar />
+    <div class="container" >
+      <NavBar :seleted ='seleted'/>
       <div class="content-right">
         <div class="content-main">
           <h1>Nhận xét của tôi ({{ ratings.length }})</h1>
@@ -77,7 +77,8 @@ export default {
   },
   data() {
     return {
-      local: []
+      local: [],
+      seleted : 7
     };
   },
   created() {

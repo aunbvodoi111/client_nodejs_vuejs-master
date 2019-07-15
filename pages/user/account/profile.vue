@@ -1,7 +1,7 @@
 <template>
   <div class="container-fruid">
     <div class="container">
-      <NavBar />
+      <NavBar :seleted ='seleted'/>
       <div class="content-right">
         <div class="content-main">
           <h1>Hồ Sơ Của Tôi</h1>
@@ -46,17 +46,17 @@
                 <div class="name-email">
                   <div class="from-control">
                     <select name id class="form-input" v-model="provide">
-                      <option value v-for="(index,n)  in 30">{{ index }}</option>
+                      <option value v-for="(index,n)  in 30" :key="n.id">{{ index }}</option>
                     </select>
                   </div>
                   <div class="from-control">
                     <select name id class="form-input" v-model="provide">
-                      <option value v-for="(index,n)  in 12">{{ index }}</option>
+                      <option value v-for="(index,n)  in 12" :key="n.id">{{ index }}</option>
                     </select>
                   </div>
                   <div class="from-control">
                     <select name id class="form-input" v-model="provide">
-                      <option value v-for="(index,n)  in 30">{{ index }}</option>
+                      <option value v-for="(index,n)  in 30" :key="n.id">{{ index }}</option>
                     </select>
                   </div>
                 </div>
@@ -109,7 +109,8 @@ export default {
   data(){
     return{
       image:'',
-      provide:''
+      provide:'',
+      seleted : 1
     }
   },  
   methods: {

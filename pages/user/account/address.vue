@@ -1,7 +1,7 @@
 <template>
   <div class="container-fruid">
     <div class="container">
-      <NavBar />
+      <NavBar :seleted ="seleted"/>
       <div class="content-right">
         <div class="content-main">
           <h1>Địa chỉ của tôi</h1>
@@ -135,7 +135,8 @@ export default {
         DistrictId: "",
         address: ""
       },
-      index: -1
+      index: -1,
+      seleted : 5
     };
   },
   async asyncData({ $axios, store }) {

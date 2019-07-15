@@ -13,7 +13,7 @@
         </div>
         <div class="nav-tab">
           <ul>
-            <li>
+            <li :class="{ active:1 == seleted }" >
               <i class="fas fa-star"></i>
               <nuxt-link to='/user/account/profile'>Hồ sơ của bạn</nuxt-link>
             </li>
@@ -21,31 +21,31 @@
               <i class="fas fa-star"></i>
               <nuxt-link to='/user/account/profile'>Thông báo của bạn</nuxt-link>
             </li> -->
-            <li>
+            <li :class="{ active:2 == seleted }" >
               <i class="fas fa-star"></i>
               <nuxt-link to='/user/wishlist'>Sản phẩm yêu thích</nuxt-link>
             </li>
-            <li>
+            <li :class="{ active:3 == seleted }" >
               <i class="fas fa-star"></i>
               <nuxt-link to='/user/followShop'>Shop yêu thích</nuxt-link>
             </li>
-            <li>
+            <li :class="{ active:4 == seleted }" >
               <i class="fas fa-star"></i>
               <nuxt-link to='/user/notifications/orders'>Thông báo của bạn</nuxt-link>
             </li>
-            <li>
+            <li :class="{ active:5 == seleted }" >
               <i class="fas fa-star"></i>
               <nuxt-link to='/user/account/address'>Địa chỉ của tôi</nuxt-link>
             </li>
-            <li>
+            <li :class="{ active:6 == seleted }">
               <i class="fas fa-star"></i>
               <nuxt-link to='/user/productseen'>Sản phẩm đã xem</nuxt-link>
             </li>
-            <li>
+            <li :class="{ active:7 == seleted }" >
               <i class="fas fa-star"></i>
               <nuxt-link to='/user/review'>Nhận xét của tôi</nuxt-link>
             </li>
-            <li>
+            <li :class="{ active:8 == seleted }" >
               <i class="fas fa-star"></i>
               <nuxt-link to='/user/order/history'>Quản lí đơn hàng</nuxt-link>
             </li>
@@ -55,10 +55,21 @@
 </template>
 <script>
 export default {
-    middleware: 'authenticated'
+    middleware: 'authenticated',
+    props:['seleted'],
+    data(){
+      return{
+        
+      }
+    }
 }
 </script>
 <style lang="scss" scoped>
+.active{
+  a{
+    color: red !important;
+  }
+}
 a {
   text-decoration: none;
 }
