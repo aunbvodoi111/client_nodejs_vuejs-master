@@ -26,6 +26,10 @@
           <p>Vào giỏ hàng</p>
         </div>
       </transition>
+      <div class="qty-cart" v-if="showPopMaxQtyProduct">
+        <p >Sản phẩm này đã hết hàng !</p>
+        <button @click=" showPopMaxQtyProduct = false">Đồng ý</button>
+      </div>
       <div class="image-detail" v-if="showPopDetailImg">
         <div class="div-pop-img">
           <div class="div-img-main">
@@ -63,7 +67,7 @@
             <img :src="product.image" alt v-if="idImage == ''" @click=" showPopDetailImg = true" />
             <img :src="ImageHover.image" alt v-if="idImage != ''" @click=" showPopDetailImg = true" />
             <div class="nofj-out-of-stock" v-if="product.qty == 0">
-              <p >Hết hàng</p>
+              <p>Hết hàng</p>
             </div>
           </div>
           <div class="img-small">
@@ -146,13 +150,13 @@
             v-if=" $store.state.authUser && $store.state.authUser.id != product.user.id"
           >
             <div class="btn-add-to-cart">
-              <button @click="addCart" >
+              <button @click="addCart">
                 <i class="fas fa-shopping-cart"></i>
                 Thêm Vào Giỏ Hàng
               </button>
             </div>
-            <div class="btn-add-to-buy" >
-              <button @click="buyProduct" >Mua ngay</button>
+            <div class="btn-add-to-buy">
+              <button @click="buyProduct">Mua ngay</button>
             </div>
           </div>
           <div class="btn-action-detail" v-if=" $store.state.authUser == null ">
@@ -239,7 +243,8 @@ export default {
       online: online,
       totalProduct: data.data.totalProduct,
       totalFollow: data.data.totalFollow,
-      sumRating: data.data.totalRating
+      sumRating: data.data.totalRating,
+      cart_details: data.data.cart_details
     };
   },
   components: {
@@ -257,7 +262,8 @@ export default {
       showNofication: false,
       idImage: "",
       anhquyhi: -1,
-      showPopDetailImg: false
+      showPopDetailImg: false,
+      showPopMaxQtyProduct : false
     };
   },
   created() {},
@@ -343,23 +349,36 @@ export default {
       }
     },
     addCart() {
+      var changeQty
+      if(this.cart_details != null){
+         changeQty = this.cart_details.qty + Number(this.qtyProduct)
+      }else{
+        changeQty = 0
+      }
+      
       if (!this.$store.state.authUser) {
         this.$store.commit("OPEN_REGISTER");
       } else {
-        this.showNofication = true;
-        setTimeout(() => {
-          this.showNofication = false;
-        }, 3000);
-        this.$axios
-          .post("/api/cart/add", {
-            ProductId: this.product.id,
-            qty: this.qtyProduct,
-            UserIdSaler: this.product.user.id
-          })
-          .then(response => {
-            console.log(response);
-            this.$store.commit("ADD_TO_CART", this.qtyProduct);
-          });
+        if (changeQty > this.product.qty) {
+          console.log(changeQty)
+          this.showPopMaxQtyProduct = true
+        } else {
+          this.showNofication = true;
+          setTimeout(() => {
+            this.showNofication = false;
+          }, 3000);
+          this.$axios
+            .post("/api/cart/add", {
+              ProductId: this.product.id,
+              qty: this.qtyProduct,
+              UserIdSaler: this.product.user.id
+            })
+            .then(response => {
+              console.log(response);
+              this.cart_details = response.data
+              this.$store.commit("ADD_TO_CART", this.qtyProduct);
+            });
+        }
       }
     },
     buyer() {
@@ -524,6 +543,30 @@ button {
 .container-detail {
   background: #f0f0f0;
 }
+.qty-cart{
+  position: absolute;
+  width: 350px;
+  height: 170px;
+  background: white;
+  left: 40%;
+  -webkit-box-shadow: 3px 4px 29px -10px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 3px 4px 29px -10px rgba(0, 0, 0, 0.75);
+  box-shadow: 3px 4px 29px -10px rgba(0, 0, 0, 0.75);
+  text-align: center;
+  padding: 20px;
+  border-radius: 10px;  
+  button{
+    color: white;
+    background: red;
+    width: 120px;
+    height: 30px;
+    border: none;
+    margin-top: 40px;
+    &:hover{
+      opacity: 0.5;
+    }
+  }
+}
 .container {
   background: white;
   margin-top: 100px;
@@ -650,8 +693,8 @@ button {
               top: 13%;
               left: 28%;
               z-index: 88;
-              border-radius: 100%; 
-              p{
+              border-radius: 100%;
+              p {
                 color: white;
                 line-height: 100px;
                 text-align: center;

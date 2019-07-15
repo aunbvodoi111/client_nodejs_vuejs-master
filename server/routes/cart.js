@@ -12,6 +12,7 @@ router.post('/add', async (req, res) => {
     // var cart = await models.carts.create({ ProductId: ProductId, UserId: req.user.id });
     // cart.save()
     console.log(req.body)
+    var cart_detail
     const wishesFind = await models.carts.findOne({
         where: {
             [Op.and]:
@@ -39,10 +40,10 @@ router.post('/add', async (req, res) => {
     } else {
         var cart = await models.carts.create({ UserIdSaler: UserIdSaler, UserIdBuyer: req.user.id });
         cart.save()
-        var cart_detail = await models.cart_details.create({ UserIdSaler: UserIdSaler, ProductId: ProductId, qty: qty, UserIdBuyer: req.user.id, CartId : cart.id });
+        cart_detail = await models.cart_details.create({ UserIdSaler: UserIdSaler, ProductId: ProductId, qty: qty, UserIdBuyer: req.user.id, CartId : cart.id });
         cart_detail.save()
     }
-    return res.status(200).json(wishesFind)
+    return res.status(200).json(cart_detail)
 })
 
 

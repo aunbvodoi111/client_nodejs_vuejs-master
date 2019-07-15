@@ -9,8 +9,32 @@ const Op = Sequelize.Op;
 var models = require('../models');
 router.post('/add', async (req, res) => {
     var { ProductId, title, star, image, content } = req.body
-    var ratingNew = await models.ratings.create({ ProductId: ProductId, UserId: req.user.id, name: req.user.name, title: title, star: star, image: image, content: content });
-    ratingNew.save()
+    var bill_details = await models.bill_details.findOne({
+        where :{ [Op.and] :[ { Product_Id : ProductId},{ UserIdBuyer : req.user.id } ] }
+    })
+    if(bill_details){
+        var ratingNew = await models.ratings.create({ 
+            ProductId: ProductId,
+             UserId: req.user.id, 
+             name: req.user.name, 
+             title: title, star: star, 
+             image: image, 
+             checkBuy: 1 
+            });
+        ratingNew.save()
+    }else{
+        var ratingNew = await models.ratings.create({ 
+            ProductId: ProductId,
+             UserId: req.user.id, 
+             name: req.user.name, 
+             title: title, star: star, 
+             image: image, 
+             content: content,
+             checkBuy: 0
+             });
+        ratingNew.save()
+    }
+    
     return res.status(200).json(ratingNew)
 })
 router.post('/add_reprating', async (req, res) => {

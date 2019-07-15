@@ -17,10 +17,6 @@
               <i class="fas fa-star"></i>
               <nuxt-link to='/user/account/profile'>Hồ sơ của bạn</nuxt-link>
             </li>
-            <!-- <li>
-              <i class="fas fa-star"></i>
-              <nuxt-link to='/user/account/profile'>Thông báo của bạn</nuxt-link>
-            </li> -->
             <li :class="{ active:2 == seleted }" >
               <i class="fas fa-star"></i>
               <nuxt-link to='/user/wishlist'>Sản phẩm yêu thích</nuxt-link>

@@ -4,15 +4,12 @@
       <div class="filter">
         <div class="title-filter">
           <h4>BỘ LỌC TÌM KIẾM</h4>
-          <!-- <div class="filter-cate">
+          <div class="filter-cate">
             <p>Theo danh mục</p>
             <ul>
-              <li>điển thoại</li>
-              <li>điển thoại</li>
-              <li>điển thoại</li>
-              <li>điển thoại</li>
+              <li v-for="item in subcates">{{item.name }}</li>
             </ul>
-          </div> -->
+          </div>
           <!-- <div class="filter-rating">
             <h5>Đánh giá</h5>
             <p @click="filterStar(5)">
@@ -34,7 +31,7 @@
               <i class="fas fa-star" v-for="n in 1" :key="n + 4"></i>
               <i class="far fa-star" v-for="n in 4" :key="n + 1"></i>( ít nhất 1 sao )
             </p>
-          </div> -->
+          </div>-->
           <div class="filter-rating">
             <h5>Gía</h5>
             <div class="input">
@@ -75,7 +72,7 @@
               </div>
             </nuxt-link>
             <div class="price">
-              <p>₫{{ formatPrice(item.discount) }} </p>
+              <p>₫{{ formatPrice(item.discount) }}</p>
             </div>
           </div>
         </div>
@@ -90,6 +87,32 @@ export default {
     var products = await $axios.get("/api/product/shop/" + params.id);
     console.log(products);
     return { products: products.data };
+  },
+  computed: {
+    subcates() {
+      var subcates = [];
+      for (var i = 0; i < this.products.length; i++) {
+        console.log(this.products[i].subcate)
+        // subcates = subcates.push(this.products[i].subcate)
+        subcates = [...subcates,this.products[i].subcate]
+      }
+      
+      var uniqueAddresses
+       uniqueAddresses = Array.from(new Set(subcates.map(a => a.name))).map(
+        name => {
+           return subcates.find(a => a.name === name);
+        }
+      );
+      console.log(uniqueAddresses)
+      return uniqueAddresses
+      // const array = this.products
+      // const unique = new Set(array)
+      // const backtoArray = [...unique]
+      // array.filter(( item ,index )=>{
+      //   return array.indexOf(item) === index
+      // })
+      // [...new Set(array)]
+    }
   },
   methods: {
     formatPrice(value) {

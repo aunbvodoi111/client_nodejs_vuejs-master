@@ -217,7 +217,7 @@
                 <span v-if="item.star == 2 ">Không Hài Lòng</span>
                 <span v-if="item.star == 1 ">Rất Không Hài Lòng</span>
               </p>
-              <!-- <p class="buy-alredy">Đã mua sản phẩm này tại Pham Qúy</p> -->
+              <p class="buy-alredy" v-if="item.checkBuy == 1">Đã mua sản phẩm này tại Pham Qúy</p>
               <p style="margin-top : 5px;">{{ item.content }}</p>
             </div>
             <div class>
@@ -473,7 +473,8 @@ export default {
                 star: response.data.star,
                 image: response.data.image,
                 content: response.data.content,
-                rep_ratings: []
+                rep_ratings: [],
+                checkBuy : response.data.checkBuy
               });
               this.product.ratings.forEach(item => {
                 Vue.set(item, "is_rating", false);
@@ -490,7 +491,8 @@ export default {
                 star: response.data.star,
                 image: response.data.image,
                 content: response.data.content,
-                rep_ratings: []
+                rep_ratings: [],
+                checkBuy : response.data.checkBuy
               });
 
               this.productnew.ratings.forEach(item => {
@@ -509,6 +511,7 @@ export default {
               this.rating.title = "";
               this.rating.content = "";
               this.errorSendRating = false;
+              this.this.rating.image = ''
             });
         }
       }

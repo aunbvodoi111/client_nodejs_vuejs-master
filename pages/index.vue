@@ -63,7 +63,7 @@
               <p>₫{{ formatPrice(item.discount) }}</p>
             </div>
             <div class="star">
-              <i class="fas fa-star" v-for="n in 5"></i>
+              <i class="fas fa-star" v-for="n in 5" :key="n"></i>
               <span>(5 nhận xét)</span>
             </div>
           </div>

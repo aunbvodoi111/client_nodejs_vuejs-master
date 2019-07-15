@@ -12,11 +12,10 @@ var models = require('../models');
 router.get('/', async (req, res) => {
     console.log(req.user)
     var cates = await models.cates.findAll({})
-    var products = await models.products.findAll({
-        // include: [{
-        //   model: models.Product,
-        //   as: 'products'
-        // }]
+    var products = await models.products.findAll({ 
+        order: [
+            ['id', 'DESC'],
+        ],
     })
     var carts = []
     var anhquy
@@ -63,6 +62,9 @@ router.get('/danhmuc/:id', async (req, res) => {
         include: [{
             model: models.products,
             as: 'products',
+            order: [
+                ['id', 'DESC'],
+            ],
             include: [{
                 model: models.mulimages,
                 as: 'mulimages',
@@ -87,8 +89,8 @@ router.get('/shop/:id', async (req, res) => {
         where: { UserId: id },
         include: [{
             model: models.users,
-
-        }]
+        },{ model: models.subcates }
+        ]
     })
     return res.json(products)
 })
@@ -214,6 +216,9 @@ router.get('/detailPr/:id', async (req, res) => {
         include: [{
             model: models.ratings,
             as: 'ratings',
+            order: [
+                ['id', 'DESC'],
+            ],
             include: [{
                 model: models.rep_ratings,
                 as: 'rep_ratings',
@@ -228,6 +233,9 @@ router.get('/detailPr/:id', async (req, res) => {
         {
             model: models.comments,
             as: 'comments',
+            order: [
+                ['id', 'DESC'],
+            ],
             include: [{
                 model: models.rep_comments,
                 as: 'req_comments',
@@ -293,7 +301,6 @@ router.get('/detailPr/:id', async (req, res) => {
             attributes: ['UserIdSaler', 'UserIdBuyer'],
         })
         if (findCart) {
-            console.log('ok dc k ')
             carts = await models.carts.findAll({
                 where: { UserIdBuyer: findCart.UserIdBuyer },
                 include: [{
@@ -308,15 +315,6 @@ router.get('/detailPr/:id', async (req, res) => {
                     model: models.users,
                 }]
             })
-            // return res.send({
-            //     products: products,
-            //     count: count,
-            //     follows: follows,
-            //     carts: carts,
-            //     totalProduct: totalProduct,
-            //     totalFollow: totalFollow,
-            //     totalRating: totalRating
-            // })
         } else {
             carts = []
 
@@ -331,13 +329,22 @@ router.get('/detailPr/:id', async (req, res) => {
             sumQty = sumQty + carts[i].cart_details[j].qty;
         }
     }
+    if(req.user){
+        var cart_details = await models.cart_details.findOne({
+            where :{ [Op.and]:[{ UserIdBuyer : req.user.id  },{ ProductId : products.id }]}
+        })
+    }else{
+        cart_details = { }
+    }
+   
     console.log(sumQty)
     return res.send({
         products: products,
         count: count,
         follows: follows, sumQty: sumQty,
         totalProduct: totalProduct, totalFollow: totalFollow,
-        totalRating: totalRating
+        totalRating: totalRating,
+        cart_details : cart_details
     })
 })
 // router.post('/login', async (req, res) => {
