@@ -32,6 +32,11 @@ export const mutations = {
   TOGGLE_CHAT: function (state) {
     state.toggleChat = !state.toggleChat
   },
+  CHANGE_ROOM :function(state , room){
+    var index = state.rooms.indexOf(room)
+    Object.assign(state.rooms[index],room)
+    console.log(state.rooms)
+  },
   ADD_TO_CART: function (state, cart) {
     state.carts += cart  
     console.log(state.carts)

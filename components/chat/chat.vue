@@ -147,6 +147,7 @@
 </template>
 <script>
 import socket from "~/plugins/socket.io.js";
+import Vue from 'vue'
 export default {
   data() {
     return {
@@ -183,7 +184,9 @@ export default {
       return this.$store.state.toggleChat;
     },
     rooms() {
-      return this.$store.state.rooms;
+      return this.$store.state.rooms.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
+     
+      // return this.$store.state.rooms;
     }
   },
   beforeMount() {
@@ -193,10 +196,19 @@ export default {
       audio.play();
       this.messageLast = message;
       message["isRead"] = false;
-      console.log(message);
+      Vue.set(idRoom, 'updated_at', new Date().toISOString());
+      // idRoom['updated_at'] = new Date().toISOString()
+      // console.log(new Date().toISOString())
+      // console.log(idRoom['updated_at'])
+      // idRoom['updated_at'] = new Date().toISOString();
+      console.log(idRoom['updated_at'])
       if (idRoom.id == this.roomname) {
         console.log("vao dau");
         this.room = this.rooms.find(item => item.id === room);
+        // console.log(index)
+        console.log(idRoom)
+        this.$store.commit('CHANGE_ROOM',idRoom)
+        // this.rooms = Object.assign(this.rooms[index],idRoom)
         message["isRead"] = true;
         this.room.messagers.push(message);
       } else {
