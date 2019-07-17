@@ -13,7 +13,8 @@ module.exports = {
       BillId: data.data.BillId,
       sum: data.data.sum,
       image : data.data.image,
-      status : data.data.status
+      status : data.data.status,
+      isRead : data.data.isRead
     })
     newMess.save()
     // var room = await Room.findOne({ _id: data.data.roomid })

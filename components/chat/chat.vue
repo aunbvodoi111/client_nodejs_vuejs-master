@@ -25,9 +25,28 @@
             />
           </div>
           <div class="name-buyer">
-            <p v-if="item.UserName1 != $store.state.authUser.name">{{ item.UserName1 }} <span v-if="countMess(item) > 0">{{ countMess(item) }}</span></p>
-            <p v-if="item.UserName1 == item.UserName2">{{ item.UserName1 }} <span v-if="countMess(item) > 0">{{ countMess(item)  }}</span> </p>
-            <p v-if="item.UserName2 != $store.state.authUser.name">{{ item.UserName2 }} <span v-if="countMess(item) > 0">{{ countMess(item)  }}</span></p>
+            <p v-if="item.UserName1 != $store.state.authUser.name">
+              {{ item.UserName1 }}
+              <span v-if="countMess(item) > 0">{{ countMess(item) }}</span>
+            </p>
+            <p v-if="item.UserName1 == item.UserName2">
+              {{ item.UserName1 }}
+              <span v-if="countMess(item) > 0">{{ countMess(item) }}</span>
+            </p>
+            <p v-if="item.UserName2 != $store.state.authUser.name">
+              {{ item.UserName2 }}
+              <span v-if="countMess(item) > 0">{{ countMess(item) }}</span>
+            </p>
+
+            <p v-if="item.UserName1 != $store.state.authUser.name">
+              <span>{{ messageSend(item) }}</span>
+            </p>
+            <p v-if="item.UserName1 == item.UserName2">
+              <span>{{ messageSend(item) }}</span>
+            </p>
+            <p v-if="item.UserName2 != $store.state.authUser.name">
+              <span>{{ messageSend(item) }}</span>
+            </p>
           </div>
         </div>
       </div>
@@ -141,7 +160,7 @@ export default {
         idroom: -1,
         countMess: 0
       },
-      dem :0,
+      dem: 0,
       image: "",
       selected: "",
       product: {
@@ -154,8 +173,9 @@ export default {
         image: ""
       },
       idroom: "",
-      roomidnew : 0,
-      listMess: []
+      roomidnew: 0,
+      listMess: [],
+      messageLast: ""
     };
   },
   computed: {
@@ -166,28 +186,28 @@ export default {
       return this.$store.state.rooms;
     }
   },
-
   beforeMount() {
     socket.on("new-message", (room, message) => {
       var idRoom = this.rooms.find(item => item.id === room);
       var audio = new Audio("/Iphone.mp3"); // path to filesssdsaaaaaaaaaaaa
       audio.play();
-        message['isRead'] = false
+      this.messageLast = message;
+      message["isRead"] = false;
       console.log(message);
       if (idRoom.id == this.roomname) {
         console.log("vao dau");
         this.room = this.rooms.find(item => item.id === room);
-        message['isRead'] = true
+        message["isRead"] = true;
         this.room.messagers.push(message);
       } else {
         console.log("else");
-        this.countMess( idRoom )
+        this.countMess(idRoom);
         // this.room = this.rooms.find(item => item.id === room);
         // this.count = this.count + 1;
         this.listMess.unshift(message);
         this.dem = this.dem + 1;
         this.roomidnew = room;
-        this.countMess(idRoom)
+        this.countMess(idRoom);
         // this.room.messagers.push(message);
       }
     });
@@ -196,18 +216,27 @@ export default {
       this.typing = message;
     });
   },
-
   methods: {
-    countMess( item ){
-      console.log('chay dc vao k ')
-      var count = 0 ; 
-      
-      for( var i = 0 ; i < this.listMess.length ; i++){
-        if( item.id == this.listMess[i].roomid){
-          count = count + 1
+    messageSend(item) {
+      // console.log(this.messageLast)
+      if (this.messageLast != "") {
+        if (this.messageLast.roomid == item.id) {
+          return this.messageLast.content;
         }
       }
-      return count
+      var message = item.messagers[item.messagers.length - 1];
+      if (message != undefined) {
+        return message.content;
+      }
+    },
+    countMess(item) {
+      var count = 0;
+      for (var i = 0; i < this.listMess.length; i++) {
+        if (item.id == this.listMess[i].roomid) {
+          count = count + 1;
+        }
+      }
+      return count;
     },
     scrollMessages() {
       var container = this.$refs.messages;
@@ -253,23 +282,21 @@ export default {
       this.roomname = item.id;
       console.log(item.id);
       console.log(this.listMess);
-
       this.room = this.rooms.find(room => room.id === item.id);
       if (this.listMess.length > 0) {
         // this.room.messagers.push(this.listMess)
-        for ( var i = this.listMess.length -1; i >= 0; i--) {
+        for (var i = this.listMess.length - 1; i >= 0; i--) {
           if (item.id == this.listMess[i].roomid) {
-            var index = this.listMess.indexOf(this.listMess[i])
-            this.room.messagers.push(this.listMess[i]) 
+            var index = this.listMess.indexOf(this.listMess[i]);
+            this.room.messagers.push(this.listMess[i]);
             console.log(index);
-            this.listMess.splice( index, 1)
+            this.listMess.splice(index, 1);
           } else {
           }
         }
         // console.log("aaaaaaaaaaaaaa");
         console.log(this.room);
       }
-
       this.count = 0;
       if (item.UserName1 == this.$store.state.authUser.name) {
         this.idUserSend = item.UserName2;
@@ -300,7 +327,6 @@ export default {
         }
       }
     },
-
     sendMessages() {
       var avatar;
       if (this.$store.state.authUser.avatar != 0) {
@@ -308,7 +334,6 @@ export default {
       } else {
         avatar = 0;
       }
-
       var status;
       console.log(this.message);
       if (
@@ -344,7 +369,7 @@ export default {
         content: this.message,
         nameuser: this.idUserSend,
         roomid: this.roomname,
-        isRead : true,
+        isRead: true,
         UserId: this.$store.state.authUser.id,
         ProductId: this.product.ProductId,
         image: this.product.image,
@@ -357,6 +382,7 @@ export default {
         // image: this.bill.image,
         status: status
       };
+      this.messageLast = message;
       this.room.messagers.push(message);
       socket.emit("send-message", message);
       this.message = "";
@@ -384,7 +410,6 @@ export default {
 * {
   box-sizing: border-box;
 }
-
 .highlight {
   color: white !important;
   background: grey;
@@ -443,7 +468,6 @@ export default {
         padding: 5px;
       }
     }
-
     .people-pm {
       width: 100%;
       display: flex;
@@ -523,7 +547,6 @@ export default {
             display: flex;
             margin-left: right;
             width: 80%;
-
             .img {
               width: 15%;
               margin-left: auto;
@@ -568,7 +591,6 @@ export default {
 }
 @media only screen and (min-width: 1200px) {
 }
-
 @media (min-width: 992px) and (max-width: 1199px) {
   .container {
     -webkit-box-shadow: 3px 4px 29px -10px rgba(0, 0, 0, 0.75);
@@ -584,7 +606,6 @@ export default {
     display: flex;
   }
 }
-
 @media (min-width: 768px) and (max-width: 991px) {
   .container {
     -webkit-box-shadow: 3px 4px 29px -10px rgba(0, 0, 0, 0.75);
@@ -629,11 +650,9 @@ export default {
   margin: 0;
   padding: 0;
 }
-
 body {
   background-color: #0084ff;
 }
-
 .bubble-chat {
   background-color: #e6e7ec;
   width: 50px;
@@ -642,13 +661,11 @@ body {
   margin: 4px;
   position: relative;
 }
-
 .container-circle {
   width: 100px;
   position: relative;
   margin: 0 auto;
 }
-
 .circle {
   height: 5px;
   padding-left: 3px;
@@ -666,35 +683,27 @@ body {
   animation-iteration-count: infinite;
   animation-timing-function: linear;
 }
-
 #circle1 {
   -webkit-animation-name: circle1;
 }
-
 #circle2 {
   -webkit-animation-name: circle2;
 }
-
 #circle3 {
   -webkit-animation-name: circle3;
 }
-
 #circle1 {
   animation-name: circle1;
 }
-
 #circle2 {
   animation-name: circle2;
 }
-
 #circle3 {
   animation-name: circle3;
 }
-
 .cc1 {
   background-color: #9e9da2;
 }
-
 @-webkit-keyframes circle1 {
   0% {
     top: 10px;
@@ -706,7 +715,6 @@ body {
     top: 10px;
   }
 }
-
 @-webkit-keyframes circle2 {
   10% {
     top: 30px;
@@ -718,7 +726,6 @@ body {
     top: 30px;
   }
 }
-
 @-webkit-keyframes circle3 {
   15% {
     top: 30px;
@@ -730,7 +737,6 @@ body {
     top: 30px;
   }
 }
-
 @keyframes circle1 {
   0% {
     top: 10px;
@@ -742,7 +748,6 @@ body {
     top: 10px;
   }
 }
-
 @keyframes circle2 {
   10% {
     top: 10px;
@@ -754,7 +759,6 @@ body {
     top: 10px;
   }
 }
-
 @keyframes circle3 {
   15% {
     top: 10px;
