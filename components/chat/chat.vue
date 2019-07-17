@@ -23,15 +23,11 @@
               src="https://media3.scdn.vn/img3/2019/5_14/nEZOmN_simg_ab1f47_250x250_maxb.jpg"
               alt
             />
-            <!-- <img v-if="item.UserName1 != $store.state.authUser.name"
-              :src="item"
-              alt
-            />-->
           </div>
           <div class="name-buyer">
-            <p v-if="item.UserName1 != $store.state.authUser.name">{{ item.UserName1 }} {{ count }}</p>
-            <p v-if="item.UserName1 == item.UserName2">{{ item.UserName1 }} {{ count }}</p>
-            <p v-if="item.UserName2 != $store.state.authUser.name">{{ item.UserName2 }} {{ count }}</p>
+            <p v-if="item.UserName1 != $store.state.authUser.name">{{ item.UserName1 }} <span >{{ countMess(item) }}</span></p>
+            <p v-if="item.UserName1 == item.UserName2">{{ item.UserName1 }} <span>{{ countMess(item)  }}</span> </p>
+            <p v-if="item.UserName2 != $store.state.authUser.name">{{ item.UserName2 }} <span >{{ countMess(item)  }}</span></p>
           </div>
         </div>
       </div>
@@ -39,40 +35,57 @@
         <div class="title-chat-right">
           <i class="fas fa-minus" @click="$store.commit('TOGGLE_CHAT')"></i>
         </div>
-        <div class="content-chat messages" ref="messages">
-          <div class="messager" v-for="item in room.messagers" :key="item.id">
-            <div class="saler">
-              <div class="div-left" v-if="item.UserId == $store.state.authUser.id">
-                <div class="content">
-                  <p>{{ item.content }}</p>
+        <div style="overflow-y: scroll; height : 350px;" ref="messages">
+          <div class="content-chat">
+            <div class="messager" v-for="item in room.messagers" :key="item.id">
+              <div class="saler">
+                <div class="div-left" v-if="item.UserId == $store.state.authUser.id">
+                  <div class="content">
+                    <p v-if="item.status == 0 ">{{ item.content }}</p>
+                    <p v-if="item.status == 1">
+                      <nuxt-link :to="`/${item.ProductId}`">
+                        <img :src="item.image" width="50px" />
+                      </nuxt-link>
+                    </p>
+                    <p v-if="item.status == 3">
+                      <img :src="item.image" width="100px" />
+                    </p>
+                  </div>
+                  <div class="img" v-if="item.user.avatar != 0">
+                    <img :src="item.user.avatar" alt />
+                  </div>
+                  <div class="img" v-if="item.user.avatar == 0">
+                    <img src="/img/images.png" alt />
+                  </div>
                 </div>
-                <div class="img" v-if="item.user.avatar != 0">
-                  <img :src="item.user.avatar" alt />
-                </div>
-                <div class="img" v-if="item.user.avatar == 0">
-                  <img src="/img/images.png" alt />
+              </div>
+              <div class="buyer" v-if="item.UserId != $store.state.authUser.id">
+                <div class="div-right">
+                  <div class="img" v-if="item.user.avatar != 0">
+                    <img :src="item.user.avatar" alt />
+                  </div>
+                  <div class="img" v-if="item.user.avatar == 0">
+                    <img src="/img/images.png" alt />
+                  </div>
+                  <div class="content-right">
+                    <p v-if="item.status == 0">{{ item.content }}</p>
+                    <p v-if="item.status == 1">
+                      <nuxt-link :to="`/${item.ProductId}`">
+                        <img :src="item.image" width="50px" />
+                      </nuxt-link>
+                    </p>
+                    <p v-if="item.status == 3">
+                      <img :src="item.image" width="100px" />
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
-            <div class="buyer" v-if="item.UserId != $store.state.authUser.id">
-              <div class="div-right">
-                <div class="img" v-if="item.user.avatar != 0">
-                  <img :src="item.user.avatar" alt />
-                </div>
-                <div class="img" v-if="item.user.avatar == 0">
-                  <img src="/img/images.png" alt />
-                </div>
-                <div class="content-right">
-                  <p>{{ item.content }}</p>
-                </div>
-              </div>
-            </div>
+
+            <!-- {{ typing }} -->
           </div>
-
-          <!-- {{ typing }} -->
         </div>
-
-        <div class="bubble-chat" v-if="typing">
+        <div class="bubble-chat" v-if="idroom == roomname">
           <div class="container-circle">
             <div class="circle cc1" id="circle1"></div>
             <div class="circle cc2" id="circle2"></div>
@@ -84,6 +97,29 @@
           <input type="text" class="txt-input-chat" v-model="message" @keyup="triggerMessageSend" />
           <div>
             <button @click="sendMessages">Gui</button>
+          </div>
+        </div>
+        <div class="send-file">
+          <input type="file" id="send-file" @change="onImageChange" ref="file" />
+          <label for="send-file">
+            <div class="send-image">
+              <div class="icon">
+                <i class="fas fa-images"></i>
+              </div>
+              <div class>hình ảnh</div>
+            </div>
+          </label>
+          <div class="send-product">
+            <div class="icon">
+              <i class="fas fa-tshirt"></i>
+            </div>
+            <div class>quần áo</div>
+          </div>
+          <div class="send-bill">
+            <div class="icon">
+              <i class="fas fa-images"></i>
+            </div>
+            <div class>hình ảnh</div>
           </div>
         </div>
       </div>
@@ -100,11 +136,26 @@ export default {
       idUserSend: "",
       messages: [],
       typing: "",
-      // room: {},
-      count: "",
-      scrollToTop: true,
-      scrollHeight: true,
-      selected: ""
+      room: {},
+      count: {
+        idroom: -1,
+        countMess: 0
+      },
+      dem :0,
+      image: "",
+      selected: "",
+      product: {
+        image: "",
+        ProductId: ""
+      },
+      bill: {
+        sum: "",
+        bill: "",
+        image: ""
+      },
+      idroom: "",
+      roomidnew : 0,
+      listMess: []
     };
   },
   computed: {
@@ -118,36 +169,66 @@ export default {
 
   beforeMount() {
     socket.on("new-message", (room, message) => {
+      var idRoom = this.rooms.find(item => item.id === room);
       var audio = new Audio("/Iphone.mp3"); // path to filesssdsaaaaaaaaaaaa
       audio.play();
-      if (this.room.id == room) {
+        message['isRead'] = false
+      console.log(message);
+      if (idRoom.id == this.roomname) {
+        console.log("vao dau");
+        this.room = this.rooms.find(item => item.id === room);
+        message['isRead'] = true
         this.room.messagers.push(message);
       } else {
-        console.log(this.$store.state.rooms);
-        console.log(room);
-        this.room = this.$store.state.rooms.find(room => room.id === room);
-        console.log(this.room);
-        this.count = this.count + 1;
-        this.room.messagers.push(message);
+        console.log("else");
+        this.countMess( idRoom )
+        // this.room = this.rooms.find(item => item.id === room);
+        // this.count = this.count + 1;
+        this.listMess.push(message);
+        this.dem = this.dem + 1;
+        this.roomidnew = room;
+        // this.room.messagers.push(message);
       }
-
-      // this.$store.commit("ADD_MESS", message);
     });
     socket.on("receivedUserTyping", message => {
-      console.log(message);
+      this.idroom = message.room;
       this.typing = message;
     });
   },
-  mounted() {
-    this.scrollToBottom();
-  },
-  updated() {
-    this.scrollToBottom();
-  },
-  watch: {
-    'messages': 'scrollToBottom'
-  },
+
   methods: {
+    countMess( item ){
+      console.log(item)
+      var count = 0 ; 
+      for( var i = 0 ; i < item.messagers.length ; i++){
+        if( item.messagers[i].isRead == false){
+          count = count + 1
+        }
+      }
+      return count
+    },
+    scrollMessages() {
+      var container = this.$refs.messages;
+      container.scrollTop = container.scrollHeight;
+    },
+    onImageChange(e) {
+      let file;
+      file = this.$refs.file.files[0];
+      let formData = new FormData();
+      formData.append("file", file);
+      this.$axios
+        .post("/api/upload", formData, {
+          headers: { "Content-Type": "multipart/form-data" }
+        })
+        .then(response => {
+          this.image = "/img/" + response.data;
+          this.sendMessages();
+          console.log(response.data);
+        })
+        .catch(function() {
+          console.log("FAILURE!!");
+        });
+    },
     showDivChat() {
       if (!this.$store.state.authUser) {
         this.$store.commit("OPEN_REGISTER");
@@ -158,7 +239,7 @@ export default {
           })
           .then(response => {
             console.log(response);
-            this.rooms = response.data;
+            // this.rooms = response.data;
             this.$store.commit("ROOMS", response.data);
             this.chatUser(this.rooms[0]);
           });
@@ -168,8 +249,26 @@ export default {
     chatUser(item) {
       this.selected = item.id;
       this.roomname = item.id;
+      console.log(item.id);
+      console.log(this.listMess);
+
       this.room = this.rooms.find(room => room.id === item.id);
-      this.count = "";
+      if (this.listMess.length > 0) {
+        // this.room.messagers.push(this.listMess)
+        for (var i = 0; i <= messages.length; i++) {
+          if (item.id == this.listMess[i].roomid) {
+            var index = this.listMess.indexOf(this.listMess[i])
+            this.room.messagers = [...this.room.messagers, this.listMess[i]];
+            console.log(index);
+            this.listMess.splice( index, 1)
+          } else {
+          }
+        }
+        // console.log("aaaaaaaaaaaaaa");
+        console.log(this.room);
+      }
+
+      this.count = 0;
       if (item.UserName1 == this.$store.state.authUser.name) {
         this.idUserSend = item.UserName2;
       } else if (item.UserName2 == this.$store.state.authUser.name) {
@@ -199,6 +298,7 @@ export default {
         }
       }
     },
+
     sendMessages() {
       var avatar;
       if (this.$store.state.authUser.avatar != 0) {
@@ -206,24 +306,73 @@ export default {
       } else {
         avatar = 0;
       }
+
+      var status;
+      console.log(this.message);
+      if (
+        this.message != "" &&
+        this.bill.image == "" &&
+        this.product.image == "" &&
+        this.image == ""
+      ) {
+        status = 0;
+      } else if (
+        this.message == "" &&
+        this.bill.image == "" &&
+        this.product.image != "" &&
+        this.image == ""
+      ) {
+        status = 1;
+      } else if (
+        this.message == "" &&
+        this.product.image == "" &&
+        this.bill.image != "" &&
+        this.image == ""
+      ) {
+        status = 2;
+      } else if (
+        this.message == "" &&
+        this.product.image == "" &&
+        this.bill.image == "" &&
+        this.image != ""
+      ) {
+        status = 3;
+      }
       var message = {
         content: this.message,
         nameuser: this.idUserSend,
         roomid: this.roomname,
+        isRead : true,
         UserId: this.$store.state.authUser.id,
+        ProductId: this.product.ProductId,
+        image: this.product.image,
+        image: this.image,
         user: {
           avatar: avatar
-        }
+        },
+        sum: this.bill.sum,
+        BillId: this.bill.BillId,
+        // image: this.bill.image,
+        status: status
       };
       this.room.messagers.push(message);
       socket.emit("send-message", message);
       this.message = "";
+      this.image = "";
       this.sendUserNotTyping();
-    },
-    scrollToBottom() {
-      this.$nextTick(() => {
-        // this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight
-      })
+      this.scrollMessages();
+    }
+  },
+  mounted() {
+    // if (process.client) {
+    //   setTimeout(() => {
+    //     this.scrollMessages();
+    //   }, 1000);
+    // }
+  },
+  updated() {
+    if (this.$refs.messages) {
+      this.scrollMessages();
     }
   }
 };
@@ -238,11 +387,13 @@ export default {
   color: white !important;
   background: grey;
 }
-
+#send-file {
+  display: none;
+}
 .messages {
-  height: 100%;
+  // height: 200px;
   margin: 0;
-  overflow-y: scroll;
+  overflow-y: auto;
   padding: 10px 20px 10px 20px;
 }
 .btn-chat {
@@ -326,7 +477,7 @@ export default {
     }
     .content-chat {
       width: 100%;
-      height: 400px;
+      height: 350px;
       .messager {
         width: 100%;
         .saler {
@@ -407,6 +558,9 @@ export default {
         width: 50px;
         height: 30px;
       }
+    }
+    .send-file {
+      display: flex;
     }
   }
 }

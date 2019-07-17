@@ -7,7 +7,7 @@
           <div class="filter-cate">
             <p>Theo danh mục</p>
             <ul>
-              <li v-for="item in subcates">{{item.name }}</li>
+              <li v-for="item in subcates" :key="item.id">{{item.name }}</li>
             </ul>
           </div>
           <!-- <div class="filter-rating">
@@ -46,6 +46,52 @@
       </div>
     </div>
     <div class="content-right">
+      <div class="container">
+        <div class="saler">
+          <div class="saler-left">
+            <div class="img" v-if="user.avatar != 0">
+              <img :src="user.avatar" alt />
+            </div>
+            <div class="img" v-if="user.avatar == 0">
+              <img src="/img/images.png" alt />
+            </div>
+            <div class="chat-saler">
+              <p class="name-saler">{{ user.name }}</p>
+              <p class="online" v-if="online == 1">Đang online</p>
+              <p
+                class="online"
+                v-if="online == 0"
+              >Offline {{ moment(user.updated_at).fromNow()}}</p>
+              <button @click="showDivChat">Chat ngay</button>
+              <button @click="followSaler">{{ checkFollow === undefined ? 'Follow' : 'Đã Follow' }}</button>
+            </div>
+          </div>
+          <div class="saler-right">
+            <ul>
+              <li>
+                <nuxt-link :to="`/buyer/rating/${ user.id }`">
+                  Đánh giá :
+                  <span>{{ totalRating }}</span>
+                </nuxt-link>
+              </li>
+              <li>
+                <nuxt-link :to="`/shop/${ user.id }`">
+                  Sản phẩm :
+                  <span>{{ totalProduct }}</span>
+                </nuxt-link>
+              </li>
+              <li>
+                Tham gia :
+                <span>{{ moment(user.created_at).fromNow()}}</span>
+              </li>
+              <li>
+                Người theo dõi :
+                <span>{{ totalFollow }}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
       <div class="title-filter-product">
         <div>
           <ul>
@@ -82,39 +128,116 @@
   </div>
 </template>
 <script>
+import moment from "moment";
+moment.locale("vi");
 export default {
   async asyncData({ $axios, params }) {
-    var products = await $axios.get("/api/product/shop/" + params.id);
-    console.log(products);
-    return { products: products.data };
+    var data = await $axios.get("/api/product/shop/" + params.id);
+    return {
+      products: data.data.products,
+      totalProduct: data.data.totalProduct,
+      totalRating: data.data.totalRating,
+      totalFollow: data.data.totalFollow,     
+      user : data.data.user,
+      follows : data.data.follows
+    };
   },
   computed: {
     subcates() {
       var subcates = [];
       for (var i = 0; i < this.products.length; i++) {
-        console.log(this.products[i].subcate)
+        console.log(this.products[i].subcate);
         // subcates = subcates.push(this.products[i].subcate)
-        subcates = [...subcates,this.products[i].subcate]
+        subcates = [...subcates, this.products[i].subcate];
       }
-      
-      var uniqueAddresses
-       uniqueAddresses = Array.from(new Set(subcates.map(a => a.name))).map(
+
+      var uniqueAddresses;
+      uniqueAddresses = Array.from(new Set(subcates.map(a => a.name))).map(
         name => {
-           return subcates.find(a => a.name === name);
+          return subcates.find(a => a.name === name);
         }
       );
-      console.log(uniqueAddresses)
-      return uniqueAddresses
-      // const array = this.products
-      // const unique = new Set(array)
-      // const backtoArray = [...unique]
-      // array.filter(( item ,index )=>{
-      //   return array.indexOf(item) === index
-      // })
-      // [...new Set(array)]
+      console.log(uniqueAddresses);
+      return uniqueAddresses;
+    },
+    checkFollow: {
+      get: function() {
+        if (this.follows) {
+          console.log("online" + this.online);
+          var index;
+          if (this.$store.state.authUser && this.follows.length > 0) {
+            index = this.follows.find(
+              follow => follow.UserIdFollow === this.user.id
+            );
+          }
+          return index;
+        }
+      },
+      set: function(newValue) {
+        this.index = newValue;
+      }
+    }
+  },
+  data(){
+    return {
+      moment: moment,
     }
   },
   methods: {
+    followSaler(product) {
+      if (!this.$store.state.authUser) {
+        this.$store.commit("OPEN_REGISTER");
+      } else {
+        var find = this.follows.find(
+          follow => follow.UserIdFollow === this.user.id
+        );
+        var index = this.follows.indexOf(find);
+        if (find) {
+          this.follows.splice(index, 1);
+        } else {
+          var anhquy = {
+            UserId: this.$store.state.authUser.id,
+            ProductId: 12,
+            UserIdFollow: this.user.id
+          };
+          this.follows.push(anhquy);
+        }
+        this.$axios
+          .post("/api/follow/add", {
+            ProductId:12,
+            UserIdFollow: this.user.id
+          })
+          .then(response => {});
+      }
+    },
+    chatUser(item) {
+      this.selected = item.id;
+      this.roomname = item.id;
+      this.room = this.rooms.find(room => room.id === item.id);
+      this.count = "";
+      if (item.UserName1 == this.$store.state.authUser.name) {
+        this.idUserSend = item.UserName2;
+      } else if (item.UserName2 == this.$store.state.authUser.name) {
+        this.idUserSend = item.UserName1;
+      }
+    },
+    showDivChat() {
+      if (!this.$store.state.authUser) {
+        this.$store.commit("OPEN_REGISTER");
+      } else {
+        this.$axios
+          .post("/api/room/add", {
+            user: this.user
+          })
+          .then(response => {
+            console.log(response);
+            this.rooms = response.data;
+            this.$store.commit("ROOMS", response.data);
+            this.chatUser(this.rooms[0])
+          });
+        this.$store.commit("TOGGLE_CHAT");
+      }
+    },
     formatPrice(value) {
       let val = (value / 1).toFixed(0).replace(".", ",");
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -148,7 +271,72 @@ a {
 a:hover {
   text-decoration: none;
 }
-
+ul li {
+  list-style-type: none;
+}
+.container {
+  margin-top: 25px !important;
+  .saler {
+    display: flex;
+    padding: 10px 0px;
+    .chat-saler {
+      width: 70%;
+      .name-saler {
+        font-weight: 400;
+        font-size: 1rem;
+        color: rgba(0, 0, 0, 0.87);
+        margin: 0;
+      }
+      .online {
+        font-size: 0.875rem;
+        color: rgba(0, 0, 0, 0.54);
+        text-transform: capitalize;
+      }
+      button {
+        margin-top: 15px;
+        color: #00bfa5;
+        border: 1px solid #00bfa5;
+        background: white;
+        padding: 8px 15px;
+      }
+    }
+    .saler-left {
+      display: flex;
+      width: 35%;
+      .img {
+        width: 25%;
+        padding-left: 10px;
+        img {
+          width: 75%;
+        }
+      }
+      .chat-saler {
+        width: 80%;
+      }
+    }
+    .saler-right {
+      width: 65%;
+      display: flex;
+      ul {
+        width: 100%;
+        li {
+          a {
+            color: rgba(0, 0, 0, 0.4);
+            text-decoration: none;
+          }
+          text-transform: capitalize;
+          color: rgba(0, 0, 0, 0.4);
+          float: left;
+          font-size: 14px;
+          margin-right: 40px;
+          span {
+            color: red;
+          }
+        }
+      }
+    }
+  }
+}
 @media only screen and (min-width: 1200px) {
   .container {
     width: 1200px;

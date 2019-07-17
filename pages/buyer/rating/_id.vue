@@ -116,19 +116,19 @@
       <div v-if="ratingFilter.length > 0">
         <div class="box-rating" v-for=" item in ratingFilter" :key="item.id">
           <div class="div">
-            <div class="img">
+            <div class="img" v-if="item.user.avatar == 0">
               <img src="/img/images.png" alt v-if="item.user.avatar == 0" />
             </div>
-            <div class="img">
-              <img :src="item.user.avatar " alt v-if="item.user.avatar != 0" />
+            <div class="img" v-if="item.user.avatar != 0">
+              <img :src="item.user.avatar " alt  />
             </div>
-            
             <div class="content">
               <p>{{ item.user.name}}</p>
               <p>
                 <i class="fas fa-star" v-for="n in item.star" :key="n + 20"></i>
                 <i class="far fa-star" v-for="n in 5 - item.star" :key="n"></i>
               </p>
+              <p style="margin-top : 5px;">{{ item.content }}</p>
               <nuxt-link :to="`/${item.id}`">
                 <div class="product-rating">
                   <div class="img-product">

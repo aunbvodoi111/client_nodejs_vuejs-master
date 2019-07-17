@@ -291,21 +291,14 @@ export default {
     },
     anhquy() {
       this.idImage = "";
-      this.anhquyhi += 1; // increment your counter
-      // the modulus (%) operator resets the counter to 0
-      // when it reaches the length of the array
-      // console.log(counter)
+      this.anhquyhi += 1; 
       if (
         this.product.mulimages[this.anhquyhi] == undefined ||
         this.anhquyhi > this.product.mulimages.length
       ) {
         this.anhquyhi = 0;
-        console.log(this.product.mulimages[this.anhquyhi]);
       } else {
-        // this.anhquyhi +=  1
-        console.log(this.product.mulimages[this.anhquyhi]);
       }
-      // console.log(this.product.mulimages[this.anhquyhi]); // the new incremented value
     },
     hoverImage(item) {
       if (item == 1) {

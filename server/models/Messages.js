@@ -5,6 +5,11 @@ module.exports = (sequelize, DataTypes) => {
     RoomId: DataTypes.UUID,
     UserId: DataTypes.UUID,
     avatar: DataTypes.STRING,
+    sum: DataTypes.INTEGER,
+    BillId: DataTypes.INTEGER,
+    ProductId: DataTypes.INTEGER,
+    status: DataTypes.INTEGER,
+    image : DataTypes.STRING,
   }, {
     updatedAt: 'updated_at',
     createdAt: 'created_at'

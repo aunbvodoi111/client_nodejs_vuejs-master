@@ -3,11 +3,17 @@ const Op = Sequelize.Op;
 var models = require('../models');
 module.exports = {
   ADD_MESSAGE: async (data) => {
+    console.log('ok')
     console.log(data.data)
     const newMess = await models.messagers.create({
       content: data.data.content,
       RoomId: data.data.roomid,
       UserId: data.data.UserId,
+      ProductId: data.data.ProductId,
+      BillId: data.data.BillId,
+      sum: data.data.sum,
+      image : data.data.image,
+      status : data.data.status
     })
     newMess.save()
     // var room = await Room.findOne({ _id: data.data.roomid })

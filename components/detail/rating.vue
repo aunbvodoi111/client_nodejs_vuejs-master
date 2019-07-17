@@ -167,10 +167,6 @@
               :class="{highlight:1 == selected}"
               @click="filterRating(1)"
             >1 sao({{ totalStarOne.length }})</button>
-            <!-- <button
-              :class="{highlight:9 == selected}"
-              @click="filterRating(9)"
-            >có bình luận({{ totalStarOne.length }})</button>-->
             <button
               :class="{highlight:8 == selected}"
               @click="filterRating(8)"
@@ -297,13 +293,7 @@ export default {
       console.log(room);
       var audio = new Audio("/Iphone.mp3"); // path to filesssdsaaaaaaaaaaaa
       audio.play();
-
-      // this.room = this.rooms.find( room => room.id === room)
       console.log();
-      // this.room.messagers.push(message)
-      // var audio = new Audio('/Iphone.mp3') // path to file
-      // audio.play()
-      // var anhquy = this.messages.messages
       console.log(this.room);
       if (this.room.id == room) {
         this.room.messagers.push(message);

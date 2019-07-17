@@ -154,13 +154,16 @@ io.on('connection', (socket) => {
     var anhquy = 'Đang trả lời '
     socket
       .to(data.room)
-      .emit('receivedUserTyping', anhquy);
+      .emit('receivedUserTyping', data);
   });
   socket.on('removeUserTyping', data => {
-    var anhquy = ''
+    // data.room = ''
+    var idroom  ={
+      room : -1
+    }
     socket
       .to(data.room)
-      .emit('receivedUserTyping', anhquy);
+      .emit('receivedUserTyping', idroom);
   });
   function findUserById(name) {
     console.log(people)

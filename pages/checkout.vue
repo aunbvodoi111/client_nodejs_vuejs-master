@@ -56,14 +56,14 @@
         </p>
       </div>
       <div class="product-checkout" v-for="item in carts" :key="item.id">
+        <p>
+          <span>{{ item.user.name }}</span>
+          <span @click="showDivChat(item)">Chat ngay</span>
+        </p>
         <div class="product" v-for=" prod in item.cart_details" :key="prod.id">
           <div class="name">
             <div class="name-shop">
               <h4>Sản phẩm</h4>
-              <p>
-                <span>{{ item.user.name }}</span>
-                <span @click="showDivChat(item)">Chat ngay</span>
-              </p>
             </div>
             <div class="img-name-pr">
               <div class="img">
@@ -289,7 +289,7 @@ export default {
           address: this.address,
           UserIdSaler: this.UserIdSaler,
           note: this.message,
-          AddressId : this.addresseDefault.id
+          AddressId: this.addresseDefault.id
         })
         .then(response => {
           this.$router.push("/user/order/history");

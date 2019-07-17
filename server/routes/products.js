@@ -74,9 +74,7 @@ router.get('/danhmuc/:id', async (req, res) => {
             as: 'subcates',
         }]
     });
-    // var products = await models.products.findAll({
-    //     where: { id: req.params.id },
-    // })
+
     return res.send({ cates: cates })
 })
 
@@ -92,13 +90,70 @@ router.get('/shop/:id', async (req, res) => {
         },{ model: models.subcates }
         ]
     })
-    return res.json(products)
+    var user = await models.users.findOne({
+        where :{ id : id}
+    })
+
+    var totalProduct = 0
+    await models.products.count({
+        where: { UserId: user.id },
+        include: [{
+            model: models.users,
+        }]
+    }).then(function (count) {
+        // count is an integer
+        console.log(count)
+        totalProduct = count
+    });
+
+    var totalRating = 0
+    await models.ratings.count({
+        include: [{
+            where: { UserId: user.id },
+            model: models.products,
+        }]
+    }).then(function (count) {
+        // count is an integer
+        console.log('dddddddd' + count)
+        totalRating = count
+    });
+
+    var totalFollow = 0
+    await models.follows.count({
+        where: { UserIdFollow: user.id },
+    }).then(function (count) {
+        // count is an integer
+        totalFollow = count
+    });
+
+    var totalFollow = 0
+    var follows = await models.follows.findAll({
+        
+    })
+
+    // var count = await models.wishes.findAll({
+    //     where: { ProductId: id },
+    // });
+    if (req.user) {
+        var follows = await models.follows.findAll({
+            where: {
+                [Op.or]: [
+                    { ProductId: id },
+                    { UserId: user.id },
+                ]
+            }
+        });
+    }
+    return res.send({ products : products , totalProduct : totalProduct , totalRating : totalRating , totalFollow :totalFollow , user : user , follows :follows})
 })
 
 router.get('/search/:keyword', async (req, res) => {
     var { keyword } = req.params
     var products = await models.products.findAll({
         where: { name: { [Op.like]: '%' + keyword + '%' } },
+        include: [
+            { model: models.subcates }
+        ]
     })
     var users = await models.users.findAll({
         where: { name: { [Op.like]: '%' + keyword + '%' } }
@@ -341,8 +396,10 @@ router.get('/detailPr/:id', async (req, res) => {
     return res.send({
         products: products,
         count: count,
-        follows: follows, sumQty: sumQty,
-        totalProduct: totalProduct, totalFollow: totalFollow,
+        follows: follows,
+        sumQty: sumQty,
+        totalProduct: totalProduct,
+        totalFollow: totalFollow,
         totalRating: totalRating,
         cart_details : cart_details
     })
