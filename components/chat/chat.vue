@@ -25,9 +25,9 @@
             />
           </div>
           <div class="name-buyer">
-            <p v-if="item.UserName1 != $store.state.authUser.name">{{ item.UserName1 }} <span >{{ countMess(item) }}</span></p>
-            <p v-if="item.UserName1 == item.UserName2">{{ item.UserName1 }} <span>{{ countMess(item)  }}</span> </p>
-            <p v-if="item.UserName2 != $store.state.authUser.name">{{ item.UserName2 }} <span >{{ countMess(item)  }}</span></p>
+            <p v-if="item.UserName1 != $store.state.authUser.name">{{ item.UserName1 }} <span v-if="countMess(item) > 0">{{ countMess(item) }}</span></p>
+            <p v-if="item.UserName1 == item.UserName2">{{ item.UserName1 }} <span v-if="countMess(item) > 0">{{ countMess(item)  }}</span> </p>
+            <p v-if="item.UserName2 != $store.state.authUser.name">{{ item.UserName2 }} <span v-if="countMess(item) > 0">{{ countMess(item)  }}</span></p>
           </div>
         </div>
       </div>
@@ -184,9 +184,10 @@ export default {
         this.countMess( idRoom )
         // this.room = this.rooms.find(item => item.id === room);
         // this.count = this.count + 1;
-        this.listMess.push(message);
+        this.listMess.unshift(message);
         this.dem = this.dem + 1;
         this.roomidnew = room;
+        this.countMess(idRoom)
         // this.room.messagers.push(message);
       }
     });
@@ -198,10 +199,11 @@ export default {
 
   methods: {
     countMess( item ){
-      console.log(item)
+      console.log('chay dc vao k ')
       var count = 0 ; 
-      for( var i = 0 ; i < item.messagers.length ; i++){
-        if( item.messagers[i].isRead == false){
+      
+      for( var i = 0 ; i < this.listMess.length ; i++){
+        if( item.id == this.listMess[i].roomid){
           count = count + 1
         }
       }
@@ -255,10 +257,10 @@ export default {
       this.room = this.rooms.find(room => room.id === item.id);
       if (this.listMess.length > 0) {
         // this.room.messagers.push(this.listMess)
-        for (var i = 0; i <= messages.length; i++) {
+        for ( var i = this.listMess.length -1; i >= 0; i--) {
           if (item.id == this.listMess[i].roomid) {
             var index = this.listMess.indexOf(this.listMess[i])
-            this.room.messagers = [...this.room.messagers, this.listMess[i]];
+            this.room.messagers.push(this.listMess[i]) 
             console.log(index);
             this.listMess.splice( index, 1)
           } else {
