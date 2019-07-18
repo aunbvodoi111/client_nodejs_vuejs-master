@@ -127,9 +127,15 @@
             <div class="number-rating">{{ product.ratings.length }} đánh giá</div>
             <div class="number-rating">{{ product.sold }} đã bán</div>
           </div>
-          <div class="price-detail">
+          <div class="price-detail" v-if="product.classifies.length == 0 && priceClassify == 0">
             <span class="payment">₫ {{ formatPrice(product.price) }}</span>
             <span class="discount">₫{{ formatPrice(product.discount) }}</span>
+          </div>
+          <div class="price-detail" v-if="product.classifies.length > 0 && priceClassify == 0">
+            <span class="discount">₫{{ formatPrice(minPrice) }} - {{ formatPrice(maxPrice) }}</span>
+          </div>
+          <div class="price-detail" v-if="product.classifies.length > 0 && priceClassify > 0">
+            <span class="discount">₫{{ formatPrice(priceClassify) }}</span>
           </div>
           <div v-if="product.classifies.length" class="classify">
             <button
@@ -289,7 +295,8 @@ export default {
       showPopDetailImg: false,
       showPopMaxQtyProduct: false,
       sumQty: 0,
-      activeButton: 0
+      activeButton: 0,
+      priceClassify : 0
     };
   },
   created() {},
@@ -309,6 +316,7 @@ export default {
       this.sumQty = item.qty;
       this.qtyProduct = 1;
       this.activeButton = item.id;
+      this.priceClassify = item.price
     },
     anhquyok() {
       // increment your counter
@@ -519,7 +527,28 @@ export default {
     //   }
     //   return sum;
     // },
-
+    minPrice() {
+      var lowest = Number.POSITIVE_INFINITY;
+      var highest = Number.NEGATIVE_INFINITY;
+      var tmp;
+      for (var i = this.product.classifies.length - 1; i >= 0; i--) {
+        tmp = this.product.classifies[i].price;
+        if (tmp < lowest) lowest = tmp;
+        if (tmp > highest) highest = tmp;
+      }
+      return lowest
+    },
+    maxPrice() {
+      var lowest = Number.POSITIVE_INFINITY;
+      var highest = Number.NEGATIVE_INFINITY;
+      var tmp;
+      for (var i = this.product.classifies.length - 1; i >= 0; i--) {
+        tmp = this.product.classifies[i].price;
+        if (tmp < lowest) lowest = tmp;
+        if (tmp > highest) highest = tmp;
+      }
+      return highest
+    },
     ImageHover() {
       if (this.idImage) {
         return this.product.mulimages.find(item => item.id === this.idImage);
@@ -588,8 +617,8 @@ button {
     background: #fff;
     outline: 0;
     &:hover {
-      color: red ;
-      border: 1px solid red ;
+      color: red;
+      border: 1px solid red;
     }
   }
   button.disabled {
