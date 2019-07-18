@@ -299,6 +299,9 @@ router.get('/detailPr/:id', async (req, res) => {
         {
             model: models.mulimages,
             as: 'mulimages',
+        },{
+            model: models.classifies,
+            as: 'classifies',
         }],
 
     })

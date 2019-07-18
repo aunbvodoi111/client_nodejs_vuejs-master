@@ -27,7 +27,7 @@
         </div>
       </transition>
       <div class="qty-cart" v-if="showPopMaxQtyProduct">
-        <p >Sản phẩm này đã hết hàng !</p>
+        <p>Sản phẩm này đã hết hàng !</p>
         <button @click=" showPopMaxQtyProduct = false">Đồng ý</button>
       </div>
       <div class="image-detail" v-if="showPopDetailImg">
@@ -131,6 +131,24 @@
             <span class="payment">₫ {{ formatPrice(product.price) }}</span>
             <span class="discount">₫{{ formatPrice(product.discount) }}</span>
           </div>
+          <div v-if="product.classifies.length" class="classify">
+            <button
+              v-for=" item in product.classifies"
+              @click="qtyClassify(item)"
+              :class="{activeButton:item.id == activeButton}"
+              v-if="item.qty > 0"
+              :key="item.id"
+            >{{ item.name }}</button>
+            <button
+              v-for=" item in product.classifies"
+              @click="qtyClassify(item)"
+              :class="{activeButton:item.id == activeButton}"
+              v-if="item.qty == 0"
+              disabled
+              class="button disabled"
+              :key="item.id"
+            >{{ item.name }}</button>
+          </div>
           <div class="qty-action">
             <span>Số Lượng</span>
             <div class="btn-txt">
@@ -143,7 +161,13 @@
                 <i class="fas fa-plus"></i>
               </button>
             </div>
-            <span>{{ product.qty }} sản phẩm có sẵn</span>
+            <span>
+              <span v-if="product.classifies.length == 0">{{ product.qty }}</span>
+              <span v-if="product.classifies.length > 0">
+                <span v-if="sumQty == 0">{{ sumQtynew() }}</span>
+                <span v-if="sumQty > 0">{{ sumQty }}</span>
+              </span>sản phẩm có sẵn
+            </span>
           </div>
           <div
             class="btn-action-detail"
@@ -263,11 +287,29 @@ export default {
       idImage: "",
       anhquyhi: -1,
       showPopDetailImg: false,
-      showPopMaxQtyProduct : false
+      showPopMaxQtyProduct: false,
+      sumQty: 0,
+      activeButton: 0
     };
   },
   created() {},
   methods: {
+    sumQtynew() {
+      var anhquy = this.product.classifies;
+      this.sumQty = 0;
+      if (anhquy.length) {
+        for (var i = 0; i < anhquy.length; i++) {
+          this.sumQty = this.sumQty + anhquy[i].qty;
+        }
+      }
+      return this.sumQty;
+      // this.sumQtyProduct = item.qty;
+    },
+    qtyClassify(item) {
+      this.sumQty = item.qty;
+      this.qtyProduct = 1;
+      this.activeButton = item.id;
+    },
     anhquyok() {
       // increment your counter
       // the modulus (%) operator resets the counter to 0
@@ -291,7 +333,7 @@ export default {
     },
     anhquy() {
       this.idImage = "";
-      this.anhquyhi += 1; 
+      this.anhquyhi += 1;
       if (
         this.product.mulimages[this.anhquyhi] == undefined ||
         this.anhquyhi > this.product.mulimages.length
@@ -342,19 +384,19 @@ export default {
       }
     },
     addCart() {
-      var changeQty
-      if(this.cart_details != null){
-         changeQty = this.cart_details.qty + Number(this.qtyProduct)
-      }else{
-        changeQty = 0
+      var changeQty;
+      if (this.cart_details != null) {
+        changeQty = this.cart_details.qty + Number(this.qtyProduct);
+      } else {
+        changeQty = 0;
       }
-      
+
       if (!this.$store.state.authUser) {
         this.$store.commit("OPEN_REGISTER");
-      } else {
+      } else if (this.product.qty > 0 && this.product.classifies.length == 0) {
         if (changeQty > this.product.qty) {
-          console.log(changeQty)
-          this.showPopMaxQtyProduct = true
+          console.log(changeQty);
+          this.showPopMaxQtyProduct = true;
         } else {
           this.showNofication = true;
           setTimeout(() => {
@@ -368,7 +410,29 @@ export default {
             })
             .then(response => {
               console.log(response);
-              this.cart_details = response.data
+              this.cart_details = response.data;
+              this.$store.commit("ADD_TO_CART", this.qtyProduct);
+            });
+        }
+      } else if (this.sumQty > 0 && this.product.classifies.length > 0) {
+        console.log("ok");
+        if (changeQty > this.sumQty) {
+          console.log(changeQty);
+          this.showPopMaxQtyProduct = true;
+        } else {
+          this.showNofication = true;
+          setTimeout(() => {
+            this.showNofication = false;
+          }, 3000);
+          this.$axios
+            .post("/api/cart/add", {
+              ProductId: this.product.id,
+              qty: this.qtyProduct,
+              UserIdSaler: this.product.user.id
+            })
+            .then(response => {
+              console.log(response);
+              this.cart_details = response.data;
               this.$store.commit("ADD_TO_CART", this.qtyProduct);
             });
         }
@@ -422,10 +486,18 @@ export default {
       this.mediumstar = e;
     },
     increment() {
-      if (this.qtyProduct == this.product.qty) {
-        this.qtyProduct = this.product.qty;
-      } else {
-        this.qtyProduct = this.qtyProduct + 1;
+      if (this.product.qty && this.product.classifies.length == 0) {
+        if (this.qtyProduct == this.product.qty) {
+          this.qtyProduct = this.product.qty;
+        } else {
+          this.qtyProduct = this.qtyProduct + 1;
+        }
+      } else if (this.sumQty > 0 && this.product.classifies.length > 0) {
+        if (this.qtyProduct == this.sumQty) {
+          this.qtyProduct = this.sumQty;
+        } else {
+          this.qtyProduct = this.qtyProduct + 1;
+        }
       }
     },
     reduction() {
@@ -436,7 +508,18 @@ export default {
       }
     }
   },
+
   computed: {
+    // sumQtyProduct() {
+    //   var sum = 0;
+    //   if (this.product.classifies.length) {
+    //     for (var i = 0; i < this.product.classifies.length; i++) {
+    //       sum = sum + this.product.classifies[i].qty;
+    //     }
+    //   }
+    //   return sum;
+    // },
+
     ImageHover() {
       if (this.idImage) {
         return this.product.mulimages.find(item => item.id === this.idImage);
@@ -479,6 +562,44 @@ export default {
 <style lang="scss" scoped>
 button {
   cursor: pointer;
+}
+.activeButton {
+  color: red !important;
+  border: 1px solid red !important;
+}
+.classify {
+  margin-top: 20px;
+  button {
+    cursor: pointer;
+    display: inline-block;
+    min-width: 5rem;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 0 0.75rem;
+    height: 2.125rem;
+    line-height: 1;
+    margin: 0 8px 8px 0;
+    color: rgba(0, 0, 0, 0.8);
+    text-align: center;
+    white-space: nowrap;
+    border-radius: 2px;
+    border: 1px solid rgba(0, 0, 0, 0.09);
+    position: relative;
+    background: #fff;
+    outline: 0;
+    &:hover {
+      color: red ;
+      border: 1px solid red ;
+    }
+  }
+  button.disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    &:hover {
+      color: rgba(0, 0, 0, 0.8) !important;
+      border: 1px solid rgba(0, 0, 0, 0.09) !important;
+    }
+  }
 }
 .selectImage {
   border: 3px solid red !important;
@@ -536,7 +657,7 @@ button {
 .container-detail {
   background: #f0f0f0;
 }
-.qty-cart{
+.qty-cart {
   position: absolute;
   width: 350px;
   height: 170px;
@@ -547,15 +668,15 @@ button {
   box-shadow: 3px 4px 29px -10px rgba(0, 0, 0, 0.75);
   text-align: center;
   padding: 20px;
-  border-radius: 10px;  
-  button{
+  border-radius: 10px;
+  button {
     color: white;
     background: red;
     width: 120px;
     height: 30px;
     border: none;
     margin-top: 40px;
-    &:hover{
+    &:hover {
       opacity: 0.5;
     }
   }

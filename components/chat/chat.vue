@@ -176,7 +176,8 @@ export default {
       idroom: "",
       roomidnew: 0,
       listMess: [],
-      messageLast: ""
+      messageLast: "",
+      roomok :{}
     };
   },
   computed: {
@@ -185,13 +186,12 @@ export default {
     },
     rooms() {
       return this.$store.state.rooms.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
-     
-      // return this.$store.state.rooms;
     }
   },
   beforeMount() {
     socket.on("new-message", (room, message) => {
       var idRoom = this.rooms.find(item => item.id === room);
+      this.roomok = this.rooms.find(item => item.id === room);
       var audio = new Audio("/Iphone.mp3"); // path to filesssdsaaaaaaaaaaaa
       audio.play();
       this.messageLast = message;
@@ -394,6 +394,8 @@ export default {
         // image: this.bill.image,
         status: status
       };
+      Vue.set(this.room, 'updated_at', new Date().toISOString());
+      this.$store.commit('CHANGE_ROOM',this.room)
       this.messageLast = message;
       this.room.messagers.push(message);
       socket.emit("send-message", message);
