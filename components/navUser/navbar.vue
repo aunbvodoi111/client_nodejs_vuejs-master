@@ -27,7 +27,19 @@
             </li>
             <li :class="{ active:4 == seleted }" >
               <i class="fas fa-star"></i>
-              <nuxt-link to='/user/notifications/orders'>Thông báo của bạn</nuxt-link>
+              <nuxt-link to='/user/notifications/orders'>Cập nhật đơn hàng</nuxt-link>
+            </li>
+            <li :class="{ active:4 == seleted }" >
+              <i class="fas fa-star"></i>
+              <nuxt-link to='/user/notifications/review'>Cập nhật đánh giá</nuxt-link>
+            </li>
+            <li :class="{ active:4 == seleted }" >
+              <i class="fas fa-star"></i>
+              <nuxt-link to='/user/notifications/productUpdate'>Cập nhật sản phẩm </nuxt-link>
+            </li>
+            <li :class="{ active:4 == seleted }" >
+              <i class="fas fa-star"></i>
+              <nuxt-link to='/user/notifications/action'>Hoạt động</nuxt-link>
             </li>
             <li :class="{ active:5 == seleted }" >
               <i class="fas fa-star"></i>

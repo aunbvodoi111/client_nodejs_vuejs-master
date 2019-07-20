@@ -31,6 +31,79 @@ router.get('/', async (req, res) => {
     return res.json(notifications) ; 
 })
 
+router.get('/action', async (req, res) => {
+    var carts
+    var notifications
+    var bills
+    if (req.user) {
+        notifications = await models.action__notis.findAll({
+            where: { [Op.or]:[{
+                [Op.and]:[{ UserIdSaler: req.user.id },{ status: 1 }],
+            },{
+                [Op.and]:[{ UserIdSaler: req.user.id },{ status: 0 }]
+            }]},
+           
+            // attributes: ['UserIdSaler', 'UserIdBuyer'],
+            include:[{
+                model: models.users,
+                as:'user'
+            },{
+                model: models.users,
+                as:'userSaler'
+            }]
+        })
+    } else {
+        notifications = []
+    }
+    return res.json(notifications) ; 
+})
+
+router.get('/review', async (req, res) => {
+    var carts
+    var notifications
+    var bills
+    if (req.user) {
+        notifications = await models.action__notis.findAll({
+            where: { [Op.and]:[{ UserIdSaler: req.user.id },{ status: 3 }] },
+           
+            // attributes: ['UserIdSaler', 'UserIdBuyer'],
+            include:[{
+                model: models.users,
+                as:'user'
+            },{
+                model: models.users,
+                as:'userSaler'
+            }]
+        })
+    } else {
+        notifications = []
+    }
+    return res.json(notifications) ; 
+})
+
+router.get('/actionProduct', async (req, res) => {
+    var carts
+    var notifications
+    var bills
+    if (req.user) {
+        notifications = await models.product__notis.findAll({
+            where: { [Op.and]:[{ UserId: req.user.id },{ status: 1 }] },
+           
+            // attributes: ['UserIdSaler', 'UserIdBuyer'],
+            include:[{
+                model: models.users,
+                as:'user'
+            },{
+                model: models.products,
+                as:'product'
+            }]
+        })
+    } else {
+        notifications = []
+    }
+    return res.json(notifications) ; 
+})
+
 router.get('/detail/:id', async (req, res) => {
     var { id } = req.params
     if (req.user) {

@@ -17,12 +17,9 @@ module.exports = (sequelize, DataTypes) => {
     //   }
     // });
     // Comment.hasMany(models.rep_comments,{ as: 'req_comments', foreignKey: 'CommentId'})
-    Product_notis.belongsTo(models.users, {
-      foreignKey: 'UserId', onDelete: "CASCADE"
-    });
-    Product_notis.belongsTo(models.products, {
-      foreignKey: 'ProductId', onDelete: "CASCADE"
-    });
+    Product_notis.belongsTo(models.users,{ as:'user',foreignKey: 'UserId'})
+    Product_notis.belongsTo(models.products,{ as:'product',foreignKey: 'ProductId'})
+    
   };
   return Product_notis;
 };

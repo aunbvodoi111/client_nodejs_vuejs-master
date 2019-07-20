@@ -94,7 +94,8 @@ router.post('/addCartCustomer', async (req, res) => {
             BillId: bills.id,
             UserIdSaler: bills.UserIdSaler,
             UserIdBuyer: bills.UserIdBuyer,
-            content: 'đã hủy đơn hàng .Vui lòng liên hệ với người mua để biết thông tin',
+            title : 'Đơn hàng mới',
+            content: 'đã đặt một đơn hàng  . Vui lòng liên hệ với người mua để biết thông tin',
             status : 1 
         })
 
@@ -119,7 +120,6 @@ router.post('/addCartCustomer', async (req, res) => {
                 product.update({
                     qty: qty - carts[i].cart_details[j].qty
                 })
-                console.log('adsasasasasasasasasasasasasadsaddassadsdanhquy' + product.qty)
                 if(product.qty == 0){
                     console.log('chay dc vao day k ')
                     await models.product__notis.create({
@@ -151,9 +151,7 @@ router.post('/addCartCustomer', async (req, res) => {
                 await product.update({
                     qty: qty - carts[i].cart_details[j].qty
                 })
-                console.log('adsasasasasasasasasasasasasadsaddassadsdanhquy' + product.qty)
                 if(product.qty == 0){
-                    console.log('chay dc vao day k ')
                     await models.product__notis.create({
                         content : 'vui lòng  bổ sung thêm hàng hoặc đăng sản phẩm mới .',
                         ProductId : product.id,
