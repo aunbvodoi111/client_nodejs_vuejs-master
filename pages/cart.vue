@@ -16,6 +16,7 @@
                   style="color : red ; font-weight : bold;"
                 >{{ pr}}</span>
               </div>-->
+
               <div class="qty">
                 <!-- thành tiền : -->
                 <span style="color : red ; font-weight : bold;">{{ cart.HomeTeam.discount }}</span>
@@ -63,7 +64,8 @@
         </div>-->
         <div class="saler-cart">
           <label class="container">
-            <i class="fas fa-close"></i>{{ item.user.name }}
+            <i class="fas fa-close"></i>
+            {{ item.user.name }}
             <input type="checkbox" checked="checked" />
           </label>
         </div>
@@ -85,12 +87,25 @@
             </div>
             <div class="name">
               <p>{{ prod.HomeTeam.name }}</p>
+              <div v-if=" prod.classifies != null ">
+                <p>phân loại hàng :</p>
+                <p>{{ prod.classifies.name }}</p>
+              </div>
+              <button
+                v-for="item in prod.HomeTeam.classifies"
+                :key="item.id"
+                :class="{ activeClassify:item.id == prod.classifies.id} "
+                v-if=" prod.classifies != null "
+              >{{ item.name }}</button>
             </div>
           </div>
-          <div class="price">
+          <div class="price" v-if=" prod.classifies == null ">
             <p>₫{{ formatPrice(prod.HomeTeam.price) }} ₫ {{ formatPrice(prod.HomeTeam.discount) }}</p>
           </div>
-          <div class="price">
+          <div class="price" v-else>
+            <p>₫{{ formatPrice(prod.classifies.price) }}</p>
+          </div>
+          <div class="price" v-if=" prod.classifies == null ">
             <div class="qty-action">
               <div class="btn-txt">
                 <button @click="reduction(prod)">
@@ -103,8 +118,24 @@
               </div>
             </div>
           </div>
-          <div class="price-sum">
+          <div class="price" v-else>
+            <div class="qty-action">
+              <div class="btn-txt">
+                <button @click="reduction(prod)">
+                  <i class="fas fa-minus"></i>
+                </button>
+                <input type="text" class="txt-qty" :value=" prod.qty " />
+                <button @click="increment(prod)">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="price-sum" v-if=" prod.classifies == null ">
             <p>₫{{ formatPrice(prod.qty * prod.HomeTeam.discount) }}</p>
+          </div>
+          <div class="price-sum" v-else>
+            <p>₫{{ formatPrice(prod.qty * prod.classifies.price) }}</p>
           </div>
           <div class="action">
             <p @click="showPopCart(prod,item)">Xóa</p>
@@ -130,7 +161,7 @@
             <nuxt-link to="/checkout" v-if="sumMoneyCart > 0">
               <button class="btn-buy">Thanh toán</button>
             </nuxt-link>
-            <button v-if="sumMoneyCart == 0" @click=" nofiCartBlank" class="btn-buy" >Thanh toán</button>
+            <button v-if="sumMoneyCart == 0" @click=" nofiCartBlank" class="btn-buy">Thanh toán</button>
           </div>
         </div>
       </div>
@@ -203,18 +234,37 @@ export default {
     },
     increment(item) {
       console.log(item);
-      if (item.qty < item.HomeTeam.qty) {
-        item.qty = item.qty + 1;
-        this.$axios
-          .post("/api/cart/changeQty", {
-            ProductId: item.ProductId,
-            qty: item.qty
-          })
-          .then(response => {
-            this.$store.commit("ADD_CART");
-          });
-      } else {
-        item.qty = item.HomeTeam.qty;
+      if (item.classifies == null) {
+        if (item.qty < item.HomeTeam.qty) {
+           console.log('null');
+          item.qty = item.qty + 1;
+          this.$axios
+            .post("/api/cart/changeQty", {
+              ProductId: item.ProductId,
+              qty: item.qty
+            })
+            .then(response => {
+              this.$store.commit("ADD_CART");
+            });
+        } else {
+          item.qty = item.HomeTeam.qty;
+        }
+      }else{
+        if (item.qty < item.classifies.qty) {
+          console.log('j');
+          item.qty = item.qty + 1;
+          this.$axios
+            .post("/api/cart/changeQty", {
+              ProductId: item.ProductId,
+              qty: item.qty,
+              ClassifyId : item.ClassifyId
+            })
+            .then(response => {
+              this.$store.commit("ADD_CART");
+            });
+        } else {
+          item.qty = item.classifies.qty;
+        }
       }
     },
     showPopCart(prod, item) {
@@ -247,7 +297,7 @@ export default {
           ProductId: prod.ProductId
         })
         .then(response => {
-          this.$store.commit("DELETE_CART",prod.qty);
+          this.$store.commit("DELETE_CART", prod.qty);
         });
     },
     formatPrice(value) {
@@ -273,10 +323,22 @@ export default {
       var sum = 0;
       for (var i = 0; i < this.carts.length; i++) {
         for (var j = 0; j < this.carts[i].cart_details.length; j++) {
-          if (this.carts[i].cart_details[j].checkBuy == 1) {
+          if (
+            this.carts[i].cart_details[j].checkBuy == 1 &&
+            this.carts[i].cart_details[j].classifies == null
+          ) {
             var sum =
               sum +
               this.carts[i].cart_details[j].HomeTeam.discount *
+                this.carts[i].cart_details[j].qty;
+          } else if (
+            this.carts[i].cart_details[j].checkBuy == 1 &&
+            this.carts[i].cart_details[j].classifies != null
+          ) {
+            console.log(" no null");
+            var sum =
+              sum +
+              this.carts[i].cart_details[j].classifies.price *
                 this.carts[i].cart_details[j].qty;
           }
         }
@@ -287,6 +349,10 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.activeClassify {
+  border: 1px solid red !important ;
+  color: red !important ;
+}
 .total-cart {
   margin-left: 40%;
   .sum-money {
@@ -514,7 +580,7 @@ button {
         }
         .action {
           width: 13.65%;
-          p{
+          p {
             cursor: pointer;
           }
         }

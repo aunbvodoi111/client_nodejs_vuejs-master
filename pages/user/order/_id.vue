@@ -179,8 +179,11 @@
                       <p>{{ prod.product.name }}</p>
                       <p>x {{ prod.qty }}</p>
                     </div>
-                    <div class="total-money-pr">
+                    <div class="total-money-pr" v-if=" prod.classifies == null ">
                       <p>₫{{ formatPrice(prod.product.discount) }}</p>
+                    </div>
+                    <div class="total-money-pr" v-else>
+                      <p>₫{{ formatPrice(prod.classifies.price) }}</p>
                     </div>
                   </div>
                 </div>
@@ -188,7 +191,7 @@
                   <div class="div-right">
                     <div class="sum-bill">
                       <div class="title-sum">Tổng tiền hàng</div>
-                      <div class="content">₫{{ formatPrice(sum) }}</div>
+                      <div class="content">₫{{ formatPrice(bills.sum) }}</div>
                     </div>
                     <div class="sum-bill">
                       <div class="title-sum">Vận chuyển</div>
@@ -198,7 +201,7 @@
                     </div>
                     <div class="sum-bill">
                       <div class="title-sum">Tổng số tiền</div>
-                      <div class="content"><span>₫{{ formatPrice(sum - 30000) }}</span></div>
+                      <div class="content"><span>₫{{ formatPrice(bills.sum - 30000) }}</span></div>
                     </div>
                     <div class="sum-bill">
                       <div class="title-sum">Phương thức Thanh toán</div>

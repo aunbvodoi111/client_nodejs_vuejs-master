@@ -66,7 +66,10 @@
           <div class="img">
             <img :src="product.image" alt v-if="idImage == ''" @click=" showPopDetailImg = true" />
             <img :src="ImageHover.image" alt v-if="idImage != ''" @click=" showPopDetailImg = true" />
-            <div class="nofj-out-of-stock" v-if="product.qty == 0">
+            <div class="nofj-out-of-stock" v-if="product.qty == 0 && product.classifies.length == 0">
+              <p>Hết hàng</p>
+            </div>
+            <div class="nofj-out-of-stock" v-if="sumQty == 0 && product.classifies.length">
               <p>Hết hàng</p>
             </div>
           </div>
@@ -141,14 +144,14 @@
             <button
               v-for=" item in product.classifies"
               @click="qtyClassify(item)"
-              :class="{activeButton:item.id == activeButton}"
+              :class="{activeButton:item.id == ClassifyId}"
               v-if="item.qty > 0"
               :key="item.id"
             >{{ item.name }}</button>
             <button
               v-for=" item in product.classifies"
               @click="qtyClassify(item)"
-              :class="{activeButton:item.id == activeButton}"
+              :class="{activeButton:item.id == ClassifyId}"
               v-if="item.qty == 0"
               disabled
               class="button disabled"
@@ -295,7 +298,7 @@ export default {
       showPopDetailImg: false,
       showPopMaxQtyProduct: false,
       sumQty: 0,
-      activeButton: 0,
+      ClassifyId: 0,
       priceClassify : 0
     };
   },
@@ -315,28 +318,18 @@ export default {
     qtyClassify(item) {
       this.sumQty = item.qty;
       this.qtyProduct = 1;
-      this.activeButton = item.id;
+      this.ClassifyId = item.id;
       this.priceClassify = item.price
     },
     anhquyok() {
-      // increment your counter
-      // the modulus (%) operator resets the counter to 0
-      // when it reaches the length of the array
-      // console.log(counter)
       this.idImage = "";
-      console.log(this.anhquyhi);
       if (
         this.product.mulimages[this.anhquyhi] == undefined ||
         this.anhquyhi == -1
       ) {
-        console.log(this.product.mulimages.length);
         this.anhquyhi = this.product.mulimages.length - 1;
-        console.log(this.anhquyhi);
-        console.log(this.product.mulimages[this.anhquyhi]);
       } else {
-        console.log("dsadassssss");
         this.anhquyhi -= 1;
-        console.log(this.product.mulimages[this.anhquyhi]);
       }
     },
     anhquy() {
@@ -414,7 +407,8 @@ export default {
             .post("/api/cart/add", {
               ProductId: this.product.id,
               qty: this.qtyProduct,
-              UserIdSaler: this.product.user.id
+              UserIdSaler: this.product.user.id,
+              ClassifyId : this.ClassifyId
             })
             .then(response => {
               console.log(response);
@@ -436,7 +430,8 @@ export default {
             .post("/api/cart/add", {
               ProductId: this.product.id,
               qty: this.qtyProduct,
-              UserIdSaler: this.product.user.id
+              UserIdSaler: this.product.user.id,
+              ClassifyId : this.ClassifyId
             })
             .then(response => {
               console.log(response);

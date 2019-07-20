@@ -56,8 +56,11 @@
                       <p>{{ prod.product.name }}</p>
                       <p>x {{ prod.qty }}</p>
                     </div>
-                    <div class="total-money-pr">
+                    <div class="total-money-pr" v-if=" prod.classifies == null ">
                       <p>₫{{ formatPrice(prod.product.discount) }}</p>
+                    </div>
+                    <div class="total-money-pr" v-else>
+                      <p>₫{{ formatPrice(prod.classifies.price) }}</p>
                     </div>
                   </div>
                 </div>

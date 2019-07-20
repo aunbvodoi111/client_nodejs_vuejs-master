@@ -25,6 +25,9 @@ router.get('/', async (req, res) => {
                     include: [{
                         model: models.products,
                         as: 'product'
+                    },{
+                        model: models.classifies,
+                        as: 'classifies',
                     }]
                 }, {
                     model: models.users,
@@ -54,6 +57,9 @@ router.get('/detail/:id', async (req, res) => {
                 include: [{
                     model: models.products,
                     as: 'product'
+                },{
+                    model: models.classifies,
+                    as: 'classifies',
                 }]
             }, {
                 model: models.users,

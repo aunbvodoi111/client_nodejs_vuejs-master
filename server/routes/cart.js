@@ -8,8 +8,9 @@ const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 var models = require('../models');
 router.post('/add', async (req, res) => {
-    var { ProductId, qty, UserIdSaler } = req.body
-    // var cart = await models.carts.create({ ProductId: ProductId, UserId: req.user.id });
+    var { ProductId, qty, UserIdSaler, ClassifyId } = req.body
+    console.log(req.body)
+    var classifyFind = await models.classifies.findOne({ where: { id: ClassifyId } });
     // cart.save()
     console.log(req.body)
     var cart_detail
@@ -19,36 +20,64 @@ router.post('/add', async (req, res) => {
                 [{ UserIdBuyer: req.user.id }, { UserIdSaler: UserIdSaler }]
         }
     })
-    if (wishesFind) {
-        const cartDetail = await models.cart_details.findOne({
-            where: {
-                [Op.and]:
-                    [{ ProductId: ProductId }, { UserIdBuyer : req.user.id }]
-            }
-        })
-        if (cartDetail) {
-            console.log('vao dc day k ')
-            var qtyBd = cartDetail.qty
-            cartDetail.update({
-                qty: qtyBd + qty
+    if (classifyFind) {
+        console.log('đã tìm dc chưa ')
+        if (wishesFind) {
+            const cartDetail = await models.cart_details.findOne({
+                where: {
+                    [Op.and]:
+                        [{ ProductId: ProductId }, { UserIdBuyer: req.user.id }, { ClassifyId: classifyFind.id }]
+                }
             })
-            return res.status(200).json(cartDetail)
+            if (cartDetail) {
+                var qtyBd = cartDetail.qty
+                cartDetail.update({
+                    qty: qtyBd + qty
+                })
+                return res.status(200).json(cartDetail)
+            } else {
+                var cart_detail = await models.cart_details.create({ UserIdSaler: UserIdSaler, ProductId: ProductId, qty: qty, UserIdBuyer: req.user.id, CartId: wishesFind.id, ClassifyId: classifyFind.id });
+                return res.status(200).json(cart_detail)
+            }
         } else {
-            var cart_detail = await models.cart_details.create({ UserIdSaler: UserIdSaler, ProductId: ProductId, qty: qty, UserIdBuyer: req.user.id ,CartId : wishesFind.id });
-            return res.status(200).json(cart_detail)
+            var cart = await models.carts.create({ UserIdSaler: UserIdSaler, UserIdBuyer: req.user.id });
+            cart.save()
+            cart_detail = await models.cart_details.create({ UserIdSaler: UserIdSaler, ProductId: ProductId, qty: qty, UserIdBuyer: req.user.id, CartId: cart.id });
+            cart_detail.save()
         }
+
     } else {
-        var cart = await models.carts.create({ UserIdSaler: UserIdSaler, UserIdBuyer: req.user.id });
-        cart.save()
-        cart_detail = await models.cart_details.create({ UserIdSaler: UserIdSaler, ProductId: ProductId, qty: qty, UserIdBuyer: req.user.id, CartId : cart.id });
-        cart_detail.save()
+        if (wishesFind) {
+            const cartDetail = await models.cart_details.findOne({
+                where: {
+                    [Op.and]:
+                        [{ ProductId: ProductId }, { UserIdBuyer: req.user.id }]
+                }
+            })
+            if (cartDetail) {
+                console.log('vao dc day k ')
+                var qtyBd = cartDetail.qty
+                cartDetail.update({
+                    qty: qtyBd + qty
+                })
+                return res.status(200).json(cartDetail)
+            } else {
+                var cart_detail = await models.cart_details.create({ UserIdSaler: UserIdSaler, ProductId: ProductId, qty: qty, UserIdBuyer: req.user.id, CartId: wishesFind.id });
+                return res.status(200).json(cart_detail)
+            }
+        } else {
+            var cart = await models.carts.create({ UserIdSaler: UserIdSaler, UserIdBuyer: req.user.id });
+            cart.save()
+            cart_detail = await models.cart_details.create({ UserIdSaler: UserIdSaler, ProductId: ProductId, qty: qty, UserIdBuyer: req.user.id, CartId: cart.id });
+            cart_detail.save()
+        }
     }
     return res.status(200).json(cart_detail)
 })
 
 
 router.post('/addCartCustomer', async (req, res) => {
-    var { carts , AddressId } = req.body
+    var { carts, AddressId } = req.body
     console.log(carts)
     for (var i = 0; i < carts.length; i++) {
         var bills = await models.bills.create({
@@ -56,76 +85,115 @@ router.post('/addCartCustomer', async (req, res) => {
             UserIdSaler: carts[i].UserIdSaler,
             sum: 0,
             note: 'aaaa',
-            AddressId : AddressId,
+            AddressId: AddressId,
             date_order: '30/1/2019',
             payment: 1,
         });
         bills.save()
         await models.notifications.create({
-            BillId : bills.id,
-            UserIdSaler : bills.UserIdSaler,
-            UserIdBuyer : bills.UserIdBuyer,
-            content : 'đã hủy đơn hàng .Vui lòng liên hệ với người mua để biết thông tin'
+            BillId: bills.id,
+            UserIdSaler: bills.UserIdSaler,
+            UserIdBuyer: bills.UserIdBuyer,
+            content: 'đã hủy đơn hàng .Vui lòng liên hệ với người mua để biết thông tin'
         })
-        
+
         var sum = 0
         for (var j = 0; j < carts[i].cart_details.length; j++) {
-            var bill_details = await models.bill_details.create({
-                UserIdBuyer: carts[i].cart_details[j].UserIdBuyer,
-                UserIdSaler: carts[i].cart_details[j].UserIdSaler,
-                Product_Id: carts[i].cart_details[j].ProductId,
-                BillId: bills.id,
-                image: carts[i].cart_details[j].HomeTeam.image,
-                qty: carts[i].cart_details[j].qty,
-                price: carts[i].cart_details[j].HomeTeam.discount,
-                content: 1,
-                name: 'anqnh',
-            });
-            
-            bill_details.save() 
-            var product = await models.products.findOne({ where:{ id : carts[i].cart_details[j].ProductId }})
-            var qty = product.qty
-            product.update({ 
-                qty : qty - carts[i].cart_details[j].qty
-            })
-            sum = sum + carts[i].cart_details[j].HomeTeam.discount * carts[i].cart_details[j].qty;
+            if( carts[i].cart_details[j].classifies == null ){
+                var bill_details = await models.bill_details.create({
+                    UserIdBuyer: carts[i].cart_details[j].UserIdBuyer,
+                    UserIdSaler: carts[i].cart_details[j].UserIdSaler,
+                    Product_Id: carts[i].cart_details[j].ProductId,
+                    BillId: bills.id,
+                    image: carts[i].cart_details[j].HomeTeam.image,
+                    qty: carts[i].cart_details[j].qty,
+                    price: carts[i].cart_details[j].HomeTeam.discount,
+                    content: 1,
+                    name: 'anqnh',
+                });
+    
+                bill_details.save()
+                var product = await models.products.findOne({ where: { id: carts[i].cart_details[j].ProductId } })
+                var qty = product.qty
+                product.update({
+                    qty: qty - carts[i].cart_details[j].qty
+                })
+                sum = sum + carts[i].cart_details[j].HomeTeam.discount * carts[i].cart_details[j].qty;
+            }else{
+                var bill_details = await models.bill_details.create({
+                    UserIdBuyer: carts[i].cart_details[j].UserIdBuyer,
+                    UserIdSaler: carts[i].cart_details[j].UserIdSaler,
+                    Product_Id: carts[i].cart_details[j].ProductId,
+                    BillId: bills.id,
+                    image: carts[i].cart_details[j].HomeTeam.image,
+                    qty: carts[i].cart_details[j].qty,
+                    ClassifyId : carts[i].cart_details[j].classifies.id,
+                    price: carts[i].cart_details[j].classifies.price,
+                    content: 1,
+                    name: 'anqnh',
+                });
+    
+                bill_details.save()
+                var product = await models.products.findOne({ where: { id: carts[i].cart_details[j].ProductId } })
+                var qty = product.qty
+                product.update({
+                    qty: qty - carts[i].cart_details[j].qty
+                })
+                sum = sum + carts[i].cart_details[j].classifies.price * carts[i].cart_details[j].qty;
+            }
         }
         const wishesFind = await models.bills.findOne({
             where: { id: bills.id }
         })
 
-        if(wishesFind){
+        if (wishesFind) {
             wishesFind.update({
                 sum: sum
             })
         }
     }
-    
+
     for (var i = 0; i < carts.length; i++) {
-        await models.carts.destroy({ where: { id: carts[i].id }})
+        await models.carts.destroy({ where: { id: carts[i].id } })
     }
-    
+
     await models.date_orders.create({
-        BillId : bills.id
+        BillId: bills.id
     })
     return res.status(200).json(bill_details)
-    
+
 })
 
 router.post('/changeQty', async (req, res) => {
-    var { ProductId, qty } = req.body
+    var { ProductId, qty, ClassifyId } = req.body
+    console.log(req.body)
 
-    const wishesFind = await models.cart_details.findOne({
-        where: { UserIdBuyer: req.user.id, ProductId: ProductId }
-    })
-    if (wishesFind) {
-        wishesFind.update({
-            qty: qty
+    if (ClassifyId) {
+        const wishesFind = await models.cart_details.findOne({
+            where: { UserIdBuyer: req.user.id, ProductId: ProductId , ClassifyId : ClassifyId }
         })
+        if (wishesFind) {
+            wishesFind.update({
+                qty: qty
+            })
+        } else {
+            var cart = await models.carts.create({ ProductId: ProductId, UserId: req.user.id, qty: qty });
+            cart.save()
+        }
     } else {
-        var cart = await models.carts.create({ ProductId: ProductId, UserId: req.user.id, qty: qty });
-        cart.save()
+        const wishesFind = await models.cart_details.findOne({
+            where: { UserIdBuyer: req.user.id, ProductId: ProductId }
+        })
+        if (wishesFind) {
+            wishesFind.update({
+                qty: qty
+            })
+        } else {
+            var cart = await models.carts.create({ ProductId: ProductId, UserId: req.user.id, qty: qty });
+            cart.save()
+        }
     }
+
     return res.status(200).json('ok')
 })
 
@@ -176,7 +244,14 @@ router.get('/', async (req, res) => {
                     where: { UserIdBuyer: findCart.UserIdBuyer },
                     include: [{
                         model: models.products,
-                        as: 'HomeTeam'
+                        as: 'HomeTeam',
+                        include: [{
+                            model: models.classifies,
+                            as: 'classifies',
+                        }]
+                    },{
+                        model: models.classifies,
+                        as: 'classifies',
                     }]
                 }, {
                     model: models.users,
@@ -199,12 +274,12 @@ router.get('/checkout', async (req, res) => {
     var anhquy
     if (req.user) {
         var provinces = await models.provinces.findAll({})
-        var districts = await models.districts.findAll({})  
-        var  addresss = await models.addresses.findAll({
+        var districts = await models.districts.findAll({})
+        var addresss = await models.addresses.findAll({
             include: [{
                 model: models.districts,
                 as: 'district'
-            },{
+            }, {
                 model: models.provinces,
                 as: 'province'
             }]
@@ -231,7 +306,14 @@ router.get('/checkout', async (req, res) => {
                 },
                 include: [{
                     model: models.products,
-                    as: 'HomeTeam'
+                    as: 'HomeTeam',
+                    include: [{
+                        model: models.classifies,
+                        as: 'classifies',
+                    }]
+                }, {
+                    model: models.classifies,
+                    as: 'classifies',
                 }]
             }, {
                 model: models.users,
@@ -250,13 +332,13 @@ router.get('/checkout', async (req, res) => {
             include: [{
                 model: models.districts,
                 as: 'district'
-            },{
+            }, {
                 model: models.provinces,
                 as: 'province'
             }]
         }]
-    }) 
-    return res.send({ carts: carts, provinces: provinces, districts: districts , users : users})
+    })
+    return res.send({ carts: carts, provinces: provinces, districts: districts, users: users })
 })
 
 router.get('/anhquy', async (req, res) => {

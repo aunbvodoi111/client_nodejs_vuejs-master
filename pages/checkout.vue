@@ -69,15 +69,25 @@
               <div class="img">
                 <img :src="prod.HomeTeam.image" alt />
               </div>
-              <div class="name-pr">
+              <div class="name-pr" >
                 <a>{{ prod.HomeTeam.name }}</a>
               </div>
+              <div class="name-pr"  v-if=" prod.classifies != null ">
+                <a>Loại : {{ prod.classifies.name }}</a>
+              </div>
+
             </div>
           </div>
-          <div class="price">
+          <div class="price" v-if=" prod.classifies == null ">
             <p>Đơn giá</p>
             <div class="infor">
               <p>₫{{ formatPrice(prod.HomeTeam.discount) }}</p>
+            </div>
+          </div>
+          <div class="price" v-else>
+            <p>Đơn giá</p>
+            <div class="infor">
+              <p>₫{{ formatPrice(prod.classifies.price) }}</p>
             </div>
           </div>
           <div class="qty">
@@ -86,10 +96,16 @@
               <p>{{ prod.qty }}</p>
             </div>
           </div>
-          <div class="total-money">
+          <div class="total-money" v-if=" prod.classifies == null ">
             <p>Thành tiền</p>
             <div class="infor">
               <p>₫{{ formatPrice(prod.qty * prod.HomeTeam.discount) }}</p>
+            </div>
+          </div>
+          <div class="total-money" v-else >
+            <p>Thành tiền</p>
+            <div class="infor">
+              <p>₫{{ formatPrice(prod.qty * prod.classifies.price) }}</p>
             </div>
           </div>
         </div>
@@ -219,10 +235,22 @@ export default {
       var sum = 0;
       for (var i = 0; i < this.carts.length; i++) {
         for (var j = 0; j < this.carts[i].cart_details.length; j++) {
-          if (this.carts[i].cart_details[j].checkBuy == 1) {
+          if (
+            this.carts[i].cart_details[j].checkBuy == 1 &&
+            this.carts[i].cart_details[j].classifies == null
+          ) {
             var sum =
               sum +
               this.carts[i].cart_details[j].HomeTeam.discount *
+                this.carts[i].cart_details[j].qty;
+          } else if (
+            this.carts[i].cart_details[j].checkBuy == 1 &&
+            this.carts[i].cart_details[j].classifies != null
+          ) {
+            console.log(" no null");
+            var sum =
+              sum +
+              this.carts[i].cart_details[j].classifies.price *
                 this.carts[i].cart_details[j].qty;
           }
         }
@@ -271,7 +299,7 @@ export default {
     },
     pointer() {
       if (this.name == "") {
-        console.log("chu nhap giuw lieu");
+        
         this.errorName = "Vui lòng điền Tên";
       } else {
         this.errorName = " ";
@@ -282,6 +310,7 @@ export default {
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     },
     checkoutCart() {
+      console.log(this.carts);
       this.$axios
         .post("/api/cart/addCartCustomer", {
           carts: this.carts,

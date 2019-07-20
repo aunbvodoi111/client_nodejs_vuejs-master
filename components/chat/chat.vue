@@ -303,8 +303,7 @@ export default {
             this.room.messagers.push(this.listMess[i]);
             console.log(index);
             this.listMess.splice(index, 1);
-          } else {
-          }
+          } 
         }
         // console.log("aaaaaaaaaaaaaa");
         console.log(this.room);
