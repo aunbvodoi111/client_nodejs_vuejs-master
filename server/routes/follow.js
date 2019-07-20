@@ -18,6 +18,13 @@ router.post('/add', async (req, res) => {
     } else {
         var follows = await models.follows.create({ ProductId: ProductId, UserId: req.user.id , UserIdFollow: UserIdFollow });
         follows.save()
+        const actionNofi = await models.action__notis.findOne({
+            where: { UserId: req.user.id ,ProductId: ProductId , UserIdSaler : UserIdFollow ,status : 2  }
+        })
+        if(!actionNofi){
+            var actionNofiNew = await models.action__notis.create({ content : 'Bắt đầu theo dõi bạn', ProductId: ProductId, UserId: req.user.id, UserIdSaler: UserIdFollow ,status : 2 });
+            actionNofiNew.save()
+        }
     }
     return res.status(200).json('ok')
 })

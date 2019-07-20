@@ -1,5 +1,17 @@
 <template>
   <div class="container-fruid">
+    <div class='pop-up' v-if="popReason">
+      <div class="content">
+        <div class="title"> Vui lòng nhập nguyên nhân hủy đơn : </div>
+        <div class="txt-input">
+          <input type="text" v-model="reason">
+        </div>
+        <div class="button"> 
+          <button class="confirm" @click="cancelOrder()">Đồng ý</button>
+          <button class="close" @click="popReason = false">Hủy</button>
+        </div>
+      </div>
+    </div>
     <div class="container">
       <NavBar :seleted ='seleted'/>
       <div class="content-right">
@@ -76,7 +88,7 @@
                       <nuxt-link :to="`/user/order/${item.id}`">
                         <button>Chi tiết</button>
                       </nuxt-link>
-                      <button v-if="item.status == 0" @click="cancelOrder(item)">Hủy</button>
+                      <button v-if="item.status == 0" @click="openPopReasen(item)" >Hủy</button>
                     </div>
                   </div>
                   <div style="clear: bold;"></div>
@@ -114,7 +126,10 @@ export default {
     return {
       local: [],
       status: 0,
-      seleted : 8
+      seleted : 8,
+      popReason : false,
+      reason : '',
+      item : {}
     };
   },
   created() {
@@ -130,17 +145,21 @@ export default {
     }
   },
   methods: {
-    cancelOrder(item){
-      console.log(item)
+    openPopReasen(item){
+      this.popReason = true
+      this.item = item
+    },
+    cancelOrder(){
+      console.log(this.item)
       this.$axios.post('/api/bill/cancelOrder/',{
-        item : item
+        item : this.item,
+        reason : this.reason
       }).then(response =>{
         console.log(response)
-        var index = this.billList.indexOf(item)
+        var index = this.billList.indexOf(this.item)
         console.log(index)
         Object.assign(this.billList[index], response.data);
-        // this.billList = [this.billList[index], ...response.data]
-        console.log(this.billList)
+        this.popReason = false
       }).catch(error=>{
         console.log('error')
       })
@@ -184,6 +203,52 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.pop-up{
+  width: 100%;
+  height:  100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 90;
+  left: 0;
+  top : 0;
+  left: 0;
+  position: fixed;
+  .content{
+    margin: auto;
+    width: 400px;
+    padding:  20px;
+    height: 200px;
+    background: white;
+    margin-top : 10%;
+    .txt-input{
+      width: 100%;
+      height: 30px;
+      margin-top: 20px; 
+      
+      input[type=text] {
+        width: 100%;
+        height: 100%;
+        border: grey 1px solid ;
+        padding: 4px 5px;
+      }
+    }
+    .button{
+      margin-top: 20px; 
+      .confirm {
+        background: #2b3278;
+        border: none;
+        color: white;
+        margin-right: 20px; 
+        padding:  10px 30px;
+      }
+      .close {
+        border: grey 1px solid ;
+        background: white;
+        color: black;
+        padding:  10px 30px;
+      }
+    }
+  }
+}
 a {
   text-decoration: none;
 }

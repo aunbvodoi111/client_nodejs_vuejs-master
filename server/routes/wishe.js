@@ -8,7 +8,7 @@ const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 var models = require('../models');
 router.post('/add', async (req, res) => {
-    var { ProductId } = req.body
+    var { ProductId , UserIdSaler} = req.body
     const wishesFind = await models.wishes.findOne({
         where: { UserId: req.user.id ,ProductId: ProductId }
     })
@@ -17,6 +17,14 @@ router.post('/add', async (req, res) => {
     } else {
         var wishe = await models.wishes.create({ ProductId: ProductId, UserId: req.user.id });
         wishe.save()
+       
+        const actionNofi = await models.action__notis.findOne({
+            where: { UserId: req.user.id ,ProductId: ProductId , UserIdSaler : UserIdSaler ,status : 1  }
+        })
+        if(!actionNofi){
+            var actionNofiNew = await models.action__notis.create({ content : 'Đã thích sản phẩm của bạn', ProductId: ProductId, UserId: req.user.id, UserIdSaler: UserIdSaler ,status : 1 });
+            actionNofiNew.save()
+        }
     }
     return res.status(200).json('ok')
 })

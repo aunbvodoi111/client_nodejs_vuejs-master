@@ -8,7 +8,7 @@ const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 var models = require('../models');
 router.post('/add', async (req, res) => {
-    var { ProductId, title, star, image, content } = req.body
+    var { ProductId, title, star, image, content, UserIdSaler } = req.body
     var bill_details = await models.bill_details.findOne({
         where :{ [Op.and] :[ { Product_Id : ProductId},{ UserIdBuyer : req.user.id } ] }
     })
@@ -17,22 +17,38 @@ router.post('/add', async (req, res) => {
             ProductId: ProductId,
              UserId: req.user.id, 
              name: req.user.name, 
-             title: title, star: star, 
+             title: title, 
+             star: star, 
              image: image, 
              checkBuy: 1 
             });
         ratingNew.save()
+        const actionNofi = await models.action__notis.findOne({
+            where: { UserId: req.user.id ,ProductId: ProductId , UserIdSaler : UserIdSaler ,status : 3  }
+        })
+        if(!actionNofi){
+            var actionNofiNew = await models.action__notis.create({ content : 'đã đánh giá sản phẩm của bạn với mức đánh giá ' + star + 'sao', ProductId: ProductId, UserId: req.user.id, UserIdSaler: UserIdSaler ,status : 3 });
+            actionNofiNew.save()
+        }
     }else{
         var ratingNew = await models.ratings.create({ 
             ProductId: ProductId,
              UserId: req.user.id, 
              name: req.user.name, 
-             title: title, star: star, 
+             title: title, 
+             star: star, 
              image: image, 
              content: content,
              checkBuy: 0
              });
         ratingNew.save()
+        const actionNofi = await models.action__notis.findOne({
+            where: { UserId: req.user.id ,ProductId: ProductId , UserIdSaler : UserIdSaler ,status : 3  }
+        })
+        if(!actionNofi){
+            var actionNofiNew = await models.action__notis.create({ content : 'đã đánh giá sản phẩm của bạn với mức đánh giá ' + star + 'sao', ProductId: ProductId, UserId: req.user.id, UserIdSaler: UserIdSaler ,status : 3 });
+            actionNofiNew.save()
+        }
     }
     
     return res.status(200).json(ratingNew)

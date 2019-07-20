@@ -111,7 +111,7 @@
         </div>
         <div class="send-saler">
           <span>Lời nhắn:</span>
-          <input type="text" v-model="message" />
+          <input type="text" v-model="item.note" />
         </div>
         <!-- <div class="total-money-product">
           <p>
@@ -164,6 +164,7 @@
   </div>
 </template>
 <script>
+import Vue from "vue";
 export default {
   data() {
     return {
@@ -194,7 +195,9 @@ export default {
     } else {
       showPopInforCustom = true;
     }
-
+    data.data.carts.forEach( item =>{
+      Vue.set( item ,'note','')
+    })
     return {
       provinces: data.data.provinces,
       districts: data.data.districts,

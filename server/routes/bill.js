@@ -89,7 +89,7 @@ router.get('/detail/:id', async (req, res) => {
 })
 
 router.post('/cancelOrder', async (req, res) => {
-    var { item } = req.body
+    var { item, reason } = req.body
     if (req.user) {
         var bill = await models.bills.findOne({
             where :{ id : item.id },
@@ -106,6 +106,7 @@ router.post('/cancelOrder', async (req, res) => {
             }]
         })
         await bill.update({
+            reason : reason,
             status : 4
         })
         for( var i = 0; i < item.bill_details.length ; i++){

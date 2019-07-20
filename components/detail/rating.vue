@@ -444,7 +444,8 @@ export default {
               star: this.rating.star,
               image: this.rating.image,
               content: this.rating.content,
-              ProductId: this.product.id
+              ProductId: this.product.id,
+              UserIdSaler : this.product.user.id,
             })
             .then(response => {
               var avatar;
@@ -501,7 +502,7 @@ export default {
               this.rating.title = "";
               this.rating.content = "";
               this.errorSendRating = false;
-              this.this.rating.image = ''
+              this.rating.image = ''
             });
         }
       }

@@ -377,7 +377,7 @@ export default {
         this.$axios
           .post("/api/wishe/add", {
             ProductId: this.product.id,
-            qty: this.qtyProduct
+            UserIdSaler: this.product.user.id,
           })
           .then(response => {
             console.log(response);

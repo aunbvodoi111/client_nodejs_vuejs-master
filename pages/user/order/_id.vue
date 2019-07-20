@@ -249,15 +249,7 @@ export default {
     };
   },
   computed:{
-      sum(){
-        var sum = 0 
-        if(this.bills){
-          for( var i = 0 ; i < this.bills.bill_details.length ; i++){
-            sum = sum + this.bills.bill_details[i].qty * this.bills.bill_details[i].product.discount
-          }
-        }
-        return sum 
-      }
+    
   },
   created() {
     // this.getLocal();

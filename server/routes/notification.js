@@ -10,7 +10,12 @@ router.get('/', async (req, res) => {
     var bills
     if (req.user) {
         notifications = await models.notifications.findAll({
-            where: { [Op.or]:[{ UserIdSaler: req.user.id },{ UserIdBuyer: req.user.id }] },
+            where: { [Op.or]:[{
+                [Op.and]:[{ UserIdSaler: req.user.id },{ status: 1 }],
+            },{
+                [Op.and]:[{ UserIdBuyer: req.user.id },{ status: 0 }]
+            }]},
+           
             // attributes: ['UserIdSaler', 'UserIdBuyer'],
             include:[{
                 model: models.users,

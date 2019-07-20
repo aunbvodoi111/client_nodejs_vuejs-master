@@ -84,7 +84,7 @@ router.post('/addCartCustomer', async (req, res) => {
             UserIdBuyer: carts[i].UserIdBuyer,
             UserIdSaler: carts[i].UserIdSaler,
             sum: 0,
-            note: 'aaaa',
+            note: carts[i].note,
             AddressId: AddressId,
             date_order: '30/1/2019',
             payment: 1,
@@ -94,7 +94,8 @@ router.post('/addCartCustomer', async (req, res) => {
             BillId: bills.id,
             UserIdSaler: bills.UserIdSaler,
             UserIdBuyer: bills.UserIdBuyer,
-            content: 'đã hủy đơn hàng .Vui lòng liên hệ với người mua để biết thông tin'
+            content: 'đã hủy đơn hàng .Vui lòng liên hệ với người mua để biết thông tin',
+            status : 1 
         })
 
         var sum = 0
@@ -118,6 +119,16 @@ router.post('/addCartCustomer', async (req, res) => {
                 product.update({
                     qty: qty - carts[i].cart_details[j].qty
                 })
+                console.log('adsasasasasasasasasasasasasadsaddassadsdanhquy' + product.qty)
+                if(product.qty == 0){
+                    console.log('chay dc vao day k ')
+                    await models.product__notis.create({
+                        content : 'vui lòng  bổ sung thêm hàng hoặc đăng sản phẩm mới .',
+                        ProductId : product.id,
+                        UserId : carts[i].cart_details[j].UserIdSaler,
+                        status : 1
+                    })
+                }
                 sum = sum + carts[i].cart_details[j].HomeTeam.discount * carts[i].cart_details[j].qty;
             }else{
                 var bill_details = await models.bill_details.create({
@@ -125,6 +136,7 @@ router.post('/addCartCustomer', async (req, res) => {
                     UserIdSaler: carts[i].cart_details[j].UserIdSaler,
                     Product_Id: carts[i].cart_details[j].ProductId,
                     BillId: bills.id,
+                    note: carts[i].note,
                     image: carts[i].cart_details[j].HomeTeam.image,
                     qty: carts[i].cart_details[j].qty,
                     ClassifyId : carts[i].cart_details[j].classifies.id,
@@ -136,9 +148,19 @@ router.post('/addCartCustomer', async (req, res) => {
                 bill_details.save()
                 var product = await models.products.findOne({ where: { id: carts[i].cart_details[j].ProductId } })
                 var qty = product.qty
-                product.update({
+                await product.update({
                     qty: qty - carts[i].cart_details[j].qty
                 })
+                console.log('adsasasasasasasasasasasasasadsaddassadsdanhquy' + product.qty)
+                if(product.qty == 0){
+                    console.log('chay dc vao day k ')
+                    await models.product__notis.create({
+                        content : 'vui lòng  bổ sung thêm hàng hoặc đăng sản phẩm mới .',
+                        ProductId : product.id,
+                        UserId : carts[i].cart_details[j].UserIdSaler,
+                        status : 1
+                    })
+                }
                 sum = sum + carts[i].cart_details[j].classifies.price * carts[i].cart_details[j].qty;
             }
         }
