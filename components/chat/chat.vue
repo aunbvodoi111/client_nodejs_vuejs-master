@@ -539,8 +539,8 @@ export default {
         isRead: true,
         UserId: this.$store.state.authUser.id,
         ProductId: this.product.ProductId,
-        // image: this.product.image,
-        image: this.bill.image,
+        image: this.product.image,
+        // image: this.bill.image,
         imageUpload: this.image,
         user: {
           avatar: avatar

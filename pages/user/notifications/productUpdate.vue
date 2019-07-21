@@ -60,7 +60,7 @@ export default {
     return {
       local: [],
       status: 0,
-      selected: 4
+      seleted : 6
     };
   },
   created() {

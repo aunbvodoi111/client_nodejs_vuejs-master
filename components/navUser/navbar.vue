@@ -29,31 +29,31 @@
               <i class="fas fa-star"></i>
               <nuxt-link to='/user/notifications/orders'>Cập nhật đơn hàng</nuxt-link>
             </li>
-            <li :class="{ active:4 == seleted }" >
+            <li :class="{ active:5 == seleted }" >
               <i class="fas fa-star"></i>
               <nuxt-link to='/user/notifications/review'>Cập nhật đánh giá</nuxt-link>
             </li>
-            <li :class="{ active:4 == seleted }" >
+            <li :class="{ active:6 == seleted }" >
               <i class="fas fa-star"></i>
               <nuxt-link to='/user/notifications/productUpdate'>Cập nhật sản phẩm </nuxt-link>
             </li>
-            <li :class="{ active:4 == seleted }" >
+            <li :class="{ active:7 == seleted }" >
               <i class="fas fa-star"></i>
               <nuxt-link to='/user/notifications/action'>Hoạt động</nuxt-link>
             </li>
-            <li :class="{ active:5 == seleted }" >
+            <li :class="{ active:8 == seleted }" >
               <i class="fas fa-star"></i>
               <nuxt-link to='/user/account/address'>Địa chỉ của tôi</nuxt-link>
             </li>
-            <li :class="{ active:6 == seleted }">
+            <li :class="{ active:9 == seleted }">
               <i class="fas fa-star"></i>
               <nuxt-link to='/user/productseen'>Sản phẩm đã xem</nuxt-link>
             </li>
-            <li :class="{ active:7 == seleted }" >
+            <li :class="{ active:10 == seleted }" >
               <i class="fas fa-star"></i>
               <nuxt-link to='/user/review'>Nhận xét của tôi</nuxt-link>
             </li>
-            <li :class="{ active:8 == seleted }" >
+            <li :class="{ active:11 == seleted }" >
               <i class="fas fa-star"></i>
               <nuxt-link to='/user/order/history'>Quản lí đơn hàng</nuxt-link>
             </li>

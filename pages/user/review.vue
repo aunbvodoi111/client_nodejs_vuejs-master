@@ -78,7 +78,7 @@ export default {
   data() {
     return {
       local: [],
-      seleted : 7
+      seleted : 10
     };
   },
   created() {

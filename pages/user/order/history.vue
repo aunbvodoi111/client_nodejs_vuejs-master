@@ -126,7 +126,7 @@ export default {
     return {
       local: [],
       status: 0,
-      seleted : 8,
+      seleted : 11,
       popReason : false,
       reason : '',
       item : {}

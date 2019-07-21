@@ -136,7 +136,7 @@ export default {
         address: ""
       },
       index: -1,
-      seleted : 5
+      seleted : 8
     };
   },
   async asyncData({ $axios, store }) {
