@@ -1,27 +1,10 @@
 <template>
   <div class="container-fruid">
     <div class="container">
-      <NavBar :seleted ='seleted'/>
+      <NavBar :seleted="seleted" />
       <div class="content-right">
         <div class="content-main">
-          <h1>Hóa đơn</h1>
-          <div class="choose-nofi">
-            <div class="btn-act">
-              <button :class="{active:0 == status }" @click="chooseOrder(0)">Chờ thanh toán</button>
-            </div>
-            <div class="btn-act">
-              <button :class="{active:1 == status }" @click="chooseOrder(1)">Chờ lấy hàng</button>
-            </div>
-            <div class="btn-act">
-              <button :class="{active:2 == status }" @click="chooseOrder(2)">Đang giao</button>
-            </div>
-            <div class="btn-act">
-              <button :class="{active:3 == status }" @click="chooseOrder(3)">Đã giao</button>
-            </div>
-            <div class="btn-act">
-              <button :class="{active:4 == status }" @click="chooseOrder(4)">Đã hủy</button>
-            </div>
-          </div>
+          <!-- <h1>Hóa đơn</h1> -->
           <div class="content-nofi">
             <div class="img" v-if="nofi.length == 0 ">
               <img src="/img/anhdep.png" alt />
@@ -30,9 +13,22 @@
             </div>
             <div class="bill-content" v-else>
               <div class="bill-div" v-for="item in nofi" :key="item.id">
-                
-                <span >{{item.product.name}}</span>
-                {{ item.content }}
+                <div class="content">
+                  <div class="img">
+                    <img :src="item.product.image" alt />
+                  </div>
+                  <div class="div-center">
+                    <h4>Hết hàng</h4>
+                    <p>
+                      <span style="font-weight:bold;"> {{ item.product.name }} </span> 
+                      <span >{{ item.content }}</span>
+                    </p>
+                    <p> {{ moment(item.created_at).format('LLLL') }}</p>
+                  </div>
+                  <div class="div-left">
+                    <button>Xem chi tiết sản phẩm</button>
+                  </div>
+                </div>
               </div>
             </div>
             <div style=" clear:both;"></div>
@@ -44,13 +40,17 @@
 </template>
 <script>
 import NavBar from "./../../../components/navUser/navbar";
+import moment from "moment";
+moment.locale("vi");
+moment().format('LLLL');
 export default {
   // middleware: 'authenticated',
   async asyncData({ $axios }) {
     var data = await $axios.get("/api/notification/actionProduct");
     console.log(data);
     return {
-      nofi: data.data
+      nofi: data.data,
+      moment : moment
     };
   },
   components: {
@@ -60,7 +60,7 @@ export default {
     return {
       local: [],
       status: 0,
-      selected : 4
+      selected: 4
     };
   },
   created() {
@@ -258,64 +258,50 @@ button {
             }
           }
         }
-        .content-main-product {
+        .bill-div {
           width: 100%;
-          padding: 10px;
-          .include-div {
+          border-bottom: 1px solid rgba(0, 0, 0, 0.09);
+          .content {
+            width: 100%;
             display: flex;
-            padding: 10px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.09);
-            .img-bill {
+            .img {
               width: 10%;
+              padding: 0px;
               img {
-                width: 100%;
+                width: 90%;
+                padding: 0px;
               }
             }
-            .detail-bill {
-              width: 80%;
-              margin-left: 10px;
-            }
-            .total-money-pr {
-            }
-          }
-        }
-        .content-bottom {
-          width: 100%;
-          .div-right {
-            width: 40%;
-            margin-left: 65%;
-            .sum-bill {
+            .div-center {
+              width: 65%;
+              h4 {
+                font-size: 1rem;
+                margin-bottom: 0.625rem;
+                color: rgba(0, 0, 0, 0.8);
+              }
               p {
-                span {
-                  color: #ee4d2d;
-                  font-size: 1.875rem;
-                  line-height: 2rem;
-                }
+                font-size: 0.875rem;
+                color: rgba(0, 0, 0, 0.54);
+                margin-bottom: 0.3125rem;
               }
             }
-            .btn-choose {
-              margin-top: 30px;
-              width: 100%;
+            .div-left {
+              width: 20%;
               button {
-                width: 40%;
-                height: 40px;
-                text-transform: uppercase;
-              }
-              button:nth-child(1) {
-                width: 40%;
-                background: #ee4d2d;
-                color: white;
-                border: none;
-              }
-              button:nth-child(2) {
-                width: 40%;
-                border: 1px solid rgba(0, 0, 0, 0.09);
-                border-radius: 2px;
-                background: transparent;
+                padding: 0 0.4375rem;
+                background-color: #fff;
+                min-width: 5rem;
+                height: 1.875rem;
+                font-size: 0.75rem;
+                text-transform: capitalize;
+                -moz-box-sizing: border-box;
+                box-sizing: border-box;
               }
             }
           }
+
         }
+        
       }
       .choose-nofi {
         display: flex;

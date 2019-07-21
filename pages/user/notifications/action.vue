@@ -5,7 +5,7 @@
       <div class="content-right">
         <div class="content-main">
           <h1>Hóa đơn</h1>
-          <div class="choose-nofi">
+          <!-- <div class="choose-nofi">
             <div class="btn-act">
               <button :class="{active:0 == status }" @click="chooseOrder(0)">Chờ thanh toán</button>
             </div>
@@ -21,7 +21,7 @@
             <div class="btn-act">
               <button :class="{active:4 == status }" @click="chooseOrder(4)">Đã hủy</button>
             </div>
-          </div>
+          </div> -->
           <div class="content-nofi">
             <div class="img" v-if="nofi.length == 0 ">
               <img src="/img/anhdep.png" alt />
@@ -30,10 +30,22 @@
             </div>
             <div class="bill-content" v-else>
               <div class="bill-div" v-for="item in nofi" :key="item.id">
-                <!-- <a :href="`http://localhost:8000/order/detail/${item.BillId}`"> -->
-                <span>{{item.userSaler.name}}</span>
-                {{ item.content }}
-                <!-- </a> -->
+                <div class="content">
+                  <div class="img">
+                    <img :src="item.user.avatar" alt />
+                  </div>
+                  <div class="div-center">
+                    <!-- <h4>Hết hàng</h4> -->
+                    <p>
+                      <span style="font-weight:bold;"> {{ item.user.name }} </span> 
+                      <span >{{ item.content }}</span>
+                    </p>
+                    <p> {{ moment(item.created_at).format('LLLL') }}</p>
+                  </div>
+                  <div class="div-left">
+                    <button>Xem chi tiết sản phẩm</button>
+                  </div>
+                </div>
               </div>
             </div>
             <div style=" clear:both;"></div>
@@ -45,13 +57,17 @@
 </template>
 <script>
 import NavBar from "./../../../components/navUser/navbar";
+import moment from "moment";
+moment.locale("vi");
+moment().format('LLLL');
 export default {
   // middleware: 'authenticated',
   async asyncData({ $axios }) {
     var data = await $axios.get("/api/notification/action");
     console.log(data);
     return {
-      nofi: data.data
+      nofi: data.data,
+      moment : moment
     };
   },
   components: {
@@ -259,6 +275,44 @@ button {
             }
           }
         }
+        .content {
+            width: 100%;
+            display: flex;
+            .img {
+              width: 10%;
+              padding: 0px;
+              img {
+                width: 90%;
+                padding: 0px;
+              }
+            }
+            .div-center {
+              width: 65%;
+              h4 {
+                font-size: 1rem;
+                margin-bottom: 0.625rem;
+                color: rgba(0, 0, 0, 0.8);
+              }
+              p {
+                font-size: 0.875rem;
+                color: rgba(0, 0, 0, 0.54);
+                margin-bottom: 0.3125rem;
+              }
+            }
+            .div-left {
+              width: 20%;
+              button {
+                padding: 0 0.4375rem;
+                background-color: #fff;
+                min-width: 5rem;
+                height: 1.875rem;
+                font-size: 0.75rem;
+                text-transform: capitalize;
+                -moz-box-sizing: border-box;
+                box-sizing: border-box;
+              }
+            }
+          }
         .content-main-product {
           width: 100%;
           padding: 10px;
