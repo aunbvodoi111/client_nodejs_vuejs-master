@@ -4,6 +4,88 @@
       <button>Chat ngay nhe</button>
     </div>
     <div class="container" v-if="toggleChat">
+      <div class="pop-up-Product" v-show="showPopLisrProduct">
+        <div class="content-pop">
+          <p @click="showPopLisrProduct = false">X</p>
+          <div class="form-search">
+            <input type="text" class="txt-search" />
+          </div>
+          <div class="title">
+            <div>
+              <p :class="{ activeTitLePopup:1 == selected }" @click="productYou">Shop của tôi</p>
+            </div>
+            <div>
+              <p :class="{ activeTitLePopup:2 == selected }" @click="showDivShop">Shop Pham quý</p>
+            </div>
+          </div>
+          <div class="content-product">
+            <div
+              class="product-pop"
+              v-for="item in listProductPopup"
+              @click="sendProduct(item)"
+              :key="item.id"
+            >
+              <div class="img">
+                <img :src="item.image" alt />
+              </div>
+              <div class="name">
+                <p>{{ item.name }}</p>
+              </div>
+              <div class="price">{{ item.price }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pop-up-Product" v-show="showPopListBill">
+        <div class="content-pop">
+          <p @click="showPopListBill = false">X</p>
+          <!-- <div class="form-search">
+            <input type="text" class="txt-search" />
+          </div>-->
+          <div class="title-bill">
+            <div class="buy">Mua hàng</div>
+            <div class="saler">Bán hàng</div>
+          </div>
+          <div class="content-product">
+            <div class="bill-pop" v-for="item in listBill" :key=" item.id ">
+              <div class="user">
+                <div class="img">
+                  <img src="http://localhost:3000/img/76c6106b64c5228d864432d939224434.jpg" alt />
+                </div>
+                <div class="name">{{ item.name }}</div>
+                <div class="status">Đã hủy</div>
+              </div>
+              <div class="content-bill">
+                <div class="bill" v-for="prod in item.bill_details" :key="prod.id">
+                  <div class="img">
+                    <img :src="prod.product.image" alt />
+                  </div>
+                  <div class="content-right">
+                    <div
+                      class="name"
+                    >{{ prod.product.name }}</div>
+                    <div class="price">₫{{ prod.product.price }}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="sum-bill">
+                <div class="qty">3 sản phẩm</div>
+                <div class="sum-money"> <p>Tổng thanh toán : <span> 3.000.000</span></p> </div>
+              </div>
+              <div class="btn-action">
+                <div class="btn-send-link">
+                  <nuxt-link :to="`http://localhost:8000/${item.id}`">
+                    <button>Xem đơn hàng</button>
+                  </nuxt-link>
+                </div>
+                <div class="btn-send-link" @click="sendBill(item)">
+                  <button>Gửi link</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="container-chat-left">
         <div class="title-chat">
           <p>Chat cùng shop</p>
@@ -20,31 +102,57 @@
         >
           <div class="avatar">
             <img
-              src="https://media3.scdn.vn/img3/2019/5_14/nEZOmN_simg_ab1f47_250x250_maxb.jpg"
+              v-if="item.user1.name != $store.state.authUser.name && item.user1.avatar != 0"
+              :src="item.user1.avatar"
+              alt
+            />
+            <img
+              v-if="item.user1.name != $store.state.authUser.name && item.user1.avatar == 0"
+              src="/img/images.png"
+              alt
+            />
+            <img
+              v-if="item.user2.name != $store.state.authUser.name && item.user2.avatar != 0"
+              :src="item.user2.avatar"
+              alt
+            />
+            <img
+              v-if="item.user2.name != $store.state.authUser.name && item.user2.avatar == 0"
+              src="/img/images.png"
+              alt
+            />
+            <img
+              v-if="item.user1.name == item.user2.name && item.user2.avatar != 0"
+              :src="item.user1.avatar"
+              alt
+            />
+            <img
+              v-if="item.user1.name == item.user2.name && item.user2.avatar == 0"
+              src="/img/images.png"
               alt
             />
           </div>
           <div class="name-buyer">
-            <p v-if="item.UserName1 != $store.state.authUser.name">
-              {{ item.UserName1 }}
+            <p v-if="item.user1.name != $store.state.authUser.name">
+              {{ item.user1.name }}
               <span v-if="countMess(item) > 0">{{ countMess(item) }}</span>
             </p>
-            <p v-if="item.UserName1 == item.UserName2">
-              {{ item.UserName1 }}
+            <p v-if="item.user1.name == item.user2.name">
+              {{ item.user1.name }}
               <span v-if="countMess(item) > 0">{{ countMess(item) }}</span>
             </p>
-            <p v-if="item.UserName2 != $store.state.authUser.name">
-              {{ item.UserName2 }}
+            <p v-if="item.user2.name != $store.state.authUser.name">
+              {{ item.user2.name }}
               <span v-if="countMess(item) > 0">{{ countMess(item) }}</span>
             </p>
 
-            <p v-if="item.UserName1 != $store.state.authUser.name">
+            <p v-if="item.user1.name != $store.state.authUser.name">
               <span>{{ messageSend(item) }}</span>
             </p>
-            <p v-if="item.UserName1 == item.UserName2">
+            <p v-if="item.user1.name == item.user2.name">
               <span>{{ messageSend(item) }}</span>
             </p>
-            <p v-if="item.UserName2 != $store.state.authUser.name">
+            <p v-if="item.user2.name != $store.state.authUser.name">
               <span>{{ messageSend(item) }}</span>
             </p>
           </div>
@@ -128,13 +236,13 @@
               <div class>hình ảnh</div>
             </div>
           </label>
-          <div class="send-product">
+          <div class="send-product" @click="showDivProduct">
             <div class="icon">
               <i class="fas fa-tshirt"></i>
             </div>
             <div class>quần áo</div>
           </div>
-          <div class="send-bill">
+          <div class="send-bill" @click="showPopBill">
             <div class="icon">
               <i class="fas fa-images"></i>
             </div>
@@ -147,7 +255,7 @@
 </template>
 <script>
 import socket from "~/plugins/socket.io.js";
-import Vue from 'vue'
+import Vue from "vue";
 export default {
   data() {
     return {
@@ -170,14 +278,19 @@ export default {
       },
       bill: {
         sum: "",
-        bill: "",
+        BillId: "",
         image: ""
       },
       idroom: "",
       roomidnew: 0,
       listMess: [],
       messageLast: "",
-      roomok :{}
+      roomok: {},
+      selected: 1,
+      showPopLisrProduct: false,
+      listProductPopup: [],
+      showPopListBill: false,
+      listBill : []
     };
   },
   computed: {
@@ -185,7 +298,9 @@ export default {
       return this.$store.state.toggleChat;
     },
     rooms() {
-      return this.$store.state.rooms.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
+      return this.$store.state.rooms.sort(
+        (a, b) => new Date(b.updated_at) - new Date(a.updated_at)
+      );
     }
   },
   beforeMount() {
@@ -196,31 +311,22 @@ export default {
       audio.play();
       this.messageLast = message;
       message["isRead"] = false;
-      Vue.set(idRoom, 'updated_at', new Date().toISOString());
-      // idRoom['updated_at'] = new Date().toISOString()
-      // console.log(new Date().toISOString())
-      // console.log(idRoom['updated_at'])
-      // idRoom['updated_at'] = new Date().toISOString();
-      console.log(idRoom['updated_at'])
+      Vue.set(idRoom, "updated_at", new Date().toISOString());
+      console.log(idRoom["updated_at"]);
       if (idRoom.id == this.roomname) {
         console.log("vao dau");
         this.room = this.rooms.find(item => item.id === room);
-        // console.log(index)
-        console.log(idRoom)
-        this.$store.commit('CHANGE_ROOM',idRoom)
-        // this.rooms = Object.assign(this.rooms[index],idRoom)
+        console.log(idRoom);
+        this.$store.commit("CHANGE_ROOM", idRoom);
         message["isRead"] = true;
         this.room.messagers.push(message);
       } else {
         console.log("else");
         this.countMess(idRoom);
-        // this.room = this.rooms.find(item => item.id === room);
-        // this.count = this.count + 1;
         this.listMess.unshift(message);
         this.dem = this.dem + 1;
         this.roomidnew = room;
         this.countMess(idRoom);
-        // this.room.messagers.push(message);
       }
     });
     socket.on("receivedUserTyping", message => {
@@ -229,6 +335,51 @@ export default {
     });
   },
   methods: {
+    sendBill( item ){
+      this.bill.sum = item.sum;
+      this.bill.BillId = item.id;
+      this.bill.image = item.bill_details[0].product.image
+      this.sendMessages();
+      this.showPopListBill = false;
+    },
+    showPopBill() {
+      this.$axios.get("/api/bill/").then(response => {
+        console.log('sadsdaasd')
+        console.log(response);
+        this.listBill = response.data;
+        this.showPopListBill = true;
+      }); 
+    },
+    productYou() {
+      this.selected = 1;
+      this.showDivProduct();
+    },
+    sendProduct(item) {
+      this.product.image = item.image;
+      this.product.ProductId = item.id;
+      this.sendMessages();
+      this.showPopLisrProduct = false;
+    },
+    showDivProduct() {
+      this.selected = 1;
+      this.$axios.get("/api/chat/productUser").then(response => {
+        console.log(response.data);
+        this.listProductPopup = response.data;
+        this.showPopLisrProduct = true;
+      });
+    },
+    showDivShop() {
+      this.selected = 2;
+      this.$axios
+        .post("/api/chat/productShop", {
+          id: this.idUserSend.id
+        })
+        .then(response => {
+          console.log(response.data);
+          this.listProductPopup = response.data;
+          this.showPopLisrProduct = true;
+        });
+    },
     messageSend(item) {
       // console.log(this.messageLast)
       if (this.messageLast != "") {
@@ -292,7 +443,8 @@ export default {
     chatUser(item) {
       this.selected = item.id;
       this.roomname = item.id;
-      console.log(item.id);
+      console.log("anhquy");
+      console.log(item);
       console.log(this.listMess);
       this.room = this.rooms.find(room => room.id === item.id);
       if (this.listMess.length > 0) {
@@ -303,17 +455,20 @@ export default {
             this.room.messagers.push(this.listMess[i]);
             console.log(index);
             this.listMess.splice(index, 1);
-          } 
+          }
         }
         // console.log("aaaaaaaaaaaaaa");
-        console.log(this.room);
       }
       this.count = 0;
-      if (item.UserName1 == this.$store.state.authUser.name) {
-        this.idUserSend = item.UserName2;
-      } else if (item.UserName2 == this.$store.state.authUser.name) {
-        this.idUserSend = item.UserName1;
+      if (item.user1 && item.user2) {
+        if (item.user1.name == this.$store.state.authUser.name) {
+          this.idUserSend = item.user2;
+        } else if (item.user2.name == this.$store.state.authUser.name) {
+          this.idUserSend = item.user1;
+        }
       }
+      console.log("dsasdsadda");
+      console.log(this.idUserSend);
     },
     sendUserTyping() {
       socket.emit("userTyping", {
@@ -376,15 +531,17 @@ export default {
       ) {
         status = 3;
       }
+      console.log(this.bill)
       var message = {
         content: this.message,
-        nameuser: this.idUserSend,
+        nameuser: this.idUserSend.name,
         roomid: this.roomname,
         isRead: true,
         UserId: this.$store.state.authUser.id,
         ProductId: this.product.ProductId,
-        image: this.product.image,
-        image: this.image,
+        // image: this.product.image,
+        image: this.bill.image,
+        imageUpload: this.image,
         user: {
           avatar: avatar
         },
@@ -393,8 +550,8 @@ export default {
         // image: this.bill.image,
         status: status
       };
-      Vue.set(this.room, 'updated_at', new Date().toISOString());
-      this.$store.commit('CHANGE_ROOM',this.room)
+      Vue.set(this.room, "updated_at", new Date().toISOString());
+      this.$store.commit("CHANGE_ROOM", this.room);
       this.messageLast = message;
       this.room.messagers.push(message);
       socket.emit("send-message", message);
@@ -422,6 +579,9 @@ export default {
 <style lang="scss" scoped>
 * {
   box-sizing: border-box;
+}
+.activeTitLePopup {
+  color: red !important;
 }
 .highlight {
   color: white !important;
@@ -464,6 +624,180 @@ export default {
   right: 0;
   z-index: 99;
   display: flex;
+  .pop-up-Product {
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    z-index: 99;
+    .content-pop {
+      width: 80%;
+      height: 380px;
+      background: white;
+      margin: 40px auto;
+      .form-search {
+        width: 100%;
+        padding: 10px;
+        .txt-search {
+          width: 100%;
+          height: 35px;
+          border-radius: 10px;
+          border: 1px solid grey;
+          outline: none;
+          padding: 10px;
+        }
+      }
+      .title {
+        display: flex;
+        padding: 10px;
+        div {
+          width: 50%;
+          font-size: 14px;
+          cursor: pointer;
+        }
+        div:nth-child(1) {
+          margin-left: 50px;
+        }
+      }
+      .title-bill{
+        width: 100%;
+        display: flex;
+        .buy{
+          width: 50%;
+          text-align: center;
+        }
+        .saler{
+          width: 50%;
+          text-align: center;
+        }
+      }
+      .content-product {
+        overflow-y: auto;
+        width: 100%;
+        padding: 10px;
+        height: 300px;
+        background-color: #eaeaea;
+
+        .bill-pop {
+          width: 100%;
+          background: white;
+          padding: 5px;
+          margin-top: 5px;
+          .user {
+            display: flex;
+            width: 100%;
+            padding: 3px 5px;
+            .img {
+              width: 8%;
+              img {
+                width: 100%;
+                border-radius: 100%;
+              }
+            }
+            .name {
+              width: 30%;
+              color: #757575;
+              font-size: 14px;
+              padding: 4px;
+            }
+            .status {
+              width: 30%;
+              float: right;
+            }
+          }
+          .content-bill {
+            width: 100%;
+            .bill {
+              width: 100%;
+              display: flex;
+              .img {
+                width: 15%;
+                img {
+                  width: 100%;
+                }
+              }
+            }
+            .content-right {
+              width: 80%;
+              padding: 0px 4px 10px 10px;
+              .name {
+                font-size: 14px;
+              }
+              .price {
+                color: red;
+                margin-top: 4px;
+                font-size: 14px; 
+              }
+            }
+          }
+          .sum-bill {
+            width: 100%;
+            display: flex;
+            .sum-money{
+              text-align: right;
+              margin-left: 25%; 
+              p{
+                color: grey;
+                font-size: 14px;
+                span{
+                  color: red;
+                } 
+              }
+            }
+          }
+          .btn-action{
+            width: 100%;
+            padding: 10px 10px;
+            display: flex;
+            .btn-send-link{
+              width: 50%;
+              button{
+                width: 100%;
+                height: 40px;
+                border: 1px solid grey;
+                background: white;
+                color: red;
+              }
+            }
+            .btn-send-link{
+              width: 50%;
+              button{
+                width: 100%;
+                height: 40px;
+                border: 1px solid grey;
+                background: white;
+                color: red;
+              }
+            }
+          }
+        }
+
+        .product-pop {
+          width: 30%;
+          float: left;
+          margin: 10px 10px 10px 2px;
+          background: white;
+          cursor: pointer;
+          .img {
+            width: 100%;
+            img {
+              width: 100%;
+            }
+          }
+          .name {
+            width: 100%;
+            margin-top: 4px;
+            font-size: 13px;
+            padding: 5px;
+          }
+          .price {
+            color: red;
+            padding: 5px;
+          }
+        }
+      }
+    }
+  }
   .container-chat-left {
     width: 30%;
     border-right: 1px solid #efefef;

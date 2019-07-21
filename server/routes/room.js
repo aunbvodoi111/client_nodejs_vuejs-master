@@ -17,13 +17,13 @@ router.post('/add', async (req, res) => {
                 {
 
                     [Op.and]:
-                        [{ UserName2: req.user.name }, { UserName1: user.name }]
+                        [{ UserName2: req.user.id }, { UserName1: user.id }]
 
                 },
                 {
 
                     [Op.and]:
-                        [{ UserName1: req.user.name }, { UserName2: user.name }]
+                        [{ UserName1: req.user.id }, { UserName2: user.id }]
 
                 }
             ]
@@ -32,19 +32,26 @@ router.post('/add', async (req, res) => {
     console.log(roomfind)
     if (!roomfind) {
         console.log('dấdsas')
-        var room = await models.rooms.create({ name: req.user.name + user.name, UserName1: req.user.name, UserName2: user.name });
+        var room = await models.rooms.create({ name: req.user.name + user.name, UserName1: req.user.id, UserName2: user.id });
         room.save()
         var rooms  = await models.rooms.findAll({
-            where:{ [Op.or]: [ { UserName1: req.user.name }, { UserName2: req.user.name }] },
+            where:{ [Op.or]: [ { UserName1: req.user.id }, { UserName2: req.user.id }] },
             include: [{
                 model: models.messagers,
                 as: 'messagers',
+            },{
+                model: models.users,
+                as:'user1', 
+            },
+            {
+                model: models.users,
+                as:'user2', 
             }]
         })
         return res.json(rooms)
     }
     var rooms  = await models.rooms.findAll({
-        where:{ [Op.or]: [ { UserName1: req.user.name }, { UserName2: req.user.name }] },
+        where:{ [Op.or]: [ { UserName1: req.user.id }, { UserName2: req.user.id }] },
         include: [{
             model: models.messagers,
             as: 'messagers',
@@ -53,11 +60,11 @@ router.post('/add', async (req, res) => {
             }]
         },{
             model: models.users,
-            
+            as:'user1', 
         },
         {
             model: models.users,
-           
+            as:'user2', 
         }]
     })
     return res.json(rooms)

@@ -132,14 +132,18 @@ export default {
       }
     },
     chatUser(item) {
+      console.log('anhquy')
+      console.log(item)
       this.selected = item.id;
       this.roomname = item.id;
       this.room = this.rooms.find(room => room.id === item.id);
       this.count = "";
-      if (item.UserName1 == this.$store.state.authUser.name) {
-        this.idUserSend = item.UserName2;
-      } else if (item.UserName2 == this.$store.state.authUser.name) {
-        this.idUserSend = item.UserName1;
+      if (item.user1 && item.user2) {
+        if (item.user1.name == this.$store.state.authUser.name) {
+          this.idUserSend = item.user2.name;
+        } else if (item.user2.name == this.$store.state.authUser.name) {
+          this.idUserSend = item.user1.name;
+        }
       }
     },
     showDivChat() {
@@ -154,7 +158,7 @@ export default {
             console.log(response);
             this.rooms = response.data;
             this.$store.commit("ROOMS", response.data);
-            this.chatUser(this.rooms[0])
+            this.chatUser(this.rooms[0]);
           });
         this.$store.commit("TOGGLE_CHAT");
       }

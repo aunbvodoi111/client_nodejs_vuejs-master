@@ -5,19 +5,23 @@ module.exports = (sequelize, DataTypes) => {
     UserName1: DataTypes.STRING,
     UserName2: DataTypes.STRING,
   }, {
-    updatedAt: 'updated_at',
-    createdAt: 'created_at'
-  });
-  Room.associate = function(models) {
+      updatedAt: 'updated_at',
+      createdAt: 'created_at'
+    });
+  Room.associate = function (models) {
     // models.Product.belongsTo(models.Cate, {
     //   onDelete: "CASCADE",
     //   foreignKey: {
     //     allowNull: false
     //   }
     // });
-    Room.hasMany(models.messagers,{ as: 'messagers', foreignKey: 'RoomId'})
-    Room.belongsTo(models.users,{  foreignKey: 'UserName1'})
-    Room.belongsTo(models.users,{  foreignKey: 'UserName2'})
+    Room.hasMany(models.messagers, { as: 'messagers', foreignKey: 'RoomId' })
+    Room.hasOne(models.users, {
+      as: 'user1', foreignKey: 'id', sourceKey: 'UserName1'
+    });
+    Room.hasOne(models.users, {
+      as: 'user2', foreignKey: 'id', sourceKey: 'UserName2'
+    });
   };
   return Room;
 };
