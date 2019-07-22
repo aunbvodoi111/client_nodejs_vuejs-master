@@ -9,7 +9,7 @@
             <div class="img" v-if="follow.length == 0">
               <img src="/img/anhdep.png" alt />
               
-              <p>Bạn chưa có thông báo</p>
+              <p>Bạn chưa có shop yêu thích</p>
               <button>Tiếp tục mua sắm</button>
             </div>
             <div class="div-shop-follow" v-else>

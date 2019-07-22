@@ -181,7 +181,15 @@
                       </nuxt-link>
                     </p>
                     <p v-if="item.status == 2">
-                      <img :src="item.image" width="100px"  />
+                      <nuxt-link :to="`/${item.BillId}`">
+                        <div style="display:flex;">
+                          <img :src="item.bill.bill_details[0].image" width="50px" style="width: 30% ; height : 70px;font-size : 12px; padding : 0px;"/>
+                          <div style="width: 70% ;font-size : 13px; padding : 0px;" v-if="item.bill != null">
+                            <p  style="font-size : 13px; padding : 0px;background:white;color: rgba(0,0,0,.8);margin:0px;">{{ item.bill.bill_details[0].name }}</p>
+                            <p  style="font-size : 13px; padding : 0px;background:white;color: red;">{{ item.sum }}</p>
+                          </div>
+                        </div>
+                      </nuxt-link>
                     </p>
                     <p v-if="item.status == 3 " style="box-shadow: 0 1px 1px rgba(0,0,0,.1);background:white;">
                    
@@ -220,7 +228,15 @@
                       </nuxt-link>
                     </p>
                     <p v-if="item.status == 2">
-                      <img :src="item.image" width="100px" />
+                      <nuxt-link :to="`/${item.BillId}`">
+                        <div style="display:flex;">
+                          <img :src="item.bill.bill_details[0].image" width="50px" style="width: 30% ; height : 70px;font-size : 12px; padding : 0px;"/>
+                          <div style="width: 70% ;font-size : 13px; padding : 0px;" v-if="item.bill != null">
+                            <p  style="font-size : 13px; padding : 0px;background:white;color: rgba(0,0,0,.8);margin:0px;">{{ item.bill.bill_details[0].name }}</p>
+                            <p  style="font-size : 13px; padding : 0px;background:white;color: red;">{{ item.sum }}</p>
+                          </div>
+                        </div>
+                      </nuxt-link>
                     </p>
                     <p v-if="item.status == 3 ">
                    
@@ -245,32 +261,32 @@
         </div>
 
         <div class="bottom-chat-right">
-          <input type="text" class="txt-input-chat" v-model="message" @keyup="triggerMessageSend" />
+          <input type="text" class="txt-input-chat" v-model="message" @keyup="triggerMessageSend" style="height:40px;" placeholder="Gửi tin nhắn"/>
           <div>
-            <button @click="sendMessages">Gui</button>
+            <button @click="sendMessages" style="background:red;width:100px;height:40px;border:none;color:white;">Gui</button>
           </div>
         </div>
-        <div class="send-file">
-          <input type="file" id="send-file" @change="onImageChange" ref="file" />
+        <div class="send-file" style="margin-top : 20px;">
+          <input type="file" id="send-file" @change="onImageChange" ref="file" style="margin-right : 20px;"/>
           <label for="send-file">
             <div class="send-image">
-              <div class="icon">
-                <i class="fas fa-images"></i>
+              <div class="icon" style="text-align:center;">
+                <i class="fas fa-images" style="text-align:center;"></i>
               </div>
-              <div class>hình ảnh</div>
+              <div  class style="font-size:13px;">hình ảnh</div>
             </div>
           </label>
-          <div class="send-product" @click="showDivProduct">
-            <div class="icon">
-              <i class="fas fa-tshirt"></i>
+          <div class="send-product" @click="showDivProduct" style="width : 70px;">
+            <div class="icon" style=";text-align:center;">
+              <i class="fas fa-tshirt" style="text-align:center;"></i>
             </div>
-            <div class>quần áo</div>
+            <div class style="font-size:13px;text-align:center;">Quần áo</div>
           </div>
-          <div class="send-bill" @click="showPopBill">
+          <div class="send-bill" @click="showPopBill" style="text-align:center;">
             <div class="icon">
               <i class="fas fa-images"></i>
             </div>
-            <div class>hình ảnh</div>
+            <div  class style="font-size:13px;">Đơn hàng</div>
           </div>
         </div>
       </div>
