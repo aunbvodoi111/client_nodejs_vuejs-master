@@ -11,7 +11,7 @@ module.exports = {
     }else if( data.data.status == 2 ){
       image = data.data.imageBill
     }else if( data.data.status == 3 ){
-      image = data.data.imageUpload
+      image = data.data.image
     }
     const newMess = await models.messagers.create({
       content: data.data.content,
@@ -40,6 +40,14 @@ module.exports = {
       },{
         model : models.users,
       }]
+    })
+    var room = await models.rooms.findOne({
+      where:{ id : data.data.roomid },
+    })
+
+    var updated = room.updated
+    await room.update({
+      updated : updated + 1
     })
     return message
     // var room = await Room.findOne({ _id: data.data.roomid })

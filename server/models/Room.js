@@ -4,6 +4,7 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     UserName1: DataTypes.STRING,
     UserName2: DataTypes.STRING,
+    updated : DataTypes.INTEGER
   }, {
       updatedAt: 'updated_at',
       createdAt: 'created_at'

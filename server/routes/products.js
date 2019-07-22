@@ -174,7 +174,91 @@ router.post('/login',
     async (req, res) => {
 
         var allOrders = []
-        return res.send({ user: req.user, carts: allOrders })
+        var { user } = req.body
+    // var cart = await models.carts.create({ ProductId: ProductId, UserId: req.user.id });
+    // cart.save()
+    var roomfind = await models.rooms.findOne({
+        where: {
+            [Op.or]: [
+                {
+
+                    [Op.and]:
+                        [{ UserName2: req.user.id }, { UserName1: req.user.id }]
+
+                },
+                {
+
+                    [Op.and]:
+                        [{ UserName1: req.user.id }, { UserName2: req.user.id }]
+
+                }
+            ]
+        }
+    })
+    console.log(roomfind)
+    // if (!roomfind) {
+    //     console.log('dấdsas')
+    //     var room = await models.rooms.create({ name: req.user.name + user.name, UserName1: req.user.id, UserName2: user.id });
+    //     room.save()
+    //     var rooms  = await models.rooms.findAll({
+    //         where:{ [Op.or]: [ { UserName1: req.user.id }, { UserName2: req.user.id }] },
+    //         include: [{
+    //             model: models.messagers,
+    //             as: 'messagers',
+    //             include:[{
+    //                 model : models.products,
+    //                 as:'product'
+    //               },{
+    //                 model : models.bills,
+    //                 as:'bill',
+    //                 include: [{
+    //                     model: models.bill_details,
+    //                     as: 'bill_details',
+    //                 }]
+    //               },{
+    //                 model : models.users,
+    //               }]
+    //         },{
+    //             model: models.users,
+    //             as:'user1', 
+    //         },
+    //         {
+    //             model: models.users,
+    //             as:'user2', 
+    //         }]
+    //     })
+    //     return res.json(rooms)
+    // }
+    var rooms  = await models.rooms.findAll({
+        where:{ [Op.or]: [ { UserName1: req.user.id }, { UserName2: req.user.id }] },
+        include: [{
+            model: models.messagers,
+            as: 'messagers',
+            
+            include:[{
+                model : models.products,
+                as:'product'
+              },{
+                model : models.bills,
+                as:'bill',
+                include: [{
+                    model: models.bill_details,
+                    as: 'bill_details',
+                }]
+              },{
+                model : models.users,
+              }]
+        },{
+            model: models.users,
+            as:'user1', 
+        },
+        {
+            model: models.users,
+            as:'user2', 
+        }]
+    })
+
+        return res.send({ user: req.user, carts: allOrders , rooms : rooms })
     });
 
 

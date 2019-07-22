@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="btn-chat" v-if="!toggleChat" @click="showDivChat">
-      <button>Chat ngay nhe</button>
+      <button>Chat ngay nhe {{ sumCountMessager()}}</button>
     </div>
     <div class="container" v-if="toggleChat">
       <div class="pop-up-Product" v-show="showPopLisrProduct">
@@ -12,10 +12,10 @@
           </div>
           <div class="title">
             <div>
-              <p :class="{ activeTitLePopup:1 == selected }" @click="productYou">Shop của tôi</p>
+              <p :class="{ activeTitLePopup:1 == selectedShop }" @click="productYou">Shop của tôi</p>
             </div>
             <div>
-              <p :class="{ activeTitLePopup:2 == selected }" @click="showDivShop">Shop Pham quý</p>
+              <p :class="{ activeTitLePopup:2 == selectedShop }" @click="showDivShop">Shop Pham quý</p>
             </div>
           </div>
           <div class="content-product">
@@ -135,15 +135,15 @@
           <div class="name-buyer">
             <p v-if="item.user1.name != $store.state.authUser.name">
               {{ item.user1.name }}
-              <span v-if="countMess(item) > 0">{{ countMess(item) }}</span>
+              <span v-if="countMess(item) > 0" style="background:red;width:50px;height:50px;color:white;">{{ countMess(item) }}</span>
             </p>
             <p v-if="item.user1.name == item.user2.name">
               {{ item.user1.name }}
-              <span v-if="countMess(item) > 0">{{ countMess(item) }}</span>
+              <span v-if="countMess(item) > 0" style="background:red;width:50px;height:50px;color:white;">{{ countMess(item) }}</span>
             </p>
             <p v-if="item.user2.name != $store.state.authUser.name">
               {{ item.user2.name }}
-              <span v-if="countMess(item) > 0">{{ countMess(item) }}</span>
+              <span v-if="countMess(item) > 0" style="background:red;width:50px;height:50px;color:white;">{{ countMess(item) }}</span>
             </p>
 
             <p v-if="item.user1.name != $store.state.authUser.name">
@@ -169,21 +169,26 @@
                 <div class="div-left" v-if="item.UserId == $store.state.authUser.id">
                   <div class="content">
                     <p v-if="item.status == 0 ">{{ item.content }}</p>
-                    <p v-if="item.status == 1">
+                    <p v-if="item.status == 1" style="background:white;box-shadow: 2px 2px 2px 2px rgba(0,0,0,.1); padding : 10px 0px;">
                       <nuxt-link :to="`/${item.ProductId}`">
-                        <img :src="item.image" width="50px" />
-                        <p v-if="item.product != null">{{ item.product.name }}</p>
+                        <div style="display:flex;">
+                          <img :src="item.product.image" width="50px" style="width: 30% ; height : 70px;font-size : 12px; padding : 0px;"/>
+                          <div style="width: 70% ;font-size : 13px; padding : 0px;" v-if="item.product != null">
+                            <p  style="font-size : 13px; padding : 0px;background:white;color: rgba(0,0,0,.8);margin:0px;">{{ item.product.name }}</p>
+                            <p  style="font-size : 13px; padding : 0px;background:white;color: red;">{{ item.product.price }}</p>
+                          </div>
+                        </div>
                       </nuxt-link>
                     </p>
                     <p v-if="item.status == 2">
-                      <img :src="item.image" width="100px" />
+                      <img :src="item.image" width="100px"  />
                     </p>
-                    <!-- <p v-if="item.status == 3 ">
-                      <nuxt-link :to="`/user/order/${item.BillId}`">
-                        <img :src="item.bill_details[0].image" width="50px" />
-                        <p v-if="item.bill != null">{{ item.id }}</p>
-                      </nuxt-link>
-                    </p> -->
+                    <p v-if="item.status == 3 " style="box-shadow: 0 1px 1px rgba(0,0,0,.1);background:white;">
+                   
+                        <img :src="item.image" width="88%" />
+                        <!-- <p v-if="item.bill != null">{{ item.id }}</p> -->
+                      
+                    </p>
                   </div>
                   <div class="img" v-if="item.user.avatar != 0">
                     <img :src="item.user.avatar" alt />
@@ -205,18 +210,23 @@
                     <p v-if="item.status == 0">{{ item.content }}</p>
                     <p v-if="item.status == 1">
                       <nuxt-link :to="`/${item.ProductId}`">
-                        <img :src="item.image" width="50px" />
-                        <p v-if="item.product != null">{{ item.product.name }}</p>
+                        <div style="display:flex;">
+                          <img :src="item.product.image" width="50px" style="width: 30% ;padding : 3px;"/>
+                          <div style="width: 70% ;font-size : 13px; padding : 0px; margin-left : 5px;">
+                            <p v-if="item.product != null" style="width: 70% ;font-size : 13px; padding : 0px; ">{{ item.product.name }}</p>
+                            <p  style="font-size : 13px; padding : 0px;color: red;">{{ item.product.price }}</p>
+                          </div>
+                        </div>
                       </nuxt-link>
                     </p>
                     <p v-if="item.status == 2">
                       <img :src="item.image" width="100px" />
                     </p>
-                    <p v-if=" item.bill != null ">
-                      <nuxt-link :to="`/user/order/${item.BillId}`">
-                        <img :src="item.bill.bill_details[0].image" width="50px" />
-                        <p v-if="item.bill != null">{{ item.id }}</p>
-                      </nuxt-link>
+                    <p v-if="item.status == 3 ">
+                   
+                        <img :src="item.image" width="50px" />
+                        <!-- <p v-if="item.bill != null">{{ item.id }}</p> -->
+                      
                     </p>
                   </div>
                 </div>
@@ -288,7 +298,9 @@ export default {
       selected: "",
       product: {
         image: "",
-        ProductId: ""
+        ProductId: "",
+        product : "",
+        price:0
       },
       bill: {
         sum: "",
@@ -300,7 +312,7 @@ export default {
       listMess: [],
       messageLast: "",
       roomok: {},
-      selected: 1,
+      selectedShop: 1,
       showPopLisrProduct: false,
       listProductPopup: [],
       showPopListBill: false,
@@ -336,6 +348,7 @@ export default {
         this.room.messagers.push(message);
       } else {
         this.countMess(idRoom);
+        this.sumCountMessager(idRoom)
         this.listMess.unshift(message);
         this.dem = this.dem + 1;
         this.roomidnew = room;
@@ -364,17 +377,19 @@ export default {
       }); 
     },
     productYou() {
-      this.selected = 1;
+      this.selectedShop = 1;
       this.showDivProduct();
     },
     sendProduct(item) {
       this.product.image = item.image;
       this.product.ProductId = item.id;
+      this.product.name = item.name;
+      this.product.price = item.price;
       this.sendMessages();
       this.showPopLisrProduct = false;
     },
     showDivProduct() {
-      this.selected = 1;
+      this.selectedShop = 1;
       this.$axios.get("/api/chat/productUser").then(response => {
         console.log(response.data);
         this.listProductPopup = response.data;
@@ -382,7 +397,7 @@ export default {
       });
     },
     showDivShop() {
-      this.selected = 2;
+      this.selectedShop = 2;
       this.$axios
         .post("/api/chat/productShop", {
           id: this.idUserSend.id
@@ -414,6 +429,15 @@ export default {
       }
       return count;
     },
+    sumCountMessager(item) {
+      var count = this.listMess.length;
+      // for (var i = 0; i < this.listMess.length; i++) {
+      //   if (item.id == this.listMess[i].RoomId) {
+      //     count = count + 1;
+      //   }
+      // }
+      return count;
+    },
     scrollMessages() {
       var container = this.$refs.messages;
       container.scrollTop = container.scrollHeight;
@@ -440,6 +464,7 @@ export default {
       if (!this.$store.state.authUser) {
         this.$store.commit("OPEN_REGISTER");
       } else {
+        
         this.$axios
           .post("/api/room/add", {
             user: this.$store.state.authUser
@@ -554,7 +579,17 @@ export default {
         ProductId: this.product.ProductId,
         imageProduct: this.product.image,
         imageBill: this.bill.image,
-        imageUpload: this.image,
+        bill:[{
+          bill_details:{
+            image: this.bill.image,
+          }
+        }],
+        product:{
+          image: this.product.image,
+          name: this.product.name,
+          price: this.product.price,
+        },
+        image: this.image,
         user: {
           avatar: avatar
         },
@@ -563,12 +598,15 @@ export default {
         // image: this.bill.image,
         status: status
       };
+      console.log(message)
       Vue.set(this.room, "updated_at", new Date().toISOString());
       this.$store.commit("CHANGE_ROOM", this.room);
       this.messageLast = message;
       this.room.messagers.push(message);
       socket.emit("send-message", message);
       this.message = "";
+      this.product.image =''
+      this.bill.image =''
       this.image = "";
       this.sendUserNotTyping();
       this.scrollMessages();
@@ -602,6 +640,10 @@ export default {
 }
 #send-file {
   display: none;
+}
+a{
+  outline: none;
+  text-decoration: none;
 }
 .messages {
   // height: 200px;
