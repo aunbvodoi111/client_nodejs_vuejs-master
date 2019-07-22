@@ -49,11 +49,28 @@
       </div>
       <div class="infor-customer" v-if="addresseDefault">
         <p>Địa Chỉ Nhận Hàng</p>
-        <p>
+        <p v-if="newAddress == '' && !showListAddress">
           <strong>{{ addresseDefault.name }} (+84) {{ addresseDefault.phone }}</strong>
           {{ addresseDefault.address }} , Thị Trấn Trâu Quỳ,
           {{ addresseDefault.district.name }}, {{ addresseDefault.province.name }}
         </p>
+        <p v-if="newAddress != '' && !showListAddress">
+          <strong>{{ newAddress.name }} (+84) {{ newAddress.phone }}</strong>
+          {{ newAddress.address }} , Thị Trấn Trâu Quỳ,
+          {{ newAddress.district.name }}, {{ newAddress.province.name }}
+        </p>
+        <p @click="chooseAddress">Thay dổi</p>
+        <label class="container-radio" v-for="item in addresss" @click="changeAddressDefault(item)" v-show="showListAddress"><p>
+          <strong>{{ item.name }} (+84) {{ item.phone }}</strong>
+          {{ item.address }} , Thị Trấn Trâu Quỳ,
+          {{ item.district.name }}, {{ item.province.name }}
+        </p>
+          <input type="radio" name="radio" checked="checked" v-if="item.id == addresseDefault.id ">
+          <input type="radio" name="radio"  v-else>
+          <span class="checkmark" ></span>
+        </label>
+        <button @click="saveAddress()" v-show="showListAddress">Hoàn thành</button>
+        <button @click="close()" v-show="showListAddress">Trở lại</button>
       </div>
       <div class="product-checkout" v-for="item in carts" :key="item.id">
         <p>
@@ -182,7 +199,10 @@ export default {
       sum: "",
       UserIdSaler: "",
       note: "",
-      message: ""
+      message: "",
+      address:{},
+      newAddress:'',
+      showListAddress : false
     };
   },
 
@@ -203,10 +223,12 @@ export default {
       districts: data.data.districts,
       carts: data.data.carts,
       addresses: data.data.users.addresses,
-      showPopInforCustom: showPopInforCustom
+      showPopInforCustom: showPopInforCustom,
+      addresss : data.data.addresss
     };
   },
   computed: {
+    
     addresseDefault() {
       if (this.addresses.length > 0) {
         var address = this.addresses.find(item => item.checkAddress === 1);
@@ -262,6 +284,16 @@ export default {
     }
   },
   methods: {
+    chooseAddress(){
+      this.showListAddress = true
+    },
+    saveAddress(){
+      this.newAddress = this.address
+      this.showListAddress = false
+    },
+    changeAddressDefault(item) {
+      this.address = this.addresss.find(address => address.id === item.id);    
+    },
     add() {
       this.$axios
         .post("/api/address/add", {
@@ -332,6 +364,68 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.container-radio {
+  display: block;
+  position: relative;
+  padding-left: 35px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default radio button */
+.container-radio input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Create a custom radio button */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+  background-color: #eee;
+  border-radius: 50%;
+}
+
+/* On mouse-over, add a grey background color */
+.container-radio:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the radio button is checked, add a blue background */
+.container-radio input:checked ~ .checkmark {
+  background-color: #2196F3;
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.container-radio input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the indicator (dot/circle) */
+.container-radio .checkmark:after {
+ 	top: 9px;
+	left: 9px;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: white;
+}
 button {
   cursor: pointer;
 }

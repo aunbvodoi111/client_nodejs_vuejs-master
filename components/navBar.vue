@@ -15,7 +15,7 @@
         <div class="navtop-left">
           <ul>
             <li>
-              <a href>Kênh người bán</a>
+              <nuxt-link to='/user/notifications/orders'>Thông báo</nuxt-link>
             </li>
             <li v-if="$store.state.authUser">
               <nuxt-link to="/user/account/profile">Chao , {{ $store.state.authUser.email}}</nuxt-link>
