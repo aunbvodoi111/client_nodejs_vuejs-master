@@ -119,12 +119,15 @@ io.on('connection', (socket) => {
       socket.join(room);
       io.sockets.connected[receiverSocketId].join(room);
       //notify the client of thisss
+      var message = await ADD_MESSAGE({ data: message })
+      // socket.broadcast.to(room).emit('new-message', await ADD_MESSAGE({ data: message }));
       socket.broadcast.to(room).emit('new-message', room, message);
       await ADD_MESSAGE({ data: message })
     } else {
       console.log('vao day')
       var room = message.roomid;
-      socket.broadcast.to(room).emit('new-message', room, message);
+      // socket.broadcast.to(room).emit('new-message', room, message);
+      // socket.broadcast.to(room).emit('new-message', await ADD_MESSAGE({ data: message }));
       await ADD_MESSAGE({ data: message })
     }
 

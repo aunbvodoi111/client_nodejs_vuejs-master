@@ -172,11 +172,18 @@
                     <p v-if="item.status == 1">
                       <nuxt-link :to="`/${item.ProductId}`">
                         <img :src="item.image" width="50px" />
+                        <p v-if="item.product != null">{{ item.product.name }}</p>
                       </nuxt-link>
                     </p>
-                    <p v-if="item.status == 3">
+                    <p v-if="item.status == 2">
                       <img :src="item.image" width="100px" />
                     </p>
+                    <!-- <p v-if="item.status == 3 ">
+                      <nuxt-link :to="`/user/order/${item.BillId}`">
+                        <img :src="item.bill_details[0].image" width="50px" />
+                        <p v-if="item.bill != null">{{ item.id }}</p>
+                      </nuxt-link>
+                    </p> -->
                   </div>
                   <div class="img" v-if="item.user.avatar != 0">
                     <img :src="item.user.avatar" alt />
@@ -199,10 +206,17 @@
                     <p v-if="item.status == 1">
                       <nuxt-link :to="`/${item.ProductId}`">
                         <img :src="item.image" width="50px" />
+                        <p v-if="item.product != null">{{ item.product.name }}</p>
                       </nuxt-link>
                     </p>
-                    <p v-if="item.status == 3">
+                    <p v-if="item.status == 2">
                       <img :src="item.image" width="100px" />
+                    </p>
+                    <p v-if=" item.bill != null ">
+                      <nuxt-link :to="`/user/order/${item.BillId}`">
+                        <img :src="item.bill.bill_details[0].image" width="50px" />
+                        <p v-if="item.bill != null">{{ item.id }}</p>
+                      </nuxt-link>
                     </p>
                   </div>
                 </div>
@@ -305,6 +319,8 @@ export default {
   },
   beforeMount() {
     socket.on("new-message", (room, message) => {
+      console.log(room)
+      console.log(message)
       var idRoom = this.rooms.find(item => item.id === room);
       this.roomok = this.rooms.find(item => item.id === room);
       var audio = new Audio("/Iphone.mp3"); // path to filesssdsaaaaaaaaaaaa
@@ -314,14 +330,11 @@ export default {
       Vue.set(idRoom, "updated_at", new Date().toISOString());
       console.log(idRoom["updated_at"]);
       if (idRoom.id == this.roomname) {
-        console.log("vao dau");
         this.room = this.rooms.find(item => item.id === room);
-        console.log(idRoom);
         this.$store.commit("CHANGE_ROOM", idRoom);
         message["isRead"] = true;
         this.room.messagers.push(message);
       } else {
-        console.log("else");
         this.countMess(idRoom);
         this.listMess.unshift(message);
         this.dem = this.dem + 1;
@@ -383,7 +396,7 @@ export default {
     messageSend(item) {
       // console.log(this.messageLast)
       if (this.messageLast != "") {
-        if (this.messageLast.roomid == item.id) {
+        if (this.messageLast.RoomId == item.id) {
           return this.messageLast.content;
         }
       }
@@ -395,7 +408,7 @@ export default {
     countMess(item) {
       var count = 0;
       for (var i = 0; i < this.listMess.length; i++) {
-        if (item.id == this.listMess[i].roomid) {
+        if (item.id == this.listMess[i].RoomId) {
           count = count + 1;
         }
       }
@@ -450,7 +463,7 @@ export default {
       if (this.listMess.length > 0) {
         // this.room.messagers.push(this.listMess)
         for (var i = this.listMess.length - 1; i >= 0; i--) {
-          if (item.id == this.listMess[i].roomid) {
+          if (item.id == this.listMess[i].RoomId) {
             var index = this.listMess.indexOf(this.listMess[i]);
             this.room.messagers.push(this.listMess[i]);
             console.log(index);
@@ -539,8 +552,8 @@ export default {
         isRead: true,
         UserId: this.$store.state.authUser.id,
         ProductId: this.product.ProductId,
-        image: this.product.image,
-        // image: this.bill.image,
+        imageProduct: this.product.image,
+        imageBill: this.bill.image,
         imageUpload: this.image,
         user: {
           avatar: avatar
@@ -677,7 +690,6 @@ export default {
         padding: 10px;
         height: 300px;
         background-color: #eaeaea;
-
         .bill-pop {
           width: 100%;
           background: white;
@@ -771,7 +783,6 @@ export default {
             }
           }
         }
-
         .product-pop {
           width: 30%;
           float: left;

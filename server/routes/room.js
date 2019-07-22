@@ -39,6 +39,19 @@ router.post('/add', async (req, res) => {
             include: [{
                 model: models.messagers,
                 as: 'messagers',
+                include:[{
+                    model : models.products,
+                    as:'product'
+                  },{
+                    model : models.bills,
+                    as:'bill',
+                    include: [{
+                        model: models.bill_details,
+                        as: 'bill_details',
+                    }]
+                  },{
+                    model : models.users,
+                  }]
             },{
                 model: models.users,
                 as:'user1', 
@@ -55,9 +68,20 @@ router.post('/add', async (req, res) => {
         include: [{
             model: models.messagers,
             as: 'messagers',
-            include: [{
-                model: models.users,
-            }]
+            
+            include:[{
+                model : models.products,
+                as:'product'
+              },{
+                model : models.bills,
+                as:'bill',
+                include: [{
+                    model: models.bill_details,
+                    as: 'bill_details',
+                }]
+              },{
+                model : models.users,
+              }]
         },{
             model: models.users,
             as:'user1', 
