@@ -65,7 +65,7 @@ import moment from "moment";
 moment.locale("vi");
 moment().format('LLLL');
 export default {
-  // middleware: 'authenticated',
+  middleware: 'authenticated',
   async asyncData({ $axios }) {
     var data = await $axios.get("/api/notification/");
     console.log(data);

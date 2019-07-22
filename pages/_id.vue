@@ -64,8 +64,8 @@
       <div class="content-detail-pr">
         <div class="content-left">
           <div class="img">
-            <img :src="product.image" alt v-if="idImage == ''" @click=" showPopDetailImg = true" />
-            <img :src="ImageHover.image" alt v-if="idImage != ''" @click=" showPopDetailImg = true" />
+            <img :src="product.image" alt v-if="idImage == ''" @click=" showPopDetail()" />
+            <img :src="ImageHover.image" alt v-if="idImage != ''" @click=" showPopDetail()" />
             <div class="nofj-out-of-stock" v-if="product.qty == 0 && product.classifies.length == 0">
               <p>Hết hàng</p>
             </div>
@@ -304,6 +304,10 @@ export default {
   },
   created() {},
   methods: {
+    showPopDetail(){
+      this.showPopDetailImg = true
+      // this.product.mulimages.push(this.product.image)
+    },
     sumQtynew() {
       var anhquy = this.product.classifies;
       this.sumQty = 0;

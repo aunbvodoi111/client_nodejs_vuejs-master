@@ -71,7 +71,10 @@ router.get('/update', async (req, res) => {
     var date = new Date() - start
     return res.json({date : date,user : users})
 })
-
+router.get('/logout', async (req, res) => {
+    req.logout();
+    res.redirect('/');
+});
 router.get('/address', async (req, res) => {
     var provinces = await models.provinces.findAll({})
     var districts = await models.districts.findAll({}) 

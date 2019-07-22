@@ -18,7 +18,7 @@
               <nuxt-link to='/user/notifications/orders'>Thông báo</nuxt-link>
             </li>
             <li v-if="$store.state.authUser">
-              <nuxt-link to="/user/account/profile">Chao , {{ $store.state.authUser.email}}</nuxt-link>
+              <nuxt-link to="/user/account/profile">Chao , {{ $store.state.authUser.name}}</nuxt-link>
             </li>
             <li @click="loginAuth" v-if="!$store.state.authUser">
               <a>Đăng kí</a>
@@ -26,8 +26,8 @@
             <li @click="registerAuth" v-if="!$store.state.authUser">
               <a>Đăng nhập</a>
             </li>
-            <li @click="registerAuth" v-if="$store.state.authUser">
-              <a>Logout</a>
+            <li  v-if="$store.state.authUser">
+              <a @click="logout" href="/">Logout</a>
             </li>
           </ul>
         </div>
@@ -157,6 +157,9 @@ export default {
         this.toggleCmt = !this.toggleCmt;
       }
     },
+    logout(){
+      this.$axios.get("/api/user/logout");
+    },  
     formatPrice(value) {
       let val = (value / 1).toFixed(0).replace(".", ",");
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");

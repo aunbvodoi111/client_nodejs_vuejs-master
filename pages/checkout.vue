@@ -346,6 +346,12 @@ export default {
     },
     checkoutCart() {
       console.log(this.carts);
+      var address
+      if( this.newAddress ){
+        address = this.newAddress.id
+      }else{
+        address = this.addresseDefault.id
+      }
       this.$axios
         .post("/api/cart/addCartCustomer", {
           carts: this.carts,
@@ -353,7 +359,7 @@ export default {
           address: this.address,
           UserIdSaler: this.UserIdSaler,
           note: this.message,
-          AddressId: this.addresseDefault.id
+          AddressId: address
         })
         .then(response => {
           this.$router.push("/user/order/history");

@@ -345,6 +345,9 @@ export default {
       );
     }
   },
+  created(){
+    this.listRoom()
+  },
   beforeMount() {
     socket.on("new-message", (room, message) => {
       console.log(room)
@@ -377,6 +380,19 @@ export default {
     });
   },
   methods: {
+    listRoom(){
+      this.$axios
+          .post("/api/room/add", {
+            user: this.$store.state.authUser
+          })
+          .then(response => {
+            console.log(response);
+            // this.rooms = response.data;
+            this.$store.commit("ROOMS", response.data);
+            this.chatUser(this.rooms[0]);
+          });
+        this.$store.commit("TOGGLE_CHAT");
+    },
     sendBill( item ){
       this.bill.sum = item.sum;
       this.bill.BillId = item.id;
