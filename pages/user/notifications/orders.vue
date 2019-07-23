@@ -35,13 +35,13 @@
                     <img :src="item.userBy.avatar" alt  />
                   </div>
                   <div class="img"  v-if="item.userSl.name != $store.state.authUser.name">
-                    <img :src="item.userSl.avatar" alt  />
+                    <img :src="item.user.avatar" alt  />
                   </div>
                   <div class="div-center">
                     <h4>{{ item.title }}</h4>
                     <p>
                       <span style="font-weight:bold;" v-if=" item.userBy.name != $store.state.authUser.name">{{item.userBy.name}}</span>
-                      <span style="font-weight:bold;" v-if=" item.userSl.name != $store.state.authUser.name">{{item.userSl.name}}</span>
+                      <span style="font-weight:bold;" v-if=" item.user.name != $store.state.authUser.name">{{item.user.name}}</span>
                       <span>{{ item.content }}</span>
                     </p>
                     <p> {{ moment(item.created_at).format('LLLL') }}</p>

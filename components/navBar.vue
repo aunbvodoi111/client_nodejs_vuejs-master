@@ -14,9 +14,31 @@
         </div>
         <div class="navtop-left">
           <ul>
-            <li>
-              <nuxt-link to='/user/notifications/orders'>Thông báo</nuxt-link>
+            <li @mouseenter="showPopNofi = true"
+                @mouseleave="showPopNofi = false">
+              <nuxt-link to='/user/notifications/orders'> <i class="	far fa-bell"></i> Thông báo {{ ListNofi.length }}</nuxt-link>
+              
             </li>
+            <div class="pop-nofi" v-if="showPopNofi" 
+                @mouseenter="showPopNofi = true"
+                @mouseleave="showPopNofi = false">
+              <div class="content"  v-for="item in ListNofi" >
+                <div class="img">
+                  <img :src="item.userBy.avatar" alt  />
+                </div>
+                <div class="content-right">
+                  <div class="title">
+                     {{ item.title }}
+                  </div>
+                  <div class="content-main">
+                    <p> <span style="font-weight:bold;" v-if=" item.userBy.name != $store.state.authUser.name">{{item.userBy.name}}</span>
+                      <span style="font-weight:bold;" v-if=" item.user.name != $store.state.authUser.name">{{item.user.name}}</span>
+                      {{ item.content }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
             <li v-if="$store.state.authUser">
               <nuxt-link to="/user/account/profile">Chao , {{ $store.state.authUser.name}}</nuxt-link>
             </li>
@@ -114,20 +136,28 @@
   </div>
 </template>
 <script>
+import socket from "~/plugins/socket.io.js";
 export default {
   data() {
     return {
       keyword: "",
       hover: false,
       products: [],
-      closePopSearch: false
+      closePopSearch: false,
+      ListNofi : [],
+      showPopNofi: false
     };
   },
   created() {
-    // this.$axios.$get("/api/cart/").then(response => {
-    //   this.carts = response;
-    //   console.log(this.carts);
-    // });
+
+  },
+  beforeMount() {
+    socket.on("nofi-product", message => {
+      console.log(message);
+      var audio = new Audio("/nofi.mp3"); 
+      audio.play();
+      this.ListNofi.push(message)
+    });
   },
   computed: {
     carts() {
@@ -140,9 +170,6 @@ export default {
   },
   methods: {
     deleteCart(item) {
-      // console.log(item);
-      // this.cart = {}
-      // this.toggleComfirmCart = false
       var index = this.carts.indexOf(item);
       this.carts.splice(index, 1);
       this.$axios.post("/api/cart/deleteCart", {
@@ -230,6 +257,46 @@ a:hover {
           width: 80%;
           margin-left: auto;
           display: flex;
+          .pop-nofi{
+            background: white;
+            width: 400px;
+            height: 500px;
+            position: absolute;
+            z-index: 99;
+            top : 13%;
+            padding: 7px;
+            .content{
+              width: 100%;
+              display: flex;
+              margin-bottom: 5px; 
+              cursor: pointer;
+              .img{
+                width: 14%;
+                img{
+                  width: 100%;
+                }
+              }
+              .content-right{
+                margin-left: 9px; 
+                width: 80%;
+                border-bottom: 1px dashed gainsboro;
+                .title{
+                  font-size: 15px; 
+                }
+                .content-main{
+                  margin-top: 4px; 
+                  font-size: 14px; 
+                  
+                  p{
+                    color: grey;
+                    span{
+                      color: black;
+                    }
+                  }
+                }
+              }
+            }
+          }
           li {
             margin-right: 5%;
             a {

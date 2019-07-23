@@ -22,7 +22,7 @@ router.get('/', async (req, res) => {
                 as:'userBy'
             },{
                 model: models.users,
-                as:'userSl'
+                as:'user'
             }]
         })
     } else {

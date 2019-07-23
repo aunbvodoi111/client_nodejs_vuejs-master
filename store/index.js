@@ -1,5 +1,5 @@
 import axios from 'axios'
-
+import socket from "~/plugins/socket.io.js";
 export const state = () => ({
   authUser: null,
   login: false,
@@ -76,10 +76,21 @@ export const actions = {
       throw error
     }
   },
-
+  
   async logout({ commit }) {
     await axios.post('/api/logout')
     commit('SET_USER', null)
+  },
+  EMIT_NOFI_PRODUCT: ( context, messages )=>{
+    console.log( messages )
+    if (messages.length > 0) {
+      for (var i = 0; i < messages.length; i++) {
+        socket.emit(
+          "send-nofi-product",
+          messages[i]
+        );
+      }
+    }
   }
 
 }

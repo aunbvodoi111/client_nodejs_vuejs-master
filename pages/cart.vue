@@ -10,12 +10,6 @@
             </div>
             <div class="infor-product-cart" style="padding-left : 20px;">
               <p>{{ cart.HomeTeam.name }}</p>
-              <!-- <div class="qty">
-                số lượng sp trong giỏ hàng :
-                <span
-                  style="color : red ; font-weight : bold;"
-                >{{ pr}}</span>
-              </div>-->
 
               <div class="qty">
                 <!-- thành tiền : -->
@@ -91,12 +85,22 @@
                 <p>phân loại hàng :</p>
                 <p>{{ prod.classifies.name }}</p>
               </div>
+              <div class="pop-classify">
+                <button
+                v-for="item in prod.HomeTeam.classifies "
+                :key="item.id"
+                :class="{ activeClassify:item.id == prod.classifies.id} "
+                v-if=" prod.classifies != null && item.qty == 0"
+                class="button disabled"
+              >{{ item.name }}</button>
               <button
                 v-for="item in prod.HomeTeam.classifies"
                 :key="item.id"
                 :class="{ activeClassify:item.id == prod.classifies.id} "
-                v-if=" prod.classifies != null "
+                v-if=" prod.classifies != null && item.qty != 0 "
               >{{ item.name }}</button>
+              <button>Xác nhận</button>
+              </div>
             </div>
           </div>
           <div class="price" v-if=" prod.classifies == null ">
@@ -236,7 +240,7 @@ export default {
       console.log(item);
       if (item.classifies == null) {
         if (item.qty < item.HomeTeam.qty) {
-           console.log('null');
+          console.log("null");
           item.qty = item.qty + 1;
           this.$axios
             .post("/api/cart/changeQty", {
@@ -249,15 +253,15 @@ export default {
         } else {
           item.qty = item.HomeTeam.qty;
         }
-      }else{
+      } else {
         if (item.qty < item.classifies.qty) {
-          console.log('j');
+          console.log("j");
           item.qty = item.qty + 1;
           this.$axios
             .post("/api/cart/changeQty", {
               ProductId: item.ProductId,
               qty: item.qty,
-              ClassifyId : item.ClassifyId
+              ClassifyId: item.ClassifyId
             })
             .then(response => {
               this.$store.commit("ADD_CART");
@@ -568,6 +572,48 @@ button {
             width: 70%;
             p {
               font-weight: bold;
+            }
+            .pop-classify{
+              width: 300px;
+              height: 200px;
+              position: absolute;
+              z-index: 99;
+              box-shadow: 0 1px 1px 0 rgba(0,0,0,.05);
+              padding: 20px;
+              background: white;
+            }
+            button {
+              margin:  4px;
+              width:  30%;
+              cursor: pointer;
+              display: inline-block;
+              min-width: 5rem;
+              -moz-box-sizing: border-box;
+              box-sizing: border-box;
+              padding: 0 0.75rem;
+              height: 2.125rem;
+              line-height: 1;
+              margin: 0 8px 8px 0;
+              color: rgba(0, 0, 0, 0.8);
+              text-align: center;
+              white-space: nowrap;
+              border-radius: 2px;
+              border: 1px solid rgba(0, 0, 0, 0.09);
+              position: relative;
+              background: #fff;
+              outline: 0;
+              &:hover {
+                color: red;
+                border: 1px solid red;
+              }
+            }
+            button.disabled {
+              opacity: 0.65;
+              cursor: not-allowed;
+              &:hover {
+                color: rgba(0, 0, 0, 0.8) !important;
+                border: 1px solid rgba(0, 0, 0, 0.09) !important;
+              }
             }
           }
         }

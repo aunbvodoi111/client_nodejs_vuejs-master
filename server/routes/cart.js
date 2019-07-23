@@ -79,6 +79,7 @@ router.post('/add', async (req, res) => {
 router.post('/addCartCustomer', async (req, res) => {
     var { carts, AddressId } = req.body
     console.log(carts)
+    var listUser = []
     for (var i = 0; i < carts.length; i++) {
         var bills = await models.bills.create({
             UserIdBuyer: carts[i].UserIdBuyer,
@@ -90,7 +91,7 @@ router.post('/addCartCustomer', async (req, res) => {
             payment: 1,
         });
         bills.save()
-        await models.notifications.create({
+        var idNotifj = await models.notifications.create({
             BillId: bills.id,
             UserIdSaler: bills.UserIdSaler,
             UserIdBuyer: bills.UserIdBuyer,
@@ -98,7 +99,19 @@ router.post('/addCartCustomer', async (req, res) => {
             content: 'đã đặt một đơn hàng  . Vui lòng liên hệ với người mua để biết thông tin',
             status : 1 
         })
-
+        
+        var product__notis = await models.notifications.findOne({
+            where :{ id : idNotifj.id },
+            include:[{
+                model: models.users,
+                as:'userBy'
+            },{
+                model: models.users,
+                as:'user'
+            }]
+        })
+        
+        listUser.push(product__notis)
         var sum = 0
         for (var j = 0; j < carts[i].cart_details.length; j++) {
             if( carts[i].cart_details[j].classifies == null ){
@@ -115,20 +128,38 @@ router.post('/addCartCustomer', async (req, res) => {
                 });
     
                 bill_details.save()
-                var product = await models.products.findOne({ where: { id: carts[i].cart_details[j].ProductId } })
+                var product = await models.products.findOne({ 
+                    where: { id: carts[i].cart_details[j].ProductId },
+                    include:[{
+                        model : models.users
+                    }]
+                 })
                 var qty = product.qty
                 product.update({
                     qty: qty - carts[i].cart_details[j].qty
                 })
+                
                 if(product.qty == 0){
                     console.log('chay dc vao day k ')
-                    await models.product__notis.create({
+                    var id = await models.product__notis.create({
                         content : 'vui lòng  bổ sung thêm hàng hoặc đăng sản phẩm mới .',
                         ProductId : product.id,
                         UserId : carts[i].cart_details[j].UserIdSaler,
                         status : 1
                     })
+                    var product__notis = await models.product__notis.findOne({
+                        where :{ id : id.id },
+                        include:[{
+                            model: models.users,
+                            as:'user'
+                        },{
+                            model: models.products,
+                            as:'product'
+                        }]
+                    })
+                    listUser.push(product__notis)
                 }
+                
                 sum = sum + carts[i].cart_details[j].HomeTeam.discount * carts[i].cart_details[j].qty;
             }else{
                 var bill_details = await models.bill_details.create({
@@ -151,6 +182,7 @@ router.post('/addCartCustomer', async (req, res) => {
                 await product.update({
                     qty: qty - carts[i].cart_details[j].qty
                 })
+                listUser.push(product)
                 if(product.qty == 0){
                     await models.product__notis.create({
                         content : 'vui lòng  bổ sung thêm hàng hoặc đăng sản phẩm mới .',
@@ -180,7 +212,7 @@ router.post('/addCartCustomer', async (req, res) => {
     await models.date_orders.create({
         BillId: bills.id
     })
-    return res.status(200).json(bill_details)
+    return res.status(200).send({ listUser : listUser , bill_details : bill_details })
 
 })
 
@@ -306,9 +338,7 @@ router.get('/checkout', async (req, res) => {
                 as: 'province'
             }]
         })
-        
-        // provinces = await models.provinces.findAll({})
-        // districts = await models.districts.findAll({})
+
         await models.carts.findOne({
             where: { UserIdBuyer: req.user.id },
             attributes: ['UserIdSaler', 'UserIdBuyer'],

@@ -2,7 +2,14 @@
   <div>
     <div class="btn-chat" v-if="!toggleChat" @click="showDivChat">
       <button>Chat ngay nhe {{ sumCountMessager()}}</button>
+      
     </div>
+    <div class="popup-image-zoom-chat" v-if="closePopZoomImage"> 
+        <div class="img">
+          <i @click=" closePopZoomImage = false">X</i>
+          <img :src="imageZoomChat">
+        </div>
+      </div>
     <div class="container" v-if="toggleChat">
       <div class="pop-up-Product" v-show="showPopLisrProduct">
         <div class="content-pop">
@@ -170,7 +177,7 @@
                   <div class="content">
                     <p v-if="item.status == 0 ">{{ item.content }}</p>
                     <p v-if="item.status == 1" style="background:white;box-shadow: 2px 2px 2px 2px rgba(0,0,0,.1); padding : 10px 0px;">
-                      <nuxt-link :to="`/${item.ProductId}`">
+                      <nuxt-link :to="`/user/order/${item.ProductId}`">
                         <div style="display:flex;">
                           <img :src="item.product.image" width="50px" style="width: 30% ; height : 70px;font-size : 12px; padding : 0px;"/>
                           <div style="width: 70% ;font-size : 13px; padding : 0px;" v-if="item.product != null">
@@ -181,7 +188,7 @@
                       </nuxt-link>
                     </p>
                     <p v-if="item.status == 2">
-                      <nuxt-link :to="`/${item.BillId}`">
+                      <nuxt-link :to="`/user/order/${item.BillId}`">
                         <div style="display:flex;">
                           <img :src="item.bill.bill_details[0].image" width="50px" style="width: 30% ; height : 70px;font-size : 12px; padding : 0px;"/>
                           <div style="width: 70% ;font-size : 13px; padding : 0px;" v-if="item.bill != null">
@@ -191,7 +198,7 @@
                         </div>
                       </nuxt-link>
                     </p>
-                    <p v-if="item.status == 3 " style="box-shadow: 0 1px 1px rgba(0,0,0,.1);background:white;">
+                    <p v-if="item.status == 3 " style="box-shadow: 0 1px 1px rgba(0,0,0,.1);background:white;cursor: pointer;" @click="clickZoomIamge(item)">
                    
                         <img :src="item.image" width="88%" />
                         <!-- <p v-if="item.bill != null">{{ item.id }}</p> -->
@@ -202,7 +209,7 @@
                     <img :src="item.user.avatar" alt />
                   </div>
                   <div class="img" v-if="item.user.avatar == 0">
-                    <img src="/img/images.png" alt />
+                    <img src="/img/images.png" alt  />
                   </div>
                 </div>
               </div>
@@ -240,7 +247,7 @@
                     </p>
                     <p v-if="item.status == 3 ">
                    
-                        <img :src="item.image" width="50px" />
+                        <img :src="item.image" width="50px" style="cursor: pointer;"/>
                         <!-- <p v-if="item.bill != null">{{ item.id }}</p> -->
                       
                     </p>
@@ -332,7 +339,9 @@ export default {
       showPopLisrProduct: false,
       listProductPopup: [],
       showPopListBill: false,
-      listBill : []
+      listBill : [],
+      closePopZoomImage : false,
+      imageZoomChat:{}
     };
   },
   computed: {
@@ -380,6 +389,10 @@ export default {
     });
   },
   methods: {
+    clickZoomIamge(item){
+      this.closePopZoomImage = true
+      this.imageZoomChat = item.image
+    },
     listRoom(){
       this.$axios
           .post("/api/room/add", {
@@ -611,11 +624,11 @@ export default {
         ProductId: this.product.ProductId,
         imageProduct: this.product.image,
         imageBill: this.bill.image,
-        bill:[{
-          bill_details:{
+        bill:{
+          bill_details:[{
             image: this.bill.image,
-          }
-        }],
+          }]
+        },
         product:{
           image: this.product.image,
           name: this.product.name,
@@ -698,7 +711,40 @@ a{
     border: none;
     border-radius: 10px;
   }
+  
 }
+
+.popup-image-zoom-chat{
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    background-color: black;
+    top :0 ;
+    right: 0;
+    z-index: 9999;
+    bottom: 0;
+    left: 0;
+    i{
+      color: black;
+      margin-left:  100%;
+      cursor: pointer;
+      width: 80px;
+      height: 50px;
+      padding: 5px 10px;
+      border-radius: 100%; 
+      background: white;
+    }
+    .img{
+      width: 900px;
+      margin: auto;
+      margin-top: 50px; 
+      img{
+        width: 100%;
+        
+      }
+    }
+  }
+
 .container {
   -webkit-box-shadow: 3px 4px 29px -10px rgba(0, 0, 0, 0.75);
   -moz-box-shadow: 3px 4px 29px -10px rgba(0, 0, 0, 0.75);

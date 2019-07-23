@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
     //   }
     // });
     Notification.belongsTo(models.users, {as:'userBy',foreignKey: 'UserIdBuyer'});
-    Notification.belongsTo(models.users, {as:'userSl',foreignKey: 'UserIdSaler'}); 
+    Notification.belongsTo(models.users, {as:'user',foreignKey: 'UserIdSaler'}); 
   };
   return Notification;
 };

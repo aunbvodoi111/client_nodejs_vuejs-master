@@ -60,14 +60,20 @@
           {{ newAddress.district.name }}, {{ newAddress.province.name }}
         </p>
         <p @click="chooseAddress">Thay dổi</p>
-        <label class="container-radio" v-for="item in addresss" @click="changeAddressDefault(item)" v-show="showListAddress"><p>
-          <strong>{{ item.name }} (+84) {{ item.phone }}</strong>
-          {{ item.address }} , Thị Trấn Trâu Quỳ,
-          {{ item.district.name }}, {{ item.province.name }}
-        </p>
-          <input type="radio" name="radio" checked="checked" v-if="item.id == addresseDefault.id ">
-          <input type="radio" name="radio"  v-else>
-          <span class="checkmark" ></span>
+        <label
+          class="container-radio"
+          v-for="item in addresss"
+          @click="changeAddressDefault(item)"
+          v-show="showListAddress"
+        >
+          <p>
+            <strong>{{ item.name }} (+84) {{ item.phone }}</strong>
+            {{ item.address }} , Thị Trấn Trâu Quỳ,
+            {{ item.district.name }}, {{ item.province.name }}
+          </p>
+          <input type="radio" name="radio" checked="checked" v-if="item.id == addresseDefault.id " />
+          <input type="radio" name="radio" v-else />
+          <span class="checkmark"></span>
         </label>
         <button @click="saveAddress()" v-show="showListAddress">Hoàn thành</button>
         <button @click="close()" v-show="showListAddress">Trở lại</button>
@@ -86,13 +92,12 @@
               <div class="img">
                 <img :src="prod.HomeTeam.image" alt />
               </div>
-              <div class="name-pr" >
+              <div class="name-pr">
                 <a>{{ prod.HomeTeam.name }}</a>
               </div>
-              <div class="name-pr"  v-if=" prod.classifies != null ">
+              <div class="name-pr" v-if=" prod.classifies != null ">
                 <a>Loại : {{ prod.classifies.name }}</a>
               </div>
-
             </div>
           </div>
           <div class="price" v-if=" prod.classifies == null ">
@@ -119,7 +124,7 @@
               <p>₫{{ formatPrice(prod.qty * prod.HomeTeam.discount) }}</p>
             </div>
           </div>
-          <div class="total-money" v-else >
+          <div class="total-money" v-else>
             <p>Thành tiền</p>
             <div class="infor">
               <p>₫{{ formatPrice(prod.qty * prod.classifies.price) }}</p>
@@ -182,6 +187,7 @@
 </template>
 <script>
 import Vue from "vue";
+import socket from "~/plugins/socket.io.js";
 export default {
   data() {
     return {
@@ -200,9 +206,9 @@ export default {
       UserIdSaler: "",
       note: "",
       message: "",
-      address:{},
-      newAddress:'',
-      showListAddress : false
+      address: {},
+      newAddress: "",
+      showListAddress: false
     };
   },
 
@@ -215,29 +221,27 @@ export default {
     } else {
       showPopInforCustom = true;
     }
-    data.data.carts.forEach( item =>{
-      Vue.set( item ,'note','')
-    })
+    data.data.carts.forEach(item => {
+      Vue.set(item, "note", "");
+    });
     return {
       provinces: data.data.provinces,
       districts: data.data.districts,
       carts: data.data.carts,
       addresses: data.data.users.addresses,
       showPopInforCustom: showPopInforCustom,
-      addresss : data.data.addresss
+      addresss: data.data.addresss
     };
   },
+  
   computed: {
-    
     addresseDefault() {
       if (this.addresses.length > 0) {
         var address = this.addresses.find(item => item.checkAddress === 1);
-        console.log(address);
         return address;
       }
     },
     listDistrict() {
-      console.log(this.edit.ProvideId);
       var data = this.districts.filter(
         item => item.ProvinceId === this.edit.ProvinceId
       );
@@ -246,12 +250,10 @@ export default {
     sumQtyCart() {
       var sum = 0;
       for (var i = 0; i < this.carts.length; i++) {
-        console.log(this.carts[i]);
         for (var j = 0; j < this.carts[i].cart_details.length; j++) {
           if (this.carts[i].cart_details[j].checkBuy == 1) {
             var sum = sum + this.carts[i].cart_details[j].qty;
           }
-          console.log(this.carts[i].cart_details[j]);
         }
       }
       return sum;
@@ -272,7 +274,6 @@ export default {
             this.carts[i].cart_details[j].checkBuy == 1 &&
             this.carts[i].cart_details[j].classifies != null
           ) {
-            console.log(" no null");
             var sum =
               sum +
               this.carts[i].cart_details[j].classifies.price *
@@ -284,15 +285,15 @@ export default {
     }
   },
   methods: {
-    chooseAddress(){
-      this.showListAddress = true
+    chooseAddress() {
+      this.showListAddress = true;
     },
-    saveAddress(){
-      this.newAddress = this.address
-      this.showListAddress = false
+    saveAddress() {
+      this.newAddress = this.address;
+      this.showListAddress = false;
     },
     changeAddressDefault(item) {
-      this.address = this.addresss.find(address => address.id === item.id);    
+      this.address = this.addresss.find(address => address.id === item.id);
     },
     add() {
       this.$axios
@@ -313,7 +314,6 @@ export default {
       this.$router.push("/cart");
     },
     showDivChat(item) {
-      console.log(item);
       if (!this.$store.state.authUser) {
         this.$store.commit("OPEN_REGISTER");
       } else {
@@ -322,19 +322,15 @@ export default {
             user: item.user.name
           })
           .then(response => {
-            console.log(response);
             this.rooms = response.data;
             this.$store.commit("ROOMS", response.data);
           });
         this.$store.commit("TOGGLE_CHAT");
       }
     },
-    handleItemClick() {
-      console.log("vao");
-    },
+    handleItemClick() {},
     pointer() {
       if (this.name == "") {
-        
         this.errorName = "Vui lòng điền Tên";
       } else {
         this.errorName = " ";
@@ -345,12 +341,11 @@ export default {
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     },
     checkoutCart() {
-      console.log(this.carts);
-      var address
-      if( this.newAddress ){
-        address = this.newAddress.id
-      }else{
-        address = this.addresseDefault.id
+      var address;
+      if (this.newAddress) {
+        address = this.newAddress.id;
+      } else {
+        address = this.addresseDefault.id;
       }
       this.$axios
         .post("/api/cart/addCartCustomer", {
@@ -362,6 +357,10 @@ export default {
           AddressId: address
         })
         .then(response => {
+          console.log("listUser");
+          this.$store.dispatch('EMIT_NOFI_PRODUCT',response.data.listUser)
+          console.log(response.data.listUser);
+            
           this.$router.push("/user/order/history");
         });
     }
@@ -408,7 +407,7 @@ export default {
 
 /* When the radio button is checked, add a blue background */
 .container-radio input:checked ~ .checkmark {
-  background-color: #2196F3;
+  background-color: #2196f3;
 }
 
 /* Create the indicator (the dot/circle - hidden when not checked) */
@@ -425,12 +424,12 @@ export default {
 
 /* Style the indicator (dot/circle) */
 .container-radio .checkmark:after {
- 	top: 9px;
-	left: 9px;
-	width: 8px;
-	height: 8px;
-	border-radius: 50%;
-	background: white;
+  top: 9px;
+  left: 9px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: white;
 }
 button {
   cursor: pointer;

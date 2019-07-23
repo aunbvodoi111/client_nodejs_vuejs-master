@@ -108,26 +108,47 @@ io.on('connection', (socket) => {
     //   return res.json({ nDate: nDate, user: users })
     // })
   });
+
+  socket.on('send-nofi-product', async (message) => {
+    console.log('send-nofi-product')
+    console.log(message)
+    var name = message.user.name
+    // io.emit('new-nofi-product', message);
+    var receiverSocketId = findUserById(name);
+    if (receiverSocketId) {
+      console.log('co tìm thấy k')
+      var room = message.id;
+      socket.join(room);
+      console.log(room)
+      io.sockets.connected[receiverSocketId].join(room);
+      // var message = await ADD_MESSAGE({ data: message })
+      socket.broadcast.to(room).emit('nofi-product', message);
+      console.log('sao lai the nhỉ')
+      // await ADD_MESSAGE({ data: message })
+    } else {
+      console.log('vao day')
+      var room = message.roomid;
+      // await ADD_MESSAGE({ data: message })
+    }
+
+  })
+
   socket.on('send-message', async (message) => {
     console.log(people)
     console.log(message)
     var name = message.nameuser
     var receiverSocketId = findUserById(name);
     if (receiverSocketId) {
-      // var receiver = people[receiverSocketId];
       var room = message.roomid;
       socket.join(room);
+      console.log(room)
       io.sockets.connected[receiverSocketId].join(room);
-      //notify the client of thisss
       var message = await ADD_MESSAGE({ data: message })
-      // socket.broadcast.to(room).emit('new-message', await ADD_MESSAGE({ data: message }));
       socket.broadcast.to(room).emit('new-message', room, message);
       await ADD_MESSAGE({ data: message })
     } else {
       console.log('vao day')
       var room = message.roomid;
-      // socket.broadcast.to(room).emit('new-message', room, message);
-      // socket.broadcast.to(room).emit('new-message', await ADD_MESSAGE({ data: message }));
       await ADD_MESSAGE({ data: message })
     }
 
