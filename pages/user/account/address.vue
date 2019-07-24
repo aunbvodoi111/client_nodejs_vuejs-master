@@ -1,7 +1,8 @@
 <template>
   <div class="container-fruid">
     <div class="container">
-      <NavBar :seleted ="seleted"/>
+      <NavBar :seleted="seleted" />
+      
       <div class="content-right">
         <div class="content-main">
           <h1>Địa chỉ của tôi</h1>
@@ -120,7 +121,7 @@
 </template>
 <script>
 import NavBar from "./../../../components/navUser/navbar";
-import Vue from 'vue'
+import Vue from "vue";
 export default {
   components: {
     NavBar
@@ -136,7 +137,8 @@ export default {
         address: ""
       },
       index: -1,
-      seleted : 8
+      seleted: 8,
+      popReason: true
     };
   },
   async asyncData({ $axios, store }) {
@@ -316,7 +318,6 @@ ul li {
             height: 40px;
             color: black;
             border: none;
-            
           }
         }
       }
@@ -337,14 +338,14 @@ ul li {
               }
               .content {
                 width: 80%;
-                span{
+                span {
                   font-size: 13px;
                   width: 100px;
                   height: 30px;
                   color: white;
                   padding: 3px 7px;
                   background: red;
-                  margin-left: 10px; 
+                  margin-left: 10px;
                 }
               }
             }

@@ -230,7 +230,7 @@
       :productnew="productnew"
       @mediumstar="summediumstar"
     />
-    <ProductRelate />
+    <ProductRelate  :productRela ='productRela'/>
   </div>
 </template>
 <script>
@@ -286,7 +286,8 @@ export default {
       totalProduct: data.data.totalProduct,
       totalFollow: data.data.totalFollow,
       sumRating: data.data.totalRating,
-      cart_details: data.data.cart_details
+      cart_details: data.data.cart_details,
+      productRela : data.data.productRela
     };
   },
   components: {

@@ -93,7 +93,7 @@
       </div>
       <div class="product-content" v-if="listProduct.length > 0 ">
         <div class="product" v-for="item in listProduct" :key="item.id">
-          <div class="product-div">
+          <div class="product-div" @click="submit(item)">
             <nuxt-link :to="`/${item.id}`">
               <div class="img">
                 <img :src="item.image" alt />
@@ -114,6 +114,9 @@
             <div class="star" v-if="item.ratings.length == 0">
               <i class="far fa-star" v-for="n in 5 " :key="n"></i>
               <span>(chưa có nhận xét)</span>
+            </div>
+            <div class="province">
+              <span>{{ item.province.name }}</span>
             </div>
           </div>
         </div>
@@ -350,6 +353,18 @@ export default {
     };
   },
   methods: {
+    submit(item) {
+      var anhquy = [];
+      if (localStorage && localStorage.getItem("products")) {
+        this.local = JSON.parse(localStorage.getItem("products"));
+        anhquy = this.local.filter(product => product.id !== item.id);
+        anhquy.unshift(item);
+        localStorage.setItem("products", JSON.stringify(anhquy));
+      } else {
+        this.local.push(item);
+        localStorage.setItem("products", JSON.stringify(this.local));
+      }
+    },
     filterProvincen(value){
       this.ProvinceId = value;
     },
@@ -492,7 +507,7 @@ a:hover {
         .product {
           float: left;
           width: 20%;
-          height: 300px;
+          height: 320px;
           padding: 3px;
           .product-div {
             border: 1px solid transparent;
@@ -514,6 +529,13 @@ a:hover {
               text-overflow: ellipsis;
               -webkit-box-orient: vertical;
               -webkit-line-clamp: 2;
+            }
+            .province{
+              padding-left: 4px;
+              span {
+                font-size: 11px;
+                color: grey;
+              }
             }
             .price p {
               padding: 4px;

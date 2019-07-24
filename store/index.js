@@ -14,6 +14,9 @@ export const mutations = {
   SET_USER: function (state, user) {
     state.authUser = user
   },
+  SET_USER: function (state, user) {
+    state.authUser = user
+  },
   CLOSE_AUTH: function (state) {
     console.log(state.closeAuth)
     state.closeAuth = false

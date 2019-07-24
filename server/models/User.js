@@ -2,10 +2,15 @@
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('users', {
     name: DataTypes.STRING,
+    nameShop: DataTypes.STRING,
     phone: DataTypes.INTEGER,
     email: DataTypes.STRING,
     avatar: DataTypes.STRING,
     password: DataTypes.STRING,
+    day: DataTypes.INTEGER,
+    month: DataTypes.INTEGER,
+    year: DataTypes.INTEGER,
+    gender: DataTypes.INTEGER,
   }, {
       updatedAt: 'updated_at',
       createdAt: 'created_at'

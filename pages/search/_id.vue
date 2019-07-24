@@ -13,7 +13,11 @@
           <div class="filter-cate" style="border-top: 1px solid grey;">
             <p style="margin-top:15px; font-weight:bold;">Nơi bán</p>
             <ul>
-              <li v-for="item in provide" :key="item.id" @click="filterProvincen(item.id)">{{ item.name }}</li>
+              <li
+                v-for="item in provide"
+                :key="item.id"
+                @click="filterProvincen(item.id)"
+              >{{ item.name }}</li>
             </ul>
           </div>
           <!-- <div class="filter-rating">
@@ -33,12 +37,12 @@
             <p>
               <i class="fas fa-star" v-for="n in 5"></i>( ít nhất 4 sao )
             </p>
-          </div> -->
+          </div>-->
           <div class="filter-rating">
             <h5>Gía</h5>
             <div class="input">
               <input type="text" class="txt-form" placeholder="Từ" v-model="minprice" />
-              <input type="text" class="txt-form" placeholder="Đến" v-model="maxprice"/>
+              <input type="text" class="txt-form" placeholder="Đến" v-model="maxprice" />
             </div>
             <div class="btn">
               <button @click="filterPrice = 1">áp dụng</button>
@@ -48,9 +52,11 @@
       </div>
     </div>
     <div class="content-right">
-        <h3 style="margin-bottom : 30px;">Kết quả tìm kiếm cho từ khoá '<span style="color : red;">{{$route.params.id}}</span>'
-           <span style="color : grey; margin-left : 3px;"> : {{ products.products.length }}  kết quả</span>
-        </h3>
+      <h3 style="margin-bottom : 30px;">
+        Kết quả tìm kiếm cho từ khoá '
+        <span style="color : red;">{{$route.params.id}}</span>'
+        <span style="color : grey; margin-left : 3px;">: {{ products.products.length }} kết quả</span>
+      </h3>
       <div class="title-filter-product">
         <div>
           <ul>
@@ -74,7 +80,7 @@
             <i class="far fa-window-close" @click="ProvinceId = ''"></i>
           </button>
         </span>
-        
+
         <button v-if="sort == 1">
           TỪ THẤP ĐẾN CAO
           <i class="far fa-window-close" @click="sort = ''"></i>
@@ -93,10 +99,10 @@
       </div>
       <div class="product-content">
         <div class="product" v-for="item in listProduct" :key="item.id">
-          <div class="product-div">
+          <div class="product-div" @click="submit(item)">
             <nuxt-link :to="`/${item.id}`">
               <div class="img">
-                <img :src="item.image" alt>
+                <img :src="item.image" alt />
               </div>
             </nuxt-link>
             <nuxt-link :to="`/${item.id}`">
@@ -108,12 +114,16 @@
               <p>{{ formatPrice(item.discount) }} đ</p>
             </div>
             <div class="star" v-if="item.ratings.length">
-              <i class="fas fa-star" v-for="n in avg(item)" :key="n"></i><i class="far fa-star" v-for="n in 5 - avg(item)" :key="n"></i>
+              <i class="fas fa-star" v-for="n in avg(item)" :key="n"></i>
+              <i class="far fa-star" v-for="n in 5 - avg(item)" :key="n"></i>
               <span>({{ item.ratings.length }} nhận xét)</span>
             </div>
             <div class="star" v-if="item.ratings.length == 0">
               <i class="far fa-star" v-for="n in 5 " :key="n"></i>
               <span>(chưa có nhận xét)</span>
+            </div>
+            <div class="province">
+              <span>{{ item.province.name }}</span>
             </div>
           </div>
         </div>
@@ -125,22 +135,34 @@
 <script>
 export default {
   async asyncData({ $axios, params }) {
-      console.log(params)
+    console.log(params);
     var data = await $axios.get("/api/product/search/" + params.id);
-    console.log(data)
-    return { products: data.data , users: data.data.users };
+    console.log(data);
+    return { products: data.data, users: data.data.users };
   },
-  data(){
-    return{
+  data() {
+    return {
       CateId: "",
       sort: "",
       minprice: "",
       maxprice: "",
       filterPrice: "",
-      ProvinceId : ""
-    }
+      ProvinceId: ""
+    };
   },
-  methods:{
+  methods: {
+    submit(item) {
+      var anhquy = [];
+      if (localStorage && localStorage.getItem("products")) {
+        this.local = JSON.parse(localStorage.getItem("products"));
+        anhquy = this.local.filter(product => product.id !== item.id);
+        anhquy.unshift(item);
+        localStorage.setItem("products", JSON.stringify(anhquy));
+      } else {
+        this.local.push(item);
+        localStorage.setItem("products", JSON.stringify(this.local));
+      }
+    },
     avg(value) {
       var sum = 0;
       var avg = 0;
@@ -155,19 +177,19 @@ export default {
         return Math.ceil(sum / value.ratings.length);
       }
     },
-    filterProvincen(value){
+    filterProvincen(value) {
       this.ProvinceId = value;
     },
     filter(value) {
-      console.log(value)
+      console.log(value);
       this.CateId = value;
     },
     formatPrice(value) {
       let val = (value / 1).toFixed(0).replace(".", ",");
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    },
+    }
   },
-  computed:{
+  computed: {
     listProduct() {
       if (
         this.CateId &&
@@ -186,9 +208,8 @@ export default {
               product.discount >= this.minprice &&
               product.discount <= this.maxprice
           );
-      }
-      else if (
-        this.CateId =='' &&
+      } else if (
+        this.CateId == "" &&
         this.sort == "" &&
         this.sort == "" &&
         this.maxprice == "" &&
@@ -197,74 +218,64 @@ export default {
         return this.products.products.filter(
           product => product.ProvinceId === this.ProvinceId
         );
-      }
-      else if (
-        this.CateId  &&
+      } else if (
+        this.CateId &&
         this.sort == "" &&
         this.sort == "" &&
         this.maxprice == "" &&
         this.ProvinceId
       ) {
         return this.products.products
-        .filter(product => product.ProvinceId === this.ProvinceId)
-        .filter(product => product.SubcateId === this.CateId)
-      }
-      else if (
-        this.CateId  &&
+          .filter(product => product.ProvinceId === this.ProvinceId)
+          .filter(product => product.SubcateId === this.CateId);
+      } else if (
+        this.CateId &&
         this.sort == 1 &&
         this.maxprice == "" &&
         this.ProvinceId
       ) {
         return this.products.products
-        .filter(product => product.ProvinceId === this.ProvinceId)
-        .filter(product => product.SubcateId === this.CateId)
-        .sort((a, b) => a.discount - b.discount)
-      }
-      else if (
-        this.CateId  &&
+          .filter(product => product.ProvinceId === this.ProvinceId)
+          .filter(product => product.SubcateId === this.CateId)
+          .sort((a, b) => a.discount - b.discount);
+      } else if (
+        this.CateId &&
         this.sort == -1 &&
         this.maxprice == "" &&
         this.ProvinceId
       ) {
         return this.products.products
-        .filter(product => product.ProvinceId === this.ProvinceId)
-        .filter(product => product.SubcateId === this.CateId)
-        .sort((a, b) => b.discount - a.discount)
-      }
-      else if (
-        this.CateId  &&
+          .filter(product => product.ProvinceId === this.ProvinceId)
+          .filter(product => product.SubcateId === this.CateId)
+          .sort((a, b) => b.discount - a.discount);
+      } else if (
+        this.CateId &&
         this.sort == "" &&
         this.maxprice &&
         this.ProvinceId
       ) {
         return this.products.products
-        .filter(product => product.ProvinceId === this.ProvinceId)
-        .filter(product => product.SubcateId === this.CateId)
-        .filter(
+          .filter(product => product.ProvinceId === this.ProvinceId)
+          .filter(product => product.SubcateId === this.CateId)
+          .filter(
             product =>
               product.discount >= this.minprice &&
               product.discount <= this.maxprice
           );
-      }
-      else if (
+      } else if (
         this.CateId == "" &&
         this.sort == "" &&
         this.maxprice &&
         this.ProvinceId
       ) {
         return this.products.products
-        .filter(product => product.ProvinceId === this.ProvinceId)
-        .filter(
+          .filter(product => product.ProvinceId === this.ProvinceId)
+          .filter(
             product =>
               product.discount >= this.minprice &&
               product.discount <= this.maxprice
           );
-      }
-       else if (
-        this.CateId &&
-        this.sort == "" &&
-        this.maxprice == ""
-      ) {
+      } else if (this.CateId && this.sort == "" && this.maxprice == "") {
         return this.products.products.filter(
           product => product.SubcateId === this.CateId
         );
@@ -360,38 +371,43 @@ export default {
     subcates() {
       var subcates = [];
       for (var i = 0; i < this.products.products.length; i++) {
-        console.log(this.products.products[i].subcate)
-        subcates = [...subcates,this.products.products[i].subcate]
+        console.log(this.products.products[i].subcate);
+        subcates = [...subcates, this.products.products[i].subcate];
       }
-      
-      var subcate
-       subcate = Array.from(new Set(subcates.map(a => a.name))).map(
-        name => {
-           return subcates.find(a => a.name === name);
-        }
-      );
-      return subcate
+
+      var subcate;
+      subcate = Array.from(new Set(subcates.map(a => a.name))).map(name => {
+        return subcates.find(a => a.name === name);
+      });
+      return subcate;
     },
     provide() {
       var subcates = [];
       for (var i = 0; i < this.products.products.length; i++) {
-        console.log(this.products.products[i].province)
-        subcates = [...subcates,this.products.products[i].province]
+        console.log(this.products.products[i].province);
+        subcates = [...subcates, this.products.products[i].province];
       }
-      
-      var uniqueAddresses
-       uniqueAddresses = Array.from(new Set(subcates.map(a => a.name))).map(
+
+      var uniqueAddresses;
+      uniqueAddresses = Array.from(new Set(subcates.map(a => a.name))).map(
         name => {
-           return subcates.find(a => a.name === name);
+          return subcates.find(a => a.name === name);
         }
       );
-      console.log(uniqueAddresses)
-      return uniqueAddresses
+      console.log(uniqueAddresses);
+      return uniqueAddresses;
     }
-  },
+  }
 };
 </script>
 <style lang="scss" scoped>
+.province {
+  padding-left: 4px;
+  span {
+    font-size: 11px;
+    color: grey;
+  }
+}
 ul li {
   list-style-type: none;
   cursor: pointer;
@@ -403,7 +419,6 @@ a {
 }
 a:hover {
   text-decoration: none;
-  
 }
 .btn-filer {
   button {
@@ -413,8 +428,8 @@ a:hover {
     background-color: #2b3278;
     color: white;
     padding: 6px 12px;
-    i{
-      margin-left: 5px; 
+    i {
+      margin-left: 5px;
     }
   }
 }
@@ -507,7 +522,7 @@ a:hover {
         .product {
           float: left;
           width: 20%;
-          height: 300px;
+          height: 320px;
           padding: 3px;
           .product-div {
             border: 1px solid transparent;
@@ -665,6 +680,7 @@ a:hover {
               -webkit-box-orient: vertical;
               -webkit-line-clamp: 2;
             }
+
             .price p {
               padding: 4px;
               color: red;
@@ -789,10 +805,18 @@ a:hover {
               -webkit-box-orient: vertical;
               -webkit-line-clamp: 2;
             }
+
             .price p {
               padding: 4px;
               color: red;
               margin-top: 10px;
+            }
+            .province {
+              padding-left: 4px;
+              span {
+                font-size: 11px;
+                color: grey;
+              }
             }
           }
         }

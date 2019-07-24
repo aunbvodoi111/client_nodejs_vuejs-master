@@ -252,6 +252,26 @@ ul li {
         width: 100%;
         margin-top: 20px;
         align-items: center;
+        .img {
+          margin-top: 100px;
+          width: 50%;
+          margin: auto;
+          img {
+            margin-left: 20px;
+          }
+          p {
+            font-size: 14px;
+            margin-left: 20px;
+          }
+          button {
+            width: 40%;
+            margin-top: 15px;
+            background: cornflowerblue;
+            height: 40px;
+            color: black;
+            border: none;
+          }
+        }
         .div-shop-follow {
           width: 100%;
           height: auto;

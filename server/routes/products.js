@@ -472,7 +472,9 @@ router.get('/detailPr/:id', async (req, res) => {
     }else{
         cart_details = { }
     }
-   
+    var productRela = await models.products.findAll({
+        where :{ CateId : products.CateId}
+    })
     console.log(sumQty)
     return res.send({
         products: products,
@@ -482,9 +484,12 @@ router.get('/detailPr/:id', async (req, res) => {
         totalProduct: totalProduct,
         totalFollow: totalFollow,
         totalRating: totalRating,
-        cart_details : cart_details
+        cart_details : cart_details,
+        productRela : productRela
     })
 })
+
+
 // router.post('/login', async (req, res) => {
 //     console.log(req.body)
 //     var { email ,password} = req.body

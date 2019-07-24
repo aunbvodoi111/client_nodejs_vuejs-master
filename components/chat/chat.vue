@@ -2,14 +2,13 @@
   <div>
     <div class="btn-chat" v-if="!toggleChat" @click="showDivChat">
       <button>Chat ngay nhe {{ sumCountMessager()}}</button>
-      
     </div>
-    <div class="popup-image-zoom-chat" v-if="closePopZoomImage"> 
-        <div class="img">
-          <i @click=" closePopZoomImage = false">X</i>
-          <img :src="imageZoomChat">
-        </div>
+    <div class="popup-image-zoom-chat" v-if="closePopZoomImage">
+      <div class="img">
+        <i @click=" closePopZoomImage = false">X</i>
+        <img :src="imageZoomChat" />
       </div>
+    </div>
     <div class="container" v-if="toggleChat">
       <div class="pop-up-Product" v-show="showPopLisrProduct">
         <div class="content-pop">
@@ -68,16 +67,19 @@
                     <img :src="prod.product.image" alt />
                   </div>
                   <div class="content-right">
-                    <div
-                      class="name"
-                    >{{ prod.product.name }}</div>
+                    <div class="name">{{ prod.product.name }}</div>
                     <div class="price">₫{{ prod.product.price }}</div>
                   </div>
                 </div>
               </div>
               <div class="sum-bill">
                 <div class="qty">3 sản phẩm</div>
-                <div class="sum-money"> <p>Tổng thanh toán : <span> 3.000.000</span></p> </div>
+                <div class="sum-money">
+                  <p>
+                    Tổng thanh toán :
+                    <span>3.000.000</span>
+                  </p>
+                </div>
               </div>
               <div class="btn-action">
                 <div class="btn-send-link">
@@ -142,15 +144,24 @@
           <div class="name-buyer">
             <p v-if="item.user1.name != $store.state.authUser.name">
               {{ item.user1.name }}
-              <span v-if="countMess(item) > 0" style="background:red;width:50px;height:50px;color:white;">{{ countMess(item) }}</span>
+              <span
+                v-if="countMess(item) > 0"
+                style="background:red;width:50px;height:50px;color:white;"
+              >{{ countMess(item) }}</span>
             </p>
             <p v-if="item.user1.name == item.user2.name">
               {{ item.user1.name }}
-              <span v-if="countMess(item) > 0" style="background:red;width:50px;height:50px;color:white;">{{ countMess(item) }}</span>
+              <span
+                v-if="countMess(item) > 0"
+                style="background:red;width:50px;height:50px;color:white;"
+              >{{ countMess(item) }}</span>
             </p>
             <p v-if="item.user2.name != $store.state.authUser.name">
               {{ item.user2.name }}
-              <span v-if="countMess(item) > 0" style="background:red;width:50px;height:50px;color:white;">{{ countMess(item) }}</span>
+              <span
+                v-if="countMess(item) > 0"
+                style="background:red;width:50px;height:50px;color:white;"
+              >{{ countMess(item) }}</span>
             </p>
 
             <p v-if="item.user1.name != $store.state.authUser.name">
@@ -176,13 +187,27 @@
                 <div class="div-left" v-if="item.UserId == $store.state.authUser.id">
                   <div class="content">
                     <p v-if="item.status == 0 ">{{ item.content }}</p>
-                    <p v-if="item.status == 1" style="background:white;box-shadow: 2px 2px 2px 2px rgba(0,0,0,.1); padding : 10px 0px;">
+                    <p
+                      v-if="item.status == 1"
+                      style="background:white;box-shadow: 2px 2px 2px 2px rgba(0,0,0,.1); padding : 10px 0px;"
+                    >
                       <nuxt-link :to="`/${item.ProductId}`">
                         <div style="display:flex;">
-                          <img :src="item.product.image" width="50px" style="width: 30% ; height : 70px;font-size : 12px; padding : 0px;"/>
-                          <div style="width: 70% ;font-size : 13px; padding : 0px;" v-if="item.product != null">
-                            <p  style="font-size : 13px; padding : 0px;background:white;color: rgba(0,0,0,.8);margin:0px;">{{ item.product.name }}</p>
-                            <p  style="font-size : 13px; padding : 0px;background:white;color: red;">{{ item.product.price }}</p>
+                          <img
+                            :src="item.product.image"
+                            width="50px"
+                            style="width: 30% ; height : 70px;font-size : 12px; padding : 0px;"
+                          />
+                          <div
+                            style="width: 70% ;font-size : 13px; padding : 0px;"
+                            v-if="item.product != null"
+                          >
+                            <p
+                              style="font-size : 13px; padding : 0px;background:white;color: rgba(0,0,0,.8);margin:0px;"
+                            >{{ item.product.name }}</p>
+                            <p
+                              style="font-size : 13px; padding : 0px;background:white;color: red;"
+                            >{{ item.product.price }}</p>
                           </div>
                         </div>
                       </nuxt-link>
@@ -190,26 +215,39 @@
                     <p v-if="item.status == 2">
                       <nuxt-link :to="`/user/order/${item.BillId}`">
                         <div style="display:flex;">
-                          <img :src="item.bill.bill_details[0].image" width="50px" style="width: 30% ; height : 70px;font-size : 12px; padding : 0px;"/>
-                          <div style="width: 70% ;font-size : 13px; padding : 0px;" v-if="item.bill != null">
-                            <p  style="font-size : 13px; padding : 0px;background:white;color: rgba(0,0,0,.8);margin:0px;">{{ item.bill.bill_details[0].name }}</p>
-                            <p  style="font-size : 13px; padding : 0px;background:white;color: red;">{{ item.sum }}</p>
+                          <img
+                            :src="item.bill.bill_details[0].image"
+                            width="50px"
+                            style="width: 30% ; height : 70px;font-size : 12px; padding : 0px;"
+                          />
+                          <div
+                            style="width: 70% ;font-size : 13px; padding : 0px;"
+                            v-if="item.bill != null"
+                          >
+                            <p
+                              style="font-size : 13px; padding : 0px;background:white;color: rgba(0,0,0,.8);margin:0px;"
+                            >{{ item.bill.bill_details[0].name }}</p>
+                            <p
+                              style="font-size : 13px; padding : 0px;background:white;color: red;"
+                            >{{ item.sum }}</p>
                           </div>
                         </div>
                       </nuxt-link>
                     </p>
-                    <p v-if="item.status == 3 " style="box-shadow: 0 1px 1px rgba(0,0,0,.1);background:white;cursor: pointer;" @click="clickZoomIamge(item)">
-                   
-                        <img :src="item.image" width="88%" />
-                        <!-- <p v-if="item.bill != null">{{ item.id }}</p> -->
-                      
+                    <p
+                      v-if="item.status == 3 "
+                      style="box-shadow: 0 1px 1px rgba(0,0,0,.1);background:white;cursor: pointer;"
+                      @click="clickZoomIamge(item)"
+                    >
+                      <img :src="item.image" width="88%" />
+                      <!-- <p v-if="item.bill != null">{{ item.id }}</p> -->
                     </p>
                   </div>
                   <div class="img" v-if="item.user.avatar != 0">
                     <img :src="item.user.avatar" alt />
                   </div>
                   <div class="img" v-if="item.user.avatar == 0">
-                    <img src="/img/images.png" alt  />
+                    <img src="/img/images.png" alt />
                   </div>
                 </div>
               </div>
@@ -226,10 +264,21 @@
                     <p v-if="item.status == 1">
                       <nuxt-link :to="`/${item.ProductId}`">
                         <div style="display:flex;">
-                          <img :src="item.product.image" width="50px" style="width: 30% ;padding : 3px;"/>
-                          <div style="width: 70% ;font-size : 13px; padding : 0px; margin-left : 5px;">
-                            <p v-if="item.product != null" style="width: 70% ;font-size : 13px; padding : 0px; ">{{ item.product.name }}</p>
-                            <p  style="font-size : 13px; padding : 0px;color: red;">{{ item.product.price }}</p>
+                          <img
+                            :src="item.product.image"
+                            width="50px"
+                            style="width: 30% ;padding : 3px;"
+                          />
+                          <div
+                            style="width: 70% ;font-size : 13px; padding : 0px; margin-left : 5px;"
+                          >
+                            <p
+                              v-if="item.product != null"
+                              style="width: 70% ;font-size : 13px; padding : 0px; "
+                            >{{ item.product.name }}</p>
+                            <p
+                              style="font-size : 13px; padding : 0px;color: red;"
+                            >{{ item.product.price }}</p>
                           </div>
                         </div>
                       </nuxt-link>
@@ -237,19 +286,32 @@
                     <p v-if="item.status == 2">
                       <nuxt-link :to="`/user/order/${item.BillId}`">
                         <div style="display:flex;">
-                          <img :src="item.bill.bill_details[0].image" width="50px" style="width: 30% ; height : 70px;font-size : 12px; padding : 0px;"/>
-                          <div style="width: 70% ;font-size : 13px; padding : 0px;" v-if="item.bill != null">
-                            <p  style="font-size : 13px; padding : 0px;background:white;color: rgba(0,0,0,.8);margin:0px;">{{ item.bill.bill_details[0].name }}</p>
-                            <p  style="font-size : 13px; padding : 0px;background:white;color: red;">{{ item.sum }}</p>
+                          <img
+                            :src="item.bill.bill_details[0].image"
+                            width="50px"
+                            style="width: 30% ; height : 70px;font-size : 12px; padding : 0px;"
+                          />
+                          <div
+                            style="width: 70% ;font-size : 13px; padding : 0px;"
+                            v-if="item.bill != null"
+                          >
+                            <p
+                              style="font-size : 13px; padding : 0px;background:white;color: rgba(0,0,0,.8);margin:0px;"
+                            >{{ item.bill.bill_details[0].name }}</p>
+                            <p
+                              style="font-size : 13px; padding : 0px;background:white;color: red;"
+                            >{{ item.sum }}</p>
                           </div>
                         </div>
                       </nuxt-link>
                     </p>
-                    <p v-if="item.status == 3 " @click="clickZoomIamge(item)"  style="box-shadow: 0 1px 1px rgba(0,0,0,.1);background:white;cursor: pointer;">
-                   
-                        <img :src="item.image" width="75%" style="cursor: pointer;" />
-                        <!-- <p v-if="item.bill != null">{{ item.id }}</p> -->
-                      
+                    <p
+                      v-if="item.status == 3 "
+                      @click="clickZoomIamge(item)"
+                      style="box-shadow: 0 1px 1px rgba(0,0,0,.1);background:white;cursor: pointer;"
+                    >
+                      <img :src="item.image" width="75%" style="cursor: pointer;" />
+                      <!-- <p v-if="item.bill != null">{{ item.id }}</p> -->
                     </p>
                   </div>
                 </div>
@@ -268,19 +330,35 @@
         </div>
 
         <div class="bottom-chat-right">
-          <input type="text" class="txt-input-chat" v-model="message" @keyup="triggerMessageSend" style="height:40px;" placeholder="Gửi tin nhắn"/>
+          <input
+            type="text"
+            class="txt-input-chat"
+            v-model="message"
+            @keyup="triggerMessageSend"
+            style="height:40px;"
+            placeholder="Gửi tin nhắn"
+          />
           <div>
-            <button @click="sendMessages" style="background:red;width:100px;height:40px;border:none;color:white;">Gui</button>
+            <button
+              @click="sendMessages"
+              style="background:red;width:100px;height:40px;border:none;color:white;"
+            >Gui</button>
           </div>
         </div>
         <div class="send-file" style="margin-top : 20px;">
-          <input type="file" id="send-file" @change="onImageChange" ref="file" style="margin-right : 20px;"/>
+          <input
+            type="file"
+            id="send-file"
+            @change="onImageChange"
+            ref="file"
+            style="margin-right : 20px;"
+          />
           <label for="send-file">
             <div class="send-image">
               <div class="icon" style="text-align:center;">
                 <i class="fas fa-images" style="text-align:center;"></i>
               </div>
-              <div  class style="font-size:13px;">hình ảnh</div>
+              <div class style="font-size:13px;">hình ảnh</div>
             </div>
           </label>
           <div class="send-product" @click="showDivProduct" style="width : 70px;">
@@ -293,7 +371,7 @@
             <div class="icon">
               <i class="fas fa-images"></i>
             </div>
-            <div  class style="font-size:13px;">Đơn hàng</div>
+            <div class style="font-size:13px;">Đơn hàng</div>
           </div>
         </div>
       </div>
@@ -322,8 +400,8 @@ export default {
       product: {
         image: "",
         ProductId: "",
-        product : "",
-        price:0
+        product: "",
+        price: 0
       },
       bill: {
         sum: "",
@@ -339,9 +417,9 @@ export default {
       showPopLisrProduct: false,
       listProductPopup: [],
       showPopListBill: false,
-      listBill : [],
-      closePopZoomImage : false,
-      imageZoomChat:{}
+      listBill: [],
+      closePopZoomImage: false,
+      imageZoomChat: {}
     };
   },
   computed: {
@@ -354,13 +432,13 @@ export default {
       );
     }
   },
-  created(){
-    this.listRoom()
+  created() {
+    this.listRoom();
   },
   beforeMount() {
     socket.on("new-message", (room, message) => {
-      console.log(room)
-      console.log(message)
+      console.log(room);
+      console.log(message);
       var idRoom = this.rooms.find(item => item.id === room);
       this.roomok = this.rooms.find(item => item.id === room);
       var audio = new Audio("/Iphone.mp3"); // path to filesssdsaaaaaaaaaaaa
@@ -376,7 +454,7 @@ export default {
         this.room.messagers.push(message);
       } else {
         this.countMess(idRoom);
-        this.sumCountMessager(idRoom)
+        this.sumCountMessager(idRoom);
         this.listMess.unshift(message);
         this.dem = this.dem + 1;
         this.roomidnew = room;
@@ -389,37 +467,37 @@ export default {
     });
   },
   methods: {
-    clickZoomIamge(item){
-      this.closePopZoomImage = true
-      this.imageZoomChat = item.image
+    clickZoomIamge(item) {
+      this.closePopZoomImage = true;
+      this.imageZoomChat = item.image;
     },
-    listRoom(){
+    listRoom() {
       this.$axios
-          .post("/api/room/add", {
-            user: this.$store.state.authUser
-          })
-          .then(response => {
-            console.log(response);
-            // this.rooms = response.data;
-            this.$store.commit("ROOMS", response.data);
-            this.chatUser(this.rooms[0]);
-          });
-        this.$store.commit("TOGGLE_CHAT");
+        .post("/api/room/add", {
+          user: this.$store.state.authUser
+        })
+        .then(response => {
+          console.log(response);
+          // this.rooms = response.data;
+          this.$store.commit("ROOMS", response.data);
+          this.chatUser(this.rooms[0]);
+        });
+      this.$store.commit("TOGGLE_CHAT");
     },
-    sendBill( item ){
+    sendBill(item) {
       this.bill.sum = item.sum;
       this.bill.BillId = item.id;
-      this.bill.image = item.bill_details[0].product.image
+      this.bill.image = item.bill_details[0].product.image;
       this.sendMessages();
       this.showPopListBill = false;
     },
     showPopBill() {
       this.$axios.get("/api/bill/").then(response => {
-        console.log('sadsdaasd')
+        console.log("sadsdaasd");
         console.log(response);
         this.listBill = response.data;
         this.showPopListBill = true;
-      }); 
+      });
     },
     productYou() {
       this.selectedShop = 1;
@@ -509,7 +587,6 @@ export default {
       if (!this.$store.state.authUser) {
         this.$store.commit("OPEN_REGISTER");
       } else {
-        
         this.$axios
           .post("/api/room/add", {
             user: this.$store.state.authUser
@@ -614,7 +691,7 @@ export default {
       ) {
         status = 3;
       }
-      console.log(this.bill)
+      console.log(this.bill);
       var message = {
         content: this.message,
         nameuser: this.idUserSend.name,
@@ -624,15 +701,17 @@ export default {
         ProductId: this.product.ProductId,
         imageProduct: this.product.image,
         imageBill: this.bill.image,
-        bill:{
-          bill_details:[{
-            image: this.bill.image,
-          }]
+        bill: {
+          bill_details: [
+            {
+              image: this.bill.image
+            }
+          ]
         },
-        product:{
+        product: {
           image: this.product.image,
           name: this.product.name,
-          price: this.product.price,
+          price: this.product.price
         },
         image: this.image,
         user: {
@@ -643,15 +722,15 @@ export default {
         // image: this.bill.image,
         status: status
       };
-      console.log(message)
+      console.log(message);
       Vue.set(this.room, "updated_at", new Date().toISOString());
       this.$store.commit("CHANGE_ROOM", this.room);
       this.messageLast = message;
       this.room.messagers.push(message);
       socket.emit("send-message", message);
       this.message = "";
-      this.product.image =''
-      this.bill.image =''
+      this.product.image = "";
+      this.bill.image = "";
       this.image = "";
       this.sendUserNotTyping();
       this.scrollMessages();
@@ -686,7 +765,7 @@ export default {
 #send-file {
   display: none;
 }
-a{
+a {
   outline: none;
   text-decoration: none;
 }
@@ -711,39 +790,37 @@ a{
     border: none;
     border-radius: 10px;
   }
-  
 }
 
-.popup-image-zoom-chat{
-    width: 100%;
-    height: 100%;
-    position: fixed;
-    background-color: black;
-    top :0 ;
-    right: 0;
-    z-index: 9999;
-    bottom: 0;
-    left: 0;
-    i{
-      color: black;
-      margin-left:  100%;
-      cursor: pointer;
-      width: 80px;
-      height: 50px;
-      padding: 5px 10px;
-      border-radius: 100%; 
-      background: white;
-    }
-    .img{
-      width: 900px;
-      margin: auto;
-      margin-top: 50px; 
-      img{
-        width: 100%;
-        
-      }
+.popup-image-zoom-chat {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  background-color: black;
+  top: 0;
+  right: 0;
+  z-index: 9999;
+  bottom: 0;
+  left: 0;
+  i {
+    color: black;
+    margin-left: 100%;
+    cursor: pointer;
+    width: 80px;
+    height: 50px;
+    padding: 5px 10px;
+    border-radius: 100%;
+    background: white;
+  }
+  .img {
+    width: 900px;
+    margin: auto;
+    margin-top: 50px;
+    img {
+      width: 100%;
     }
   }
+}
 
 .container {
   -webkit-box-shadow: 3px 4px 29px -10px rgba(0, 0, 0, 0.75);
@@ -792,14 +869,14 @@ a{
           margin-left: 50px;
         }
       }
-      .title-bill{
+      .title-bill {
         width: 100%;
         display: flex;
-        .buy{
+        .buy {
           width: 50%;
           text-align: center;
         }
-        .saler{
+        .saler {
           width: 50%;
           text-align: center;
         }
@@ -858,32 +935,32 @@ a{
               .price {
                 color: red;
                 margin-top: 4px;
-                font-size: 14px; 
+                font-size: 14px;
               }
             }
           }
           .sum-bill {
             width: 100%;
             display: flex;
-            .sum-money{
+            .sum-money {
               text-align: right;
-              margin-left: 25%; 
-              p{
+              margin-left: 25%;
+              p {
                 color: grey;
                 font-size: 14px;
-                span{
+                span {
                   color: red;
-                } 
+                }
               }
             }
           }
-          .btn-action{
+          .btn-action {
             width: 100%;
             padding: 10px 10px;
             display: flex;
-            .btn-send-link{
+            .btn-send-link {
               width: 50%;
-              button{
+              button {
                 width: 100%;
                 height: 40px;
                 border: 1px solid grey;
@@ -891,9 +968,9 @@ a{
                 color: red;
               }
             }
-            .btn-send-link{
+            .btn-send-link {
               width: 50%;
-              button{
+              button {
                 width: 100%;
                 height: 40px;
                 border: 1px solid grey;

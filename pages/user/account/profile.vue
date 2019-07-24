@@ -1,17 +1,15 @@
 <template>
   <div class="container-fruid">
     <div class="container">
-      <NavBar :seleted ='seleted'/>
+      <NavBar :seleted="seleted" />
       <div class="content-right">
         <div class="content-main">
           <h1>Hồ Sơ Của Tôi</h1>
-          <!-- <div class="content-nofi">
-            <div class="img">
-              <img src="/img/anhdep.png" alt />
-              <p>Bạn chưa có thông báo</p>
-              <button>Tiếp tục mua sắm</button>
+          <div class="pop-up" v-if="showPopUpdateProfile">
+            <div class="content">
+              <div class="title">Cập nhật hồ sơ thành công !</div>
             </div>
-          </div>-->
+          </div>
           <div class="content">
             <div class="content-left">
               <div class="email">
@@ -35,8 +33,8 @@
                   <label>giới tính</label>
                 </div>
                 <div class="name-email">
-                  <input type="radio" name="gender" class="radio" />Nam
-                  <input type="radio" name="gender" class="radio" /> Nữ
+                  <input type="radio" name="gender" class="radio" v-model="gender" value="1" />Nam
+                  <input type="radio" name="gender" class="radio" v-model="gender" value="2" /> Nữ
                 </div>
               </div>
               <div class="email">
@@ -45,18 +43,18 @@
                 </div>
                 <div class="name-email">
                   <div class="from-control">
-                    <select name id class="form-input" v-model="provide">
-                      <option value v-for="(index,n)  in 30" :key="n.id">{{ index }}</option>
+                    <select name id class="form-input" v-model="day">
+                      <option :value="index" v-for="(index,n)  in 30" :key="n.id">{{ index }}</option>
                     </select>
                   </div>
                   <div class="from-control">
-                    <select name id class="form-input" v-model="provide">
-                      <option value v-for="(index,n)  in 12" :key="n.id">{{ index }}</option>
+                    <select name id class="form-input" v-model="month">
+                      <option :value="index" v-for="(index,n)  in 12" :key="n.id">{{ index }}</option>
                     </select>
                   </div>
                   <div class="from-control">
-                    <select name id class="form-input" v-model="provide">
-                      <option value v-for="(index,n)  in 30" :key="n.id">{{ index }}</option>
+                    <select name id class="form-input" v-model="year">
+                      <option :value="index" v-for="(index,n)  in years" :key="n.id">{{ index }}</option>
                     </select>
                   </div>
                 </div>
@@ -69,24 +67,14 @@
             </div>
             <div class="content-right">
               <div class="img">
-                <img
-                  :src="$store.state.authUser.avatar"
-                  alt
-                  v-if="$store.state.authUser.avatar"
-                />
-                <img
-                  :src="image"
-                  alt
-                  v-if="!image || $store.state.authUser.avatar == ''"
-                />
+                <img :src="$store.state.authUser.avatar" alt v-if="$store.state.authUser.avatar" />
+                <img :src="image" alt v-if="!image || $store.state.authUser.avatar == ''" />
                 <!-- <img
                   :src="image"
                   alt
                   v-if="image || $store.state.authUser.avatar"
-                /> -->
-                <div class="no-avatar" v-else>
-
-                </div>
+                />-->
+                <!-- <div class="no-avatar" v-else></div> -->
               </div>
               <label for="file-input">
                 <img src="https://goo.gl/pB9rpQ" alt />
@@ -106,16 +94,32 @@ export default {
   components: {
     NavBar
   },
-  data(){
-    return{
-      image:'',
-      provide:'',
-      seleted : 1
+  data() {
+    return {
+      image: this.$store.state.authUser.image,
+      provide: "",
+      seleted: 1,
+      nameShop: "",
+      gender: "",
+      day: this.$store.state.authUser.day,
+      month: this.$store.state.authUser.month,
+      year: this.$store.state.authUser.year,
+      gender: this.$store.state.authUser.gender,
+      showPopUpdateProfile : false
+    };
+  },
+  computed: {
+    years() {
+      const year = new Date().getFullYear();
+      return Array.from(
+        { length: year - 1900 },
+        (value, index) => 1901 + index
+      );
     }
-  },  
+  },
   methods: {
     onImageChange(e) {
-      this.$store.state.authUser.avatar = ''
+      this.$store.state.authUser.avatar = "";
       console.log("1");
       let file;
       file = this.$refs.file.files[0];
@@ -132,15 +136,28 @@ export default {
         })
         .catch(function() {
           console.log("FAILURE!!");
-        });
+        }); 
     },
-    save(){
+    save() {
+      // this.$store.state.authUser.day = this.day;
+      // this.$store.state.authUser.avatar = this.image;
+      // this.$store.state.authUser.month = this.month;
+      // this.$store.state.authUser.gender = this.gender;
+      // this.$store.state.authUser.year = this.year;
       this.$axios
-        .post("/api/user/edit",{
-          avatar : this.image
+        .post("/api/user/edit", {
+          avatar: this.image,
+          gender: this.gender,
+          day: this.day,
+          month: this.month,
+          year: this.year
         })
         .then(response => {
-          console.log('ok')
+          this.$store.commit("SET_USER", response.data);
+          this.showPopUpdateProfile = true
+          setTimeout(() => {
+            this.showPopUpdateProfile = false;
+          }, 2500);
         })
         .catch(function() {
           console.log("FAILURE!!");
@@ -151,9 +168,62 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#file-input{
+#file-input {
   display: none;
 }
+
+.pop-up {
+  width: 100%;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 90;
+  left: 0;
+  top: 0;
+  left: 0;
+  position: fixed;
+  border-radius: 15px; 
+  .content {
+    margin: auto;
+    width: 400px;
+    padding: 20px;
+    height: 200px;
+    background: white;
+    margin-top: 10%;
+    .title{
+      font-size: 20px;
+      margin: auto; 
+    }
+    .txt-input {
+      width: 100%;
+      height: 30px;
+      margin-top: 20px;
+
+      input[type="text"] {
+        width: 100%;
+        height: 100%;
+        border: grey 1px solid;
+        padding: 4px 5px;
+      }
+    }
+    .button {
+      margin-top: 20px;
+      .confirm {
+        background: #2b3278;
+        border: none;
+        color: white;
+        margin-right: 20px;
+        padding: 10px 30px;
+      }
+      .close {
+        border: grey 1px solid;
+        background: white;
+        color: black;
+        padding: 10px 30px;
+      }
+    }
+  }
+}
+
 a {
   text-decoration: none;
 }
@@ -173,7 +243,7 @@ ul li {
   .content-right {
     width: 80%;
     padding: 10px;
-    .no-avatar{
+    .no-avatar {
       width: 100px;
       height: 100px;
       border: 1px solid gray;
