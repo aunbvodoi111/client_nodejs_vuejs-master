@@ -6,7 +6,7 @@
         <div class="swiper-container">
           <div class="swiper-wrapper">
             <div class="swiper-slide" v-for="item in local" :key="item.id">
-              <div class="product-div">
+              <div class="product-div" :title="item.name">
                 <nuxt-link :to="`/${item.id}`">
                   <div class="img">
                     <img :src="item.image" alt />
@@ -37,7 +37,7 @@
         <div class="swiper-container">
           <div class="swiper-wrapper">
             <div class="swiper-slide" v-for="item in productRela" :key="item.id">
-              <div class="product-div">
+              <div class="product-div" :title="item.name">
                 <nuxt-link :to="`/${item.id}`">
                   <div class="img">
                     <img :src="item.image" alt />

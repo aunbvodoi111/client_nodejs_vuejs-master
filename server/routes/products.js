@@ -363,6 +363,7 @@ router.get('/detailPr/:id', async (req, res) => {
             ]
         }, { model: models.users },
         { model: models.subcates },
+        { model: models.cates },
         {
             model: models.comments,
             as: 'comments',

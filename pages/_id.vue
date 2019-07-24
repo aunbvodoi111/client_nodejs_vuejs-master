@@ -58,8 +58,10 @@
         </div>
         <div class></div>
       </div>
-      <div class="title-content">
-        <h4>Trang chủ > {{ product.subcate.name}}</h4>
+      <div class="title-content" style="padding : 20px 0px;">
+        <h4><nuxt-link to="/"> Trang chủ  </nuxt-link> > 
+        <nuxt-link :to="`/shop/${product.cate.id}`">{{ product.cate.name}} </nuxt-link>> 
+        <nuxt-link :to="`/shop/${product.cate.id}`">{{ product.subcate.name}} </nuxt-link></h4>
       </div>
       <div class="content-detail-pr">
         <div class="content-left">
@@ -634,6 +636,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+a {
+  color: black;
+  font-size: 14px;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: none;
+}
 button {
   cursor: pointer;
 }

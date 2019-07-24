@@ -25,6 +25,7 @@ module.exports = (sequelize, DataTypes) => {
     Product.hasOne(models.provinces, {
       as: 'province', foreignKey: 'id', sourceKey: 'ProvinceId'
     });
+    Product.belongsTo(models.cates,{ foreignKey: 'CateId'})
     Product.belongsTo(models.subcates,{ foreignKey: 'SubcateId'})
     Product.belongsTo(models.users, {foreignKey: 'UserId'});
     // Product.belongsToMany(models.users, {  

@@ -27,7 +27,7 @@
             </div>
             <div class="product-content" v-else>
               <div class="product" v-for="item in local" :key="item.id">
-                <div class="product-div" >
+                <div class="product-div" :title="item.name">
                   <nuxt-link :to="`/${item.id}`">
                     <div class="img-product">
                       <img :src=" `${item.image} `" alt />

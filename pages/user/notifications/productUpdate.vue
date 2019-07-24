@@ -13,7 +13,7 @@
             </div>
             <div class="bill-content" v-else>
               <div class="bill-div" v-for="item in nofi" :key="item.id">
-                <div class="content">
+                <div class="content" >
                   <div class="img">
                     <img :src="item.product.image" alt />
                   </div>

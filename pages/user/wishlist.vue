@@ -14,7 +14,7 @@
             </div>
             <div class="product-content" v-else>
               <div class="product" v-for="item in wishs" :key="item.id">
-                <div class="product-div" @click="submit(item)">
+                <div class="product-div" @click="submit(item)" :title="item.name">
                   <nuxt-link :to="`/${item.id}`">
                     <div class="img-product">
                       <img :src=" `${item.image} `" alt />
