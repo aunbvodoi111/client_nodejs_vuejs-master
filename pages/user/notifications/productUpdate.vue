@@ -26,7 +26,9 @@
                     <p> {{ moment(item.created_at).format('LLLL') }}</p>
                   </div>
                   <div class="div-left">
-                    <button>Xem chi tiết sản phẩm</button>
+                    <a :href="`http://localhost:8000/product/${item.ProductId}`" target="_blank">
+                      <button>Xem chi tiết sản phẩm</button>
+                    </a>
                   </div>
                 </div>
               </div>

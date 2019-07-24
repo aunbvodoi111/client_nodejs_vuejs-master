@@ -66,7 +66,10 @@
           <div class="img">
             <img :src="product.image" alt v-if="idImage == ''" @click=" showPopDetail()" />
             <img :src="ImageHover.image" alt v-if="idImage != ''" @click=" showPopDetail()" />
-            <div class="nofj-out-of-stock" v-if="product.qty == 0 && product.classifies.length == 0">
+            <div
+              class="nofj-out-of-stock"
+              v-if="product.qty == 0 && product.classifies.length == 0"
+            >
               <p>Hết hàng</p>
             </div>
             <div class="nofj-out-of-stock" v-if="sumQty == 0 && product.classifies.length">
@@ -178,6 +181,10 @@
               </span>sản phẩm có sẵn
             </span>
           </div>
+          <p
+            style="color:red;font-size : 15px;"
+            v-show="chooseClassify"
+          >Vui lòng chọn Phân loại hàng</p>
           <div
             class="btn-action-detail"
             v-if=" $store.state.authUser && $store.state.authUser.id != product.user.id"
@@ -299,13 +306,14 @@ export default {
       showPopMaxQtyProduct: false,
       sumQty: 0,
       ClassifyId: 0,
-      priceClassify : 0
+      priceClassify: 0,
+      chooseClassify: false
     };
   },
   created() {},
   methods: {
-    showPopDetail(){
-      this.showPopDetailImg = true
+    showPopDetail() {
+      this.showPopDetailImg = true;
       // this.product.mulimages.push(this.product.image)
     },
     sumQtynew() {
@@ -323,7 +331,7 @@ export default {
       this.sumQty = item.qty;
       this.qtyProduct = 1;
       this.ClassifyId = item.id;
-      this.priceClassify = item.price
+      this.priceClassify = item.price;
     },
     anhquyok() {
       this.idImage = "";
@@ -381,7 +389,7 @@ export default {
         this.$axios
           .post("/api/wishe/add", {
             ProductId: this.product.id,
-            UserIdSaler: this.product.user.id,
+            UserIdSaler: this.product.user.id
           })
           .then(response => {
             console.log(response);
@@ -394,6 +402,14 @@ export default {
         changeQty = this.cart_details.qty + Number(this.qtyProduct);
       } else {
         changeQty = 0;
+      }
+
+      if (this.product.classifies.length > 0) {
+        if (this.ClassifyId == 0) {
+          this.chooseClassify = true;
+        } else {
+          this.chooseClassify = false;
+        }
       }
 
       if (!this.$store.state.authUser) {
@@ -412,7 +428,7 @@ export default {
               ProductId: this.product.id,
               qty: this.qtyProduct,
               UserIdSaler: this.product.user.id,
-              ClassifyId : this.ClassifyId
+              ClassifyId: this.ClassifyId
             })
             .then(response => {
               console.log(response);
@@ -420,10 +436,16 @@ export default {
               this.$store.commit("ADD_TO_CART", this.qtyProduct);
             });
         }
-      } else if (this.sumQty > 0 && this.product.classifies.length > 0) {
-        console.log("ok");
+      } else if (
+        this.sumQty > 0 &&
+        this.product.classifies.length > 0 &&
+        this.ClassifyId > 0
+      ) {
+        console.log('chay vao day ');
+        console.log(this.ClassifyId);
+        this.chooseClassify = false;
         if (changeQty > this.sumQty) {
-          console.log(changeQty);
+          
           this.showPopMaxQtyProduct = true;
         } else {
           this.showNofication = true;
@@ -435,7 +457,7 @@ export default {
               ProductId: this.product.id,
               qty: this.qtyProduct,
               UserIdSaler: this.product.user.id,
-              ClassifyId : this.ClassifyId
+              ClassifyId: this.ClassifyId
             })
             .then(response => {
               console.log(response);
@@ -462,14 +484,35 @@ export default {
       }
     },
     buyProduct() {
+      if (this.product.classifies.length > 0) {
+        if (this.ClassifyId == 0) {
+          this.chooseClassify = true;
+        } else {
+          this.chooseClassify = false;
+        }
+      }
       if (!this.$store.state.authUser) {
         this.$store.commit("OPEN_REGISTER");
-      } else {
+      } else if(this.product.classifies.length == 0) {
         this.$axios
           .post("/api/cart/add", {
             ProductId: this.product.id,
             qty: this.qtyProduct,
-            UserIdSaler: this.product.user.id
+            UserIdSaler: this.product.user.id,
+            ClassifyId: this.ClassifyId
+          })
+          .then(response => {
+            this.$router.push("/cart");
+            console.log(response);
+            this.$store.commit("ADD_TO_CART", this.qtyProduct);
+          });
+      }else if(this.product.classifies.length > 0 && this.ClassifyId > 0) {
+        this.$axios
+          .post("/api/cart/add", {
+            ProductId: this.product.id,
+            qty: this.qtyProduct,
+            UserIdSaler: this.product.user.id,
+            ClassifyId: this.ClassifyId
           })
           .then(response => {
             this.$router.push("/cart");
@@ -535,7 +578,7 @@ export default {
         if (tmp < lowest) lowest = tmp;
         if (tmp > highest) highest = tmp;
       }
-      return lowest
+      return lowest;
     },
     maxPrice() {
       var lowest = Number.POSITIVE_INFINITY;
@@ -546,7 +589,7 @@ export default {
         if (tmp < lowest) lowest = tmp;
         if (tmp > highest) highest = tmp;
       }
-      return highest
+      return highest;
     },
     ImageHover() {
       if (this.idImage) {

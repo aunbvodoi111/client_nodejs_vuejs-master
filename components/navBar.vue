@@ -22,17 +22,18 @@
             <div class="pop-nofi" v-if="showPopNofi" 
                 @mouseenter="showPopNofi = true"
                 @mouseleave="showPopNofi = false">
-              <div class="content"  v-for="item in ListNofi" >
+              <div class="content"  v-for="item in ListNofi" :key="item.id">
                 <div class="img">
-                  <img :src="item.userBy.avatar" alt  />
+                  <img :src="item.user.avatar" alt  />
                 </div>
                 <div class="content-right">
                   <div class="title">
                      {{ item.title }}
                   </div>
                   <div class="content-main">
-                    <p> <span style="font-weight:bold;" v-if=" item.userBy.name != $store.state.authUser.name">{{item.userBy.name}}</span>
-                      <span style="font-weight:bold;" v-if=" item.user.name != $store.state.authUser.name">{{item.user.name}}</span>
+                    <p> 
+                      <!-- <span style="font-weight:bold;" v-if=" item.userBy.name != $store.state.authUser.name">{{item.userBy.name}}</span>
+                      <span style="font-weight:bold;" v-if=" item.user.name != $store.state.authUser.name">{{item.user.name}}</span> -->
                       {{ item.content }}
                     </p>
                   </div>
@@ -149,7 +150,7 @@ export default {
     };
   },
   created() {
-
+    this.totalCart()
   },
   beforeMount() {
     socket.on("nofi-product", message => {
@@ -169,6 +170,13 @@ export default {
     }
   },
   methods: {
+    totalCart(){
+      this.$axios.get("/api/product")
+      .then( response =>{
+        console.log(response.data)
+        this.$store.commit("LIST_CART", response.data.sumQty);
+      });
+    },
     deleteCart(item) {
       var index = this.carts.indexOf(item);
       this.carts.splice(index, 1);

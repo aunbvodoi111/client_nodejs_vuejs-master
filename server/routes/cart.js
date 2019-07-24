@@ -177,13 +177,13 @@ router.post('/addCartCustomer', async (req, res) => {
                 });
     
                 bill_details.save()
-                var product = await models.products.findOne({ where: { id: carts[i].cart_details[j].ProductId } })
-                var qty = product.qty
-                await product.update({
+                var classify = await models.classifies.findOne({ where: { id: carts[i].cart_details[j].classifies.id } })
+                var qty = classify.qty
+                await classify.update({
                     qty: qty - carts[i].cart_details[j].qty
                 })
                 listUser.push(product)
-                if(product.qty == 0){
+                if(classify.qty == 0){
                     await models.product__notis.create({
                         content : 'vui lòng  bổ sung thêm hàng hoặc đăng sản phẩm mới .',
                         ProductId : product.id,

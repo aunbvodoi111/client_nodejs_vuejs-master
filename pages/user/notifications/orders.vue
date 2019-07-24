@@ -30,11 +30,11 @@
             </div>
             <div class="bill-content" v-else>
               <div class="bill-div" v-for="item in bills" :key="item.id">
-                <div class="content">
+                <div class="content" v-if="item.UserIdSaler == $store.state.authUser.id  && item.status == 1 ">
                   <div class="img"  v-if=" item.userBy.name != $store.state.authUser.name">
                     <img :src="item.userBy.avatar" alt  />
                   </div>
-                  <div class="img"  v-if="item.userSl.name != $store.state.authUser.name">
+                  <div class="img"  v-if="item.user.name != $store.state.authUser.name">
                     <img :src="item.user.avatar" alt  />
                   </div>
                   <div class="div-center">
@@ -46,8 +46,34 @@
                     </p>
                     <p> {{ moment(item.created_at).format('LLLL') }}</p>
                   </div>
-                  <div class="div-left">
-                    <button>Xem chi tiết sản phẩm</button>
+                  <div class="div-left" v-if="item.status == 1">
+                    <a :href="`http://localhost:8000/order/detail/${item.BillId}`">
+                      <button>Xem chi tiết sản phẩm</button>
+                    </a>
+                  </div>
+                
+                </div>
+                <div class="content" v-if="item.UserIdBuyer == $store.state.authUser.id  && item.status == 0 ">
+                  <div class="img"  v-if=" item.userBy.name != $store.state.authUser.name">
+                    <img :src="item.userBy.avatar" alt  />
+                  </div>
+                  <div class="img"  v-if="item.user.name != $store.state.authUser.name">
+                    <img :src="item.user.avatar" alt  />
+                  </div>
+                  <div class="div-center">
+                    <h4>{{ item.title }}</h4>
+                    <p>
+                      <span style="font-weight:bold;" v-if=" item.userBy.name != $store.state.authUser.name">{{item.userBy.name}}</span>
+                      <span style="font-weight:bold;" v-if=" item.user.name != $store.state.authUser.name">{{item.user.name}}</span>
+                      <span>{{ item.content }}</span>
+                    </p>
+                    <p> {{ moment(item.created_at).format('LLLL') }}</p>
+                  </div>
+                  
+                  <div class="div-left" v-if="item.status == 0">
+                    <nuxt-link :to="`/user/order/${item.BillId}`">
+                      <button>Xem chi tiết sản phẩm</button>
+                    </nuxt-link>
                   </div>
                 </div>
               </div>

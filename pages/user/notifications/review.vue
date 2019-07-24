@@ -45,7 +45,9 @@
                     <p> {{ moment(item.created_at).format('LLLL') }}</p>
                   </div>
                   <div class="div-left">
-                    <button>Xem chi tiết sản phẩm</button>
+                    <nuxt-link :to="`/${ item.ProductId }`">
+                      <button>Xem chi tiết sản phẩm</button>
+                    </nuxt-link>
                   </div>
                 </div>
               </div>

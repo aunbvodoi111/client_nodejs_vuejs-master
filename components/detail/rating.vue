@@ -400,7 +400,8 @@ export default {
       rating.rep_ratings.push({
         content: item.contentcmt,
         user: {
-          name: this.$store.state.authUser.name
+          name: this.$store.state.authUser.name,
+          UserId: this.$store.state.authUser.id
         }
       });
       this.$axios

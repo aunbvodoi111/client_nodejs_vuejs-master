@@ -177,7 +177,7 @@
                   <div class="content">
                     <p v-if="item.status == 0 ">{{ item.content }}</p>
                     <p v-if="item.status == 1" style="background:white;box-shadow: 2px 2px 2px 2px rgba(0,0,0,.1); padding : 10px 0px;">
-                      <nuxt-link :to="`/user/order/${item.ProductId}`">
+                      <nuxt-link :to="`/${item.ProductId}`">
                         <div style="display:flex;">
                           <img :src="item.product.image" width="50px" style="width: 30% ; height : 70px;font-size : 12px; padding : 0px;"/>
                           <div style="width: 70% ;font-size : 13px; padding : 0px;" v-if="item.product != null">
@@ -235,7 +235,7 @@
                       </nuxt-link>
                     </p>
                     <p v-if="item.status == 2">
-                      <nuxt-link :to="`/${item.BillId}`">
+                      <nuxt-link :to="`/user/order/${item.BillId}`">
                         <div style="display:flex;">
                           <img :src="item.bill.bill_details[0].image" width="50px" style="width: 30% ; height : 70px;font-size : 12px; padding : 0px;"/>
                           <div style="width: 70% ;font-size : 13px; padding : 0px;" v-if="item.bill != null">
@@ -245,9 +245,9 @@
                         </div>
                       </nuxt-link>
                     </p>
-                    <p v-if="item.status == 3 ">
+                    <p v-if="item.status == 3 " @click="clickZoomIamge(item)"  style="box-shadow: 0 1px 1px rgba(0,0,0,.1);background:white;cursor: pointer;">
                    
-                        <img :src="item.image" width="50px" style="cursor: pointer;"/>
+                        <img :src="item.image" width="75%" style="cursor: pointer;" />
                         <!-- <p v-if="item.bill != null">{{ item.id }}</p> -->
                       
                     </p>
@@ -755,7 +755,7 @@ a{
   background: white;
   bottom: 0;
   right: 0;
-  z-index: 99;
+  z-index: 999;
   display: flex;
   .pop-up-Product {
     width: 100%;

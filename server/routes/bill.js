@@ -99,7 +99,11 @@ router.post('/cancelOrder', async (req, res) => {
                 // where: { UserIdBuyer: anhquy.UserIdBuyer },
                 include: [{
                     model: models.products,
-                    as: 'product'
+                    as: 'product',
+                    include: [{
+                        model: models.classifies,
+                        as: 'classifies',
+                    }]
                 }]
             }, {
                 model: models.users,
@@ -110,13 +114,23 @@ router.post('/cancelOrder', async (req, res) => {
             status : 4
         })
         for( var i = 0; i < item.bill_details.length ; i++){
-            var product = await models.products.findOne({
-                where :{ id : item.bill_details[i].Product_Id }
-            })
-            var qty  =  product.qty
-            product.update({
-                qty : qty + item.bill_details[i].qty
-            })
+            if( item.bill_details[i].classifies == null ){
+                var product = await models.products.findOne({
+                    where :{ id : item.bill_details[i].Product_Id }
+                })
+                var qty  =  product.qty
+                product.update({
+                    qty : qty + item.bill_details[i].qty
+                })
+            }else{
+                var classify = await models.classifies.findOne({ where: { id: item.bill_details[i].classifies.id } })
+
+                var qty = classify.qty
+                await classify.update({
+                    qty: qty + item.bill_details[i].qty
+                })
+            }
+            
         }
     }
     return res.json(bill)
