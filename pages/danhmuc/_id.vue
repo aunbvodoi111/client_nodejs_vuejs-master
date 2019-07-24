@@ -5,13 +5,19 @@
         <div class="title-filter">
           <h4>BỘ LỌC TÌM KIẾM</h4>
           <div class="filter-cate">
-            <p>Theo danh mục</p>
+            <p style=" font-weight:bold;">Theo danh mục</p>
             <ul>
               <li
                 v-for="item in products.subcates"
                 @click="filter(item.id)"
                 :key="item.id"
               >{{ item.name }}</li>
+            </ul>
+          </div>
+          <div class="filter-cate" style="border-top: 1px solid grey;">
+            <p style="margin-top:15px; font-weight:bold;">Nơi bán</p>
+            <ul>
+              <li v-for="item in provide" :key="item.id" @click="filterProvincen(item.id)">{{ item.name }}</li>
             </ul>
           </div>
           <!-- <div class="filter-rating">
@@ -63,6 +69,12 @@
             <i class="far fa-window-close" @click="CateId = ''"></i>
           </button>
         </span>
+        <span v-for="item in provide" :key="item.id">
+          <button v-if="item.id == ProvinceId">
+            {{ item.name }}
+            <i class="far fa-window-close" @click="ProvinceId = ''"></i>
+          </button>
+        </span>
         <button v-if="sort == 1">
           Từ thấp đến cao
           <i class="far fa-window-close" @click="sort = ''"></i>
@@ -95,6 +107,14 @@
             <div class="price">
               <p>₫{{ formatPrice(item.discount) }}</p>
             </div>
+            <div class="star" v-if="item.ratings.length">
+              <i class="fas fa-star" v-for="n in avg(item)" :key="n"></i><i class="far fa-star" v-for="n in 5 - avg(item)" :key="n"></i>
+              <span>({{ item.ratings.length }} nhận xét)</span>
+            </div>
+            <div class="star" v-if="item.ratings.length == 0">
+              <i class="far fa-star" v-for="n in 5 " :key="n"></i>
+              <span>(chưa có nhận xét)</span>
+            </div>
           </div>
         </div>
         <div style=" clear:both;"></div>
@@ -119,19 +139,94 @@ export default {
         this.sort == 1 &&
         this.maxprice &&
         this.minprice &&
+        this.ProvinceId &&
         this.filterPrice
       ) {
         return this.products.products
           .filter(product => product.SubcateId === this.CateId)
+          .filter(product => product.ProvinceId === this.ProvinceId)
           .sort((a, b) => a.discount - b.discount)
           .filter(
             product =>
               product.discount >= this.minprice &&
               product.discount <= this.maxprice
           );
-      } else if (
-        this.CateId &&
+      }
+      else if (
+        this.CateId =='' &&
         this.sort == "" &&
+        this.sort == "" &&
+        this.maxprice == "" &&
+        this.ProvinceId
+      ) {
+        return this.products.products.filter(
+          product => product.ProvinceId === this.ProvinceId
+        );
+      }
+      else if (
+        this.CateId  &&
+        this.sort == "" &&
+        this.sort == "" &&
+        this.maxprice == "" &&
+        this.ProvinceId
+      ) {
+        return this.products.products
+        .filter(product => product.ProvinceId === this.ProvinceId)
+        .filter(product => product.SubcateId === this.CateId)
+      }
+      else if (
+        this.CateId  &&
+        this.sort == 1 &&
+        this.maxprice == "" &&
+        this.ProvinceId
+      ) {
+        return this.products.products
+        .filter(product => product.ProvinceId === this.ProvinceId)
+        .filter(product => product.SubcateId === this.CateId)
+        .sort((a, b) => a.discount - b.discount)
+      }
+      else if (
+        this.CateId  &&
+        this.sort == -1 &&
+        this.maxprice == "" &&
+        this.ProvinceId
+      ) {
+        return this.products.products
+        .filter(product => product.ProvinceId === this.ProvinceId)
+        .filter(product => product.SubcateId === this.CateId)
+        .sort((a, b) => b.discount - a.discount)
+      }
+      else if (
+        this.CateId  &&
+        this.sort == "" &&
+        this.maxprice &&
+        this.ProvinceId
+      ) {
+        return this.products.products
+        .filter(product => product.ProvinceId === this.ProvinceId)
+        .filter(product => product.SubcateId === this.CateId)
+        .filter(
+            product =>
+              product.discount >= this.minprice &&
+              product.discount <= this.maxprice
+          );
+      }
+      else if (
+        this.CateId == "" &&
+        this.sort == "" &&
+        this.maxprice &&
+        this.ProvinceId
+      ) {
+        return this.products.products
+        .filter(product => product.ProvinceId === this.ProvinceId)
+        .filter(
+            product =>
+              product.discount >= this.minprice &&
+              product.discount <= this.maxprice
+          );
+      }
+       else if (
+        this.CateId &&
         this.sort == "" &&
         this.maxprice == ""
       ) {
@@ -147,6 +242,7 @@ export default {
       ) {
         return this.products.products
           .filter(product => product.SubcateId === this.CateId)
+          .filter(product => product.ProvinceId === this.ProvinceId)
           .sort((a, b) => b.discount - a.discount)
           .filter(
             product =>
@@ -225,6 +321,22 @@ export default {
       } else {
         return this.products.products;
       }
+    },
+    provide() {
+      var subcates = [];
+      for (var i = 0; i < this.products.products.length; i++) {
+        console.log(this.products.products[i].province)
+        subcates = [...subcates,this.products.products[i].province]
+      }
+      
+      var uniqueAddresses
+       uniqueAddresses = Array.from(new Set(subcates.map(a => a.name))).map(
+        name => {
+           return subcates.find(a => a.name === name);
+        }
+      );
+      console.log(uniqueAddresses)
+      return uniqueAddresses
     }
   },
   data() {
@@ -233,10 +345,28 @@ export default {
       sort: "",
       minprice: "",
       maxprice: "",
-      filterPrice: ""
+      filterPrice: "",
+      ProvinceId:''
     };
   },
   methods: {
+    filterProvincen(value){
+      this.ProvinceId = value;
+    },
+    avg(value) {
+      var sum = 0;
+      var avg = 0;
+      for (var i = 0; i < value.ratings.length; i++) {
+        sum += value.ratings[i]["star"];
+      }
+      // return avg = parseInt(sum/value.danhgias.length);
+      if (sum == 0) {
+        return sum;
+      }
+      if (sum > 0) {
+        return Math.ceil(sum / value.ratings.length);
+      }
+    },
     filter(value) {
       console.log(value)
       this.CateId = value;
@@ -362,7 +492,7 @@ a:hover {
         .product {
           float: left;
           width: 20%;
-          height: 275px;
+          height: 300px;
           padding: 3px;
           .product-div {
             border: 1px solid transparent;
@@ -389,6 +519,17 @@ a:hover {
               padding: 4px;
               color: red;
               margin-top: 10px;
+            }
+            .star {
+              padding: 4px;
+              i {
+                font-size: 10px;
+                color: #fd9727;
+              }
+              span {
+                font-size: 11px;
+                color: grey;
+              }
             }
           }
         }

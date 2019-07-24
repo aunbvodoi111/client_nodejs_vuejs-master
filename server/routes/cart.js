@@ -290,6 +290,9 @@ router.get('/', async (req, res) => {
             console.log('ok dc k ')
             carts = await models.carts.findAll({
                 where: { UserIdBuyer: findCart.UserIdBuyer },
+                order: [
+                    ['id', 'DESC'],
+                ],
                 include: [{
                     model: models.cart_details,
                     as: 'cart_details',
@@ -330,6 +333,9 @@ router.get('/checkout', async (req, res) => {
         var districts = await models.districts.findAll({})
         addresss = await models.addresses.findAll({
             where :{UserId : req.user.id},
+            order: [
+                ['id', 'DESC'],
+            ],
             include: [{
                 model: models.districts,
                 as: 'district'

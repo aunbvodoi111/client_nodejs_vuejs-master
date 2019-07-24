@@ -93,6 +93,9 @@ router.post('/cancelOrder', async (req, res) => {
     if (req.user) {
         var bill = await models.bills.findOne({
             where :{ id : item.id },
+            order: [
+                ['id', 'DESC'],
+            ],
             include: [{
                 model: models.bill_details,
                 as: 'bill_details',

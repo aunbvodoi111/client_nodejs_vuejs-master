@@ -121,7 +121,7 @@
         <div class="content-right">
           <h2>{{ product.name }}</h2>
           <div class="rating-total-detail">
-            <div class="total-rating">
+            <div class="total-rating" v-if='product.ratings.length'>
               {{ mediumstar.toFixed(1) }}
               <i
                 class="fas fa-star"
@@ -130,8 +130,10 @@
               ></i>
               <i class="far fa-star" v-for=" n in 5-Math.floor(mediumstar)" :key=" n + 200"></i>
             </div>
-            <div class="number-rating">{{ product.ratings.length }} đánh giá</div>
+            <div class="number-rating" v-if='product.ratings.length'>{{ product.ratings.length }} đánh giá</div>
+            <div class="number-rating" v-if='product.ratings.length == 0'> Chưa Có Đánh Giá </div>
             <div class="number-rating">{{ product.sold }} đã bán</div>
+            
           </div>
           <div class="price-detail" v-if="product.classifies.length == 0 && priceClassify == 0">
             <span class="payment">₫ {{ formatPrice(product.price) }}</span>

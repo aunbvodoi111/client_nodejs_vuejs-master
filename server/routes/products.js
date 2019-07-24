@@ -16,6 +16,10 @@ router.get('/', async (req, res) => {
         order: [
             ['id', 'DESC'],
         ],
+        include: [{
+            model: models.ratings,
+            as: 'ratings',
+        }]
     })
     var carts = []
     var anhquy
@@ -68,7 +72,13 @@ router.get('/danhmuc/:id', async (req, res) => {
             include: [{
                 model: models.mulimages,
                 as: 'mulimages',
-            }]
+            },{
+                model: models.ratings,
+                as: 'ratings',
+            },{
+                model: models.provinces,
+                as: 'province',
+            }],
         }, {
             model: models.subcates,
             as: 'subcates',
@@ -85,9 +95,17 @@ router.get('/shop/:id', async (req, res) => {
     var { id } = req.params
     var products = await models.products.findAll({
         where: { UserId: id },
-        include: [{
+        include: [
+        {
+            model: models.ratings,
+            as: 'ratings',
+        },{
             model: models.users,
-        },{ model: models.subcates }
+        },{ model: models.subcates },
+        {
+            model: models.provinces,
+            as: 'province',
+        }
         ]
     })
     var user = await models.users.findOne({
@@ -152,8 +170,16 @@ router.get('/search/:keyword', async (req, res) => {
     var products = await models.products.findAll({
         where: { name: { [Op.like]: '%' + keyword + '%' } },
         include: [
-            { model: models.subcates }
-        ]
+            { model: models.subcates },
+            {
+                model: models.ratings,
+                as: 'ratings',
+            },
+            {
+                model: models.provinces,
+                as: 'province',
+            }
+        ],
     })
     var users = await models.users.findAll({
         where: { name: { [Op.like]: '%' + keyword + '%' } }
@@ -196,39 +222,7 @@ router.post('/login',
         }
     })
     console.log(roomfind)
-    // if (!roomfind) {
-    //     console.log('dấdsas')
-    //     var room = await models.rooms.create({ name: req.user.name + user.name, UserName1: req.user.id, UserName2: user.id });
-    //     room.save()
-    //     var rooms  = await models.rooms.findAll({
-    //         where:{ [Op.or]: [ { UserName1: req.user.id }, { UserName2: req.user.id }] },
-    //         include: [{
-    //             model: models.messagers,
-    //             as: 'messagers',
-    //             include:[{
-    //                 model : models.products,
-    //                 as:'product'
-    //               },{
-    //                 model : models.bills,
-    //                 as:'bill',
-    //                 include: [{
-    //                     model: models.bill_details,
-    //                     as: 'bill_details',
-    //                 }]
-    //               },{
-    //                 model : models.users,
-    //               }]
-    //         },{
-    //             model: models.users,
-    //             as:'user1', 
-    //         },
-    //         {
-    //             model: models.users,
-    //             as:'user2', 
-    //         }]
-    //     })
-    //     return res.json(rooms)
-    // }
+
     var rooms  = await models.rooms.findAll({
         where:{ [Op.or]: [ { UserName1: req.user.id }, { UserName2: req.user.id }] },
         include: [{

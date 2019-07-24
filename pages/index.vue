@@ -62,9 +62,13 @@
             <div class="price">
               <p>₫{{ formatPrice(item.discount) }}</p>
             </div>
-            <div class="star">
-              <i class="fas fa-star" v-for="n in 5" :key="n"></i>
-              <span>(5 nhận xét)</span>
+            <div class="star" v-if="item.ratings.length">
+              <i class="fas fa-star" v-for="n in avg(item)" :key="n"></i><i class="far fa-star" v-for="n in 5 - avg(item)" :key="n"></i>
+              <span>({{ item.ratings.length }} nhận xét)</span>
+            </div>
+            <div class="star" v-if="item.ratings.length == 0">
+              <i class="far fa-star" v-for="n in 5 " :key="n"></i>
+              <span>(chưa có nhận xét)</span>
             </div>
           </div>
         </div>
@@ -103,6 +107,20 @@ export default {
     this.fetchProduct();
   },
   methods: {
+    avg(value) {
+      var sum = 0;
+      var avg = 0;
+      for (var i = 0; i < value.ratings.length; i++) {
+        sum += value.ratings[i]["star"];
+      }
+      // return avg = parseInt(sum/value.danhgias.length);
+      if (sum == 0) {
+        return sum;
+      }
+      if (sum > 0) {
+        return Math.ceil(sum / value.ratings.length);
+      }
+    },
     fetchProduct() {},
     submit(item) {
       var anhquy = [];
