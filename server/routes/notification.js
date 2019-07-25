@@ -15,7 +15,9 @@ router.get('/', async (req, res) => {
             },{
                 [Op.and]:[{ UserIdBuyer: req.user.id },{ status: 0 }]
             }]},
-           
+            order: [
+                ['id', 'DESC'],
+            ],
             // attributes: ['UserIdSaler', 'UserIdBuyer'],
             include:[{
                 model: models.users,
@@ -42,7 +44,9 @@ router.get('/action', async (req, res) => {
             },{
                 [Op.and]:[{ UserIdSaler: req.user.id },{ status: 0 }]
             }]},
-           
+            order: [
+                ['id', 'DESC'],
+            ],
             // attributes: ['UserIdSaler', 'UserIdBuyer'],
             include:[{
                 model: models.users,
@@ -65,7 +69,9 @@ router.get('/review', async (req, res) => {
     if (req.user) {
         notifications = await models.action__notis.findAll({
             where: { [Op.and]:[{ UserIdSaler: req.user.id },{ status: 3 }] },
-           
+            order: [
+                ['id', 'DESC'],
+            ],
             // attributes: ['UserIdSaler', 'UserIdBuyer'],
             include:[{
                 model: models.users,
@@ -88,7 +94,9 @@ router.get('/actionProduct', async (req, res) => {
     if (req.user) {
         notifications = await models.product__notis.findAll({
             where: { [Op.and]:[{ UserId: req.user.id },{ status: 1 }] },
-           
+            order: [
+                ['id', 'DESC'],
+            ],
             // attributes: ['UserIdSaler', 'UserIdBuyer'],
             include:[{
                 model: models.users,
@@ -110,6 +118,9 @@ router.get('/detail/:id', async (req, res) => {
 
         var anhquy = await models.bills.findOne({  
             where: { id: id },
+            order: [
+                ['id', 'DESC'],
+            ],
             include: [{
                 model: models.bill_details,
                 as: 'bill_details',

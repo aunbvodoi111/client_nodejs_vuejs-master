@@ -50,7 +50,7 @@
             <nuxt-link :to="`/${item.id}`">
               <div class="img">
                 <img :src=" `${item.image} `" alt />
-                <div class="percent-discount">
+                <div class="percent-discount" v-if="item.classifies.length == 0">
                   <p>{{ (100 - (item.discount / item.price)*100).toFixed(0) }}%</p>
                   <p>giảm</p>
                 </div>
@@ -59,8 +59,11 @@
             <div class="name">
               <nuxt-link :to="`/${item.name}`">{{ item.name }}</nuxt-link>
             </div>
-            <div class="price">
+            <div class="price" v-if="item.classifies.length == 0">
               <p>₫{{ formatPrice(item.discount) }}</p>
+            </div>
+            <div class="price" v-if="item.classifies.length > 0">
+              <p>₫{{ formatPrice(minPrice(item)) }} - ₫{{ formatPrice(maxPrice(item)) }}</p>
             </div>
             <div class="star" v-if="item.ratings.length">
               <i class="fas fa-star" v-for="n in avg(item)" :key="n"></i><i class="far fa-star" v-for="n in 5 - avg(item)" :key="n"></i>
@@ -110,6 +113,28 @@ export default {
     this.fetchProduct();
   },
   methods: {
+    minPrice(item) {
+      var lowest = Number.POSITIVE_INFINITY;
+      var highest = Number.NEGATIVE_INFINITY;
+      var tmp;
+      for (var i = item.classifies.length - 1; i >= 0; i--) {
+        tmp = item.classifies[i].price;
+        if (tmp < lowest) lowest = tmp;
+        if (tmp > highest) highest = tmp;
+      }
+      return lowest;
+    },
+    maxPrice(item) {
+      var lowest = Number.POSITIVE_INFINITY;
+      var highest = Number.NEGATIVE_INFINITY;
+      var tmp;
+      for (var i = item.classifies.length - 1; i >= 0; i--) {
+        tmp = item.classifies[i].price;
+        if (tmp < lowest) lowest = tmp;
+        if (tmp > highest) highest = tmp;
+      }
+      return highest;
+    },
     avg(value) {
       var sum = 0;
       var avg = 0;

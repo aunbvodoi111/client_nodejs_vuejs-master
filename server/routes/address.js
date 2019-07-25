@@ -162,18 +162,25 @@ router.post('/editAddress', async (req, res) => {
         addresses = await models.addresses.findOne({
             where: { id: id }
         })
-        addresses.update({
+        await addresses.update({
             name: name,
             phone: phone,
             ProvinceId: ProvinceId,
             DistrictId: DistrictId,
             address: address
-        }).then(function (address) {
-            return res.json(address)
         })
-    } else {
-        addresses = {}
+        var  addresss =  await models.addresses.findOne({
+            where :{ id : addresses.id },
+            include: [{
+                model: models.districts,
+                as: 'district'
+            },{
+                model: models.provinces,
+                as: 'province'
+            }]
+        })
+        return res.json(addresss)
     }
-    return res.json(addresses)
+    
 })
 module.exports = router;

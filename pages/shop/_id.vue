@@ -153,8 +153,11 @@
                 <a href>{{ item.name }}</a>
               </div>
             </nuxt-link>
-            <div class="price">
+            <div class="price" v-if="item.classifies.length == 0">
               <p>₫{{ formatPrice(item.discount) }}</p>
+            </div>
+            <div class="price" v-if="item.classifies.length > 0">
+              <p>₫{{ formatPrice(minPrice(item)) }} - ₫{{ formatPrice(maxPrice(item)) }}</p>
             </div>
             <div class="star" v-if="item.ratings.length">
               <i class="fas fa-star" v-for="n in avg(item)" :key="n"></i>
@@ -450,6 +453,28 @@ export default {
     }
   },
   methods: {
+    minPrice(item) {
+      var lowest = Number.POSITIVE_INFINITY;
+      var highest = Number.NEGATIVE_INFINITY;
+      var tmp;
+      for (var i = item.classifies.length - 1; i >= 0; i--) {
+        tmp = item.classifies[i].price;
+        if (tmp < lowest) lowest = tmp;
+        if (tmp > highest) highest = tmp;
+      }
+      return lowest;
+    },
+    maxPrice(item) {
+      var lowest = Number.POSITIVE_INFINITY;
+      var highest = Number.NEGATIVE_INFINITY;
+      var tmp;
+      for (var i = item.classifies.length - 1; i >= 0; i--) {
+        tmp = item.classifies[i].price;
+        if (tmp < lowest) lowest = tmp;
+        if (tmp > highest) highest = tmp;
+      }
+      return highest;
+    },
     submit(item) {
       var anhquy = [];
       if (localStorage && localStorage.getItem("products")) {
@@ -766,6 +791,7 @@ ul li {
               padding: 4px;
               color: red;
               margin-top: 10px;
+              font-size: 14px; 
             }
             .province{
               padding-left: 4px;

@@ -70,7 +70,7 @@ export default {
   },
   methods: {
     close() {
-      this.$store.commit("CLOSE_AUTH");
+      this.$store.commit("CLOSE_AUTH"); 
     },
     loginAuth(){
       this.$axios.post('/api/product/login',{
@@ -84,6 +84,7 @@ export default {
         if(response){
           socket.emit("joinRoom", response.data.user.name);
           this.$store.commit("ROOMS", response.data.rooms);
+          this.$store.commit("LIST_CART", response.data.sumQty);
           // console.log(res.user.username)
           // this.$store.commit('SET_USER' ,res.user )
           // this.$store.commit('CLOSE_MODEL' )

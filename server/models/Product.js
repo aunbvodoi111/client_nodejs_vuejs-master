@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
     image: DataTypes.STRING,
     sold: DataTypes.INTEGER,
     ProvinceId : DataTypes.INTEGER,
+    nameClassify :DataTypes.STRING,
   }, {
       updatedAt: 'updated_at',
       createdAt: 'created_at'

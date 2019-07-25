@@ -18,6 +18,9 @@ router.get('/', async (req, res) => {
         if (anhquy) {
             bills = await models.bills.findAll({
                 where: { UserIdBuyer: anhquy.UserIdBuyer },
+                order: [
+                    ['id', 'DESC'],
+                ],
                 include: [{
                     model: models.bill_details,
                     as: 'bill_details',

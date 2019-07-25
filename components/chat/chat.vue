@@ -12,11 +12,11 @@
     <div class="container" v-if="toggleChat">
       <div class="pop-up-Product" v-show="showPopLisrProduct">
         <div class="content-pop">
-          <p @click="showPopLisrProduct = false">X</p>
+          <p @click="showPopLisrProduct = false" style="margin-left:95%;cursor:pointer;">X</p>
           <div class="form-search">
-            <input type="text" class="txt-search" />
+            <input type="text" class="txt-search" v-model="keyword" placeholder="Tìm kiếm sản phẩm "/>
           </div>
-          <div class="title">
+          <div class="title"> 
             <div>
               <p :class="{ activeTitLePopup:1 == selectedShop }" @click="productYou">Shop của tôi</p>
             </div>
@@ -24,12 +24,13 @@
               <p :class="{ activeTitLePopup:2 == selectedShop }" @click="showDivShop">Shop Pham quý</p>
             </div>
           </div>
-          <div class="content-product">
+          <div class="content-product" v-if='filteredList.length > 0'>
             <div
               class="product-pop"
-              v-for="item in listProductPopup"
+              v-for="item in filteredList"
               @click="sendProduct(item)"
               :key="item.id"
+              
             >
               <div class="img">
                 <img :src="item.image" alt />
@@ -37,14 +38,17 @@
               <div class="name">
                 <p>{{ item.name }}</p>
               </div>
-              <div class="price">{{ item.price }}</div>
+              <div class="price">₫{{ formatPrice(item.price) }}</div>
             </div>
           </div>
+          <div v-else>
+              <p style="text-align:center;">(Không tìm kiếm thấy sản phẩm)</p>
+            </div>
         </div>
       </div>
       <div class="pop-up-Product" v-show="showPopListBill">
         <div class="content-pop">
-          <p @click="showPopListBill = false">X</p>
+          <p @click="showPopListBill = false" style="margin-left:95%;cursor:pointer;">X</p>
           <!-- <div class="form-search">
             <input type="text" class="txt-search" />
           </div>-->
@@ -59,7 +63,11 @@
                   <img src="http://localhost:3000/img/76c6106b64c5228d864432d939224434.jpg" alt />
                 </div>
                 <div class="name">{{ item.name }}</div>
-                <div class="status">Đã hủy</div>
+                <div class="status" v-if="item.status == 0">Chờ xác nhận</div>
+                <div class="status" v-if="item.status == 1">Đã xác nhận</div>
+                <div class="status" v-if="item.status == 2">Đang vận chuyển</div>
+                <div class="status" v-if="item.status == 3">Đã nhận được hàng</div>
+                <div class="status" v-if="item.status == 4">Đã hủy</div>
               </div>
               <div class="content-bill">
                 <div class="bill" v-for="prod in item.bill_details" :key="prod.id">
@@ -77,7 +85,7 @@
                 <div class="sum-money">
                   <p>
                     Tổng thanh toán :
-                    <span>3.000.000</span>
+                    <span>{{ formatPrice(item.sum) }}</span>
                   </p>
                 </div>
               </div>
@@ -302,7 +310,7 @@
                           >
                             <p
                               style="font-size : 13px; padding : 0px;background:white;color: rgba(0,0,0,.8);margin:0px;"
-                            >Mã đơn hàng : {{ item.bill.bill_details[0].name }}</p>
+                            >Mã đơn hàng : {{ item.bill.bill_details[0].id }}</p>
                             <p
                               style="font-size : 13px; padding-left : 0px;background:white;color: red;"
                             >Tổng:{{ formatPrice(item.sum) }}</p>
@@ -363,7 +371,7 @@
             ref="file"
             style="margin-right : 20px;"
           />
-          <label for="send-file">
+          <label for="send-file" style="cursor:pointer;">
             <div class="send-image">
               <div class="icon" style="text-align:center;">
                 <i class="fas fa-images" style="text-align:center;"></i>
@@ -371,13 +379,13 @@
               <div class style="font-size:13px;">hình ảnh</div>
             </div>
           </label>
-          <div class="send-product" @click="showDivProduct" style="width : 70px;">
+          <div class="send-product" @click="showDivProduct" style="width : 70px;cursor:pointer;">
             <div class="icon" style=";text-align:center;">
               <i class="fas fa-tshirt" style="text-align:center;"></i>
             </div>
             <div class style="font-size:13px;text-align:center;">Quần áo</div>
           </div>
-          <div class="send-bill" @click="showPopBill" style="text-align:center;">
+          <div class="send-bill" @click="showPopBill" style="text-align:center; cursor:pointer;">
             <div class="icon">
               <i class="fas fa-images"></i>
             </div>
@@ -430,9 +438,16 @@ export default {
       listBill: [],
       closePopZoomImage: false,
       imageZoomChat: {},
+      keyword:''
     };
   },
   computed: {
+    filteredList() {
+      
+      return this.listProductPopup.filter(post => {
+        return post.name.toLowerCase().includes(this.keyword.toLowerCase())
+      })
+    },
     toggleChat() {
       return this.$store.state.toggleChat;
     },
@@ -926,6 +941,7 @@ a {
             .status {
               width: 30%;
               float: right;
+              color: red;
             }
           }
           .content-bill {
@@ -975,6 +991,7 @@ a {
             .btn-send-link {
               width: 50%;
               button {
+                cursor: pointer;
                 width: 100%;
                 height: 40px;
                 border: 1px solid grey;
@@ -997,6 +1014,7 @@ a {
         .product-pop {
           width: 30%;
           float: left;
+          height: 220px;
           margin: 10px 10px 10px 2px;
           background: white;
           cursor: pointer;

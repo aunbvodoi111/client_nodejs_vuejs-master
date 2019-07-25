@@ -148,6 +148,7 @@
             <span class="discount">₫{{ formatPrice(priceClassify) }}</span>
           </div>
           <div v-if="product.classifies.length" class="classify">
+            <span style="margin-right:15px;color:grey;font-size : 16px;">{{ product.nameClassify }}</span>
             <button
               v-for=" item in product.classifies"
               @click="qtyClassify(item)"

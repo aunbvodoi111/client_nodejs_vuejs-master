@@ -233,7 +233,20 @@
               </div>
             </div>
             <div class="rep-rating" v-for="prod in item.rep_ratings" :key="prod.id">
-              <div class="avatar-rep"></div>
+              <div class="avatar-rep" v-if="product.user.avatar != 0">
+                <img
+                  :src="product.user.avatar"
+                  alt
+                  style="width:50px;margin:5px;border-radius:100%;"
+                />
+              </div>
+              <div class="avatar-rep" v-if="product.user.avatar == 0">
+                <img
+                  src="/img/images.png"
+                  alt
+                  style="width:50px;margin:5px;border-radius:100%;"
+                />
+              </div>
               <div class="content-rep">
                 <p v-if="product.user.id == prod.UserId">
                   <span>Phản Hồi Của Người Bán</span>
@@ -446,7 +459,7 @@ export default {
               image: this.rating.image,
               content: this.rating.content,
               ProductId: this.product.id,
-              UserIdSaler : this.product.user.id,
+              UserIdSaler: this.product.user.id
             })
             .then(response => {
               var avatar;
@@ -466,7 +479,7 @@ export default {
                 image: response.data.image,
                 content: response.data.content,
                 rep_ratings: [],
-                checkBuy : response.data.checkBuy
+                checkBuy: response.data.checkBuy
               });
               this.product.ratings.forEach(item => {
                 Vue.set(item, "is_rating", false);
@@ -484,7 +497,7 @@ export default {
                 image: response.data.image,
                 content: response.data.content,
                 rep_ratings: [],
-                checkBuy : response.data.checkBuy
+                checkBuy: response.data.checkBuy
               });
 
               this.productnew.ratings.forEach(item => {
@@ -503,7 +516,7 @@ export default {
               this.rating.title = "";
               this.rating.content = "";
               this.errorSendRating = false;
-              this.rating.image = ''
+              this.rating.image = "";
             });
         }
       }
@@ -561,27 +574,26 @@ a {
   background-color: rgba(0, 0, 0, 0.14);
   padding: 20px;
   text-align: center;
-  .pop{
+  .pop {
     width: 300px;
     margin: auto;
     background: white;
     padding: 20px;
     height: 140px;
-    border-radius: 20px; 
+    border-radius: 20px;
     .button {
-    margin: auto;
-    width: 50%;
-    button {
-      background: red;
-      width: 100px;
-      height: 30px;
-      margin: 30px 20px;
-      color: white;
-      border: none;
+      margin: auto;
+      width: 50%;
+      button {
+        background: red;
+        width: 100px;
+        height: 30px;
+        margin: 30px 20px;
+        color: white;
+        border: none;
+      }
     }
   }
-  }
-  
 }
 @media only screen and (min-width: 1200px) {
   .container {

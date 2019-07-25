@@ -373,6 +373,9 @@ router.get('/checkout', async (req, res) => {
 
         carts = await models.carts.findAll({
             where: { UserIdBuyer: anhquy.UserIdBuyer },
+            order: [
+                ['id', 'DESC'],
+            ],
             include: [{
                 model: models.cart_details,
                 as: 'cart_details',

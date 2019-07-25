@@ -51,15 +51,15 @@
         <p>Địa Chỉ Nhận Hàng</p>
         <p v-if="newAddress == '' && !showListAddress">
           <strong>{{ addresseDefault.name }} (+84) {{ addresseDefault.phone }}</strong>
-          {{ addresseDefault.address }} , Thị Trấn Trâu Quỳ,
+          {{ addresseDefault.address }} , 
           {{ addresseDefault.district.name }}, {{ addresseDefault.province.name }}
         </p>
         <p v-if="newAddress != '' && !showListAddress">
           <strong>{{ newAddress.name }} (+84) {{ newAddress.phone }}</strong>
-          {{ newAddress.address }} , Thị Trấn Trâu Quỳ,
+          {{ newAddress.address }} ,
           {{ newAddress.district.name }}, {{ newAddress.province.name }}
         </p>
-        <p @click="chooseAddress">Thay dổi</p>
+        <p @click="chooseAddress" v-if="!showListAddress && addresss.length > 0" style="margin-top : 10px;  cursor: pointer;">Thay dổi</p>
         <label
           class="container-radio"
           v-for="item in addresss"
@@ -67,9 +67,9 @@
           v-show="showListAddress"
           :key="item.id"
         >
-          <p>
+          <p style="font-weight: normal;color:grey;font-size:14px;">
             <strong>{{ item.name }} (+84) {{ item.phone }}</strong>
-            {{ item.address }} , Thị Trấn Trâu Quỳ,
+            {{ item.address }} ,
             {{ item.district.name }}, {{ item.province.name }}
           </p>
           <input type="radio" name="radio" checked="checked" v-if="item.id == addresseDefault.id " />
@@ -148,12 +148,14 @@
         </div>
         <div class="send-saler">
           <span>Lời nhắn:</span>
-          <input type="text" v-model="item.note" />
+          <input type="text" v-model="item.note" style="padding : 10px;height:35px; width:28%" placeholder="Lưu ý cho người bán"/>
         </div>
         <div class="total-money-product">
           <p>
-            Tổng số tiền ({{ sumQtyCart }} sản phẩm):
-            <span style="color :red ">₫{{ formatPrice(sumMoney(item)) }}</span>
+            Tổng số tiền ({{ formatPrice(sumQty(item)) }} sản phẩm):
+            <span
+              style="color :red "
+            >₫{{ formatPrice(sumMoney(item)) }}</span>
           </p>
         </div>
       </div>
@@ -302,8 +304,10 @@ export default {
     }
   },
   methods: {
-    sumMoney(item) {
-      console.log( item )
+    close(){
+      this.showListAddress = false
+    },
+    sumQty(item){
       var sum = 0;
       for (var j = 0; j < item.cart_details.length; j++) {
         if (
@@ -312,16 +316,36 @@ export default {
         ) {
           var sum =
             sum +
-            item.cart_details[j].HomeTeam.discount *
-              item.cart_details[j].qty;
+             item.cart_details[j].qty;
         } else if (
           item.cart_details[j].checkBuy == 1 &&
           item.cart_details[j].classifies != null
         ) {
           var sum =
             sum +
-            item.cart_details[j].classifies.price *
-              item.cart_details[j].qty;
+             item.cart_details[j].qty;
+        }
+      }
+      return sum;
+    },
+    sumMoney(item) {
+      console.log(item);
+      var sum = 0;
+      for (var j = 0; j < item.cart_details.length; j++) {
+        if (
+          item.cart_details[j].checkBuy == 1 &&
+          item.cart_details[j].classifies == null
+        ) {
+          var sum =
+            sum +
+            item.cart_details[j].HomeTeam.discount * item.cart_details[j].qty;
+        } else if (
+          item.cart_details[j].checkBuy == 1 &&
+          item.cart_details[j].classifies != null
+        ) {
+          var sum =
+            sum +
+            item.cart_details[j].classifies.price * item.cart_details[j].qty;
         }
       }
       return sum;
@@ -432,6 +456,7 @@ export default {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+ 
 }
 
 /* Hide the browser's default radio button */
@@ -615,6 +640,16 @@ button {
       p:nth-child(1) {
         color: red;
         margin-bottom: 20px;
+      }
+      button {
+        width: 120px;
+        height: 35px;
+        color: white;
+        background-color: #2b3278;
+        border: none;
+        &:hover{
+          opacity: 0.8;
+        }
       }
     }
     .popup-infor-customer {

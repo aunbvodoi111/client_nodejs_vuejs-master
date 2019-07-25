@@ -12,13 +12,19 @@ var models = require('../models');
 router.get('/', async (req, res) => {
     console.log(req.user)
     var cates = await models.cates.findAll({})
-    var products = await models.products.findAll({ 
+    var products = await models.products.findAll({
         order: [
             ['id', 'DESC'],
         ],
         include: [{
             model: models.ratings,
             as: 'ratings',
+            order: [
+                ['id', 'DESC'],
+            ],
+        }, {
+            model: models.classifies,
+            as: 'classifies',
         }]
     })
     var carts = []
@@ -72,12 +78,15 @@ router.get('/danhmuc/:id', async (req, res) => {
             include: [{
                 model: models.mulimages,
                 as: 'mulimages',
-            },{
+            }, {
                 model: models.ratings,
                 as: 'ratings',
-            },{
+            }, {
                 model: models.provinces,
                 as: 'province',
+            }, {
+                model: models.classifies,
+                as: 'classifies',
             }],
         }, {
             model: models.subcates,
@@ -96,20 +105,23 @@ router.get('/shop/:id', async (req, res) => {
     var products = await models.products.findAll({
         where: { UserId: id },
         include: [
-        {
-            model: models.ratings,
-            as: 'ratings',
-        },{
-            model: models.users,
-        },{ model: models.subcates },
-        {
-            model: models.provinces,
-            as: 'province',
-        }
+            {
+                model: models.ratings,
+                as: 'ratings',
+            }, {
+                model: models.users,
+            }, { model: models.subcates },
+            {
+                model: models.provinces,
+                as: 'province',
+            }, {
+                model: models.classifies,
+                as: 'classifies',
+            }
         ]
     })
     var user = await models.users.findOne({
-        where :{ id : id}
+        where: { id: id }
     })
 
     var totalProduct = 0
@@ -146,7 +158,7 @@ router.get('/shop/:id', async (req, res) => {
 
     var totalFollow = 0
     var follows = await models.follows.findAll({
-        
+
     })
 
     // var count = await models.wishes.findAll({
@@ -162,7 +174,7 @@ router.get('/shop/:id', async (req, res) => {
             }
         });
     }
-    return res.send({ products : products , totalProduct : totalProduct , totalRating : totalRating , totalFollow :totalFollow , user : user , follows :follows})
+    return res.send({ products: products, totalProduct: totalProduct, totalRating: totalRating, totalFollow: totalFollow, user: user, follows: follows })
 })
 
 router.get('/search/:keyword', async (req, res) => {
@@ -178,6 +190,9 @@ router.get('/search/:keyword', async (req, res) => {
             {
                 model: models.provinces,
                 as: 'province',
+            }, {
+                model: models.classifies,
+                as: 'classifies',
             }
         ],
     })
@@ -201,58 +216,92 @@ router.post('/login',
 
         var allOrders = []
         var { user } = req.body
-    // var cart = await models.carts.create({ ProductId: ProductId, UserId: req.user.id });
-    // cart.save()
-    var roomfind = await models.rooms.findOne({
-        where: {
-            [Op.or]: [
-                {
+        var carts = []
+        var anhquy
+        if (req.user) {
+            var findCart = await models.carts.findOne({
+                where: { UserIdBuyer: req.user.id },
+                attributes: ['UserIdSaler', 'UserIdBuyer'],
+            })
+            if (findCart) {
+                carts = await models.carts.findAll({
+                    where: { UserIdBuyer: findCart.UserIdBuyer },
+                    include: [{
+                        model: models.cart_details,
+                        as: 'cart_details',
+                        where: { UserIdBuyer: findCart.UserIdBuyer },
+                        include: [{
+                            model: models.products,
+                            as: 'HomeTeam'
+                        }]
+                    }, {
+                        model: models.users,
+                    }]
+                })
+            } else {
+                carts = []
+                // return res.send({ products: products, cates: cates, carts: carts })
+            }
 
-                    [Op.and]:
-                        [{ UserName2: req.user.id }, { UserName1: req.user.id }]
-
-                },
-                {
-
-                    [Op.and]:
-                        [{ UserName1: req.user.id }, { UserName2: req.user.id }]
-
-                }
-            ]
+        } else {
+            carts = []
         }
-    })
-    console.log(roomfind)
+        var sumQty = 0
+        for (var i = 0; i < carts.length; i++) {
+            for (var j = 0; j < carts[i].cart_details.length; j++) {
+                sumQty = sumQty + carts[i].cart_details[j].qty;
+            }
+        }
+        var roomfind = await models.rooms.findOne({
+            where: {
+                [Op.or]: [
+                    {
 
-    var rooms  = await models.rooms.findAll({
-        where:{ [Op.or]: [ { UserName1: req.user.id }, { UserName2: req.user.id }] },
-        include: [{
-            model: models.messagers,
-            as: 'messagers',
-            
-            include:[{
-                model : models.products,
-                as:'product'
-              },{
-                model : models.bills,
-                as:'bill',
+                        [Op.and]:
+                            [{ UserName2: req.user.id }, { UserName1: req.user.id }]
+
+                    },
+                    {
+
+                        [Op.and]:
+                            [{ UserName1: req.user.id }, { UserName2: req.user.id }]
+
+                    }
+                ]
+            }
+        })
+        console.log(roomfind)
+
+        var rooms = await models.rooms.findAll({
+            where: { [Op.or]: [{ UserName1: req.user.id }, { UserName2: req.user.id }] },
+            include: [{
+                model: models.messagers,
+                as: 'messagers',
+
                 include: [{
-                    model: models.bill_details,
-                    as: 'bill_details',
+                    model: models.products,
+                    as: 'product'
+                }, {
+                    model: models.bills,
+                    as: 'bill',
+                    include: [{
+                        model: models.bill_details,
+                        as: 'bill_details',
+                    }]
+                }, {
+                    model: models.users,
                 }]
-              },{
-                model : models.users,
-              }]
-        },{
-            model: models.users,
-            as:'user1', 
-        },
-        {
-            model: models.users,
-            as:'user2', 
-        }]
-    })
+            }, {
+                model: models.users,
+                as: 'user1',
+            },
+            {
+                model: models.users,
+                as: 'user2',
+            }]
+        })
 
-        return res.send({ user: req.user, carts: allOrders , rooms : rooms })
+        return res.send({ user: req.user, carts: allOrders, rooms: rooms,sumQty : sumQty })
     });
 
 
@@ -378,7 +427,7 @@ router.get('/detailPr/:id', async (req, res) => {
         {
             model: models.mulimages,
             as: 'mulimages',
-        },{
+        }, {
             model: models.classifies,
             as: 'classifies',
         }],
@@ -466,15 +515,15 @@ router.get('/detailPr/:id', async (req, res) => {
             sumQty = sumQty + carts[i].cart_details[j].qty;
         }
     }
-    if(req.user){
+    if (req.user) {
         var cart_details = await models.cart_details.findOne({
-            where :{ [Op.and]:[{ UserIdBuyer : req.user.id  },{ ProductId : products.id }]}
+            where: { [Op.and]: [{ UserIdBuyer: req.user.id }, { ProductId: products.id }] }
         })
-    }else{
-        cart_details = { }
+    } else {
+        cart_details = {}
     }
     var productRela = await models.products.findAll({
-        where :{ CateId : products.CateId}
+        where: { CateId: products.CateId }
     })
     console.log(sumQty)
     return res.send({
@@ -485,8 +534,8 @@ router.get('/detailPr/:id', async (req, res) => {
         totalProduct: totalProduct,
         totalFollow: totalFollow,
         totalRating: totalRating,
-        cart_details : cart_details,
-        productRela : productRela
+        cart_details: cart_details,
+        productRela: productRela
     })
 })
 
