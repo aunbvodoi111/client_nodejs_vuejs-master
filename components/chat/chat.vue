@@ -207,12 +207,12 @@
                             >{{ item.product.name }}</p>
                             <p
                               style="font-size : 13px; padding : 0px;background:white;color: red;"
-                            >{{ item.product.price }}</p>
+                            >{{ formatPrice(item.product.price) }}</p>
                           </div>
                         </div>
                       </nuxt-link>
                     </p>
-                    <p v-if="item.status == 2">
+                    <p v-if="item.status == 2" style="background:white;box-shadow: 2px 2px 2px 2px rgba(0,0,0,.1); padding : 10px 0px;">
                       <nuxt-link :to="`/user/order/${item.BillId}`">
                         <div style="display:flex;">
                           <img
@@ -226,10 +226,15 @@
                           >
                             <p
                               style="font-size : 13px; padding : 0px;background:white;color: rgba(0,0,0,.8);margin:0px;"
-                            >{{ item.bill.bill_details[0].name }}</p>
-                            <p
-                              style="font-size : 13px; padding : 0px;background:white;color: red;"
-                            >{{ item.sum }}</p>
+                            >Mã đơn hàng :{{ item.bill.bill_details[0].id }}</p>
+                            <span
+                              style="font-size : 13px; margin : 10px 0px;background:white;color: red;"
+                            >Tổng:{{ formatPrice(item.sum) }}</span>
+                            <p style="font-size : 13px; margin : 10px 0px;background:white;color: red;" v-if="item.bill.status == 0">Chờ xác nhận</p>
+                            <p style="font-size : 13px; margin : 10px 0px;background:white;color: red;" v-if="item.bill.status == 1">Đã xác nhận</p>
+                            <p style="font-size : 13px; margin : 10px 0px;background:white;color: red;" v-if="item.bill.status == 2">Đang vận chuyển</p>
+                            <p style="font-size : 13px; margin : 10px 0px;background:white;color: red;" v-if="item.bill.status == 3">Đã nhận được hàng</p>
+                            <p style="font-size : 13px; margin : 10px 0px;background:white;color: red;" v-if="item.bill.status == 4">Đã hủy</p>
                           </div>
                         </div>
                       </nuxt-link>
@@ -278,12 +283,12 @@
                             >{{ item.product.name }}</p>
                             <p
                               style="font-size : 13px; padding : 0px;color: red;"
-                            >{{ item.product.price }}</p>
+                            >{{ formatPrice(item.product.price) }}</p>
                           </div>
                         </div>
                       </nuxt-link>
                     </p>
-                    <p v-if="item.status == 2">
+                    <p v-if="item.status == 2" style="background:white;box-shadow: 2px 2px 2px 2px rgba(0,0,0,.1); padding : 10px 0px;">
                       <nuxt-link :to="`/user/order/${item.BillId}`">
                         <div style="display:flex;">
                           <img
@@ -297,10 +302,15 @@
                           >
                             <p
                               style="font-size : 13px; padding : 0px;background:white;color: rgba(0,0,0,.8);margin:0px;"
-                            >{{ item.bill.bill_details[0].name }}</p>
+                            >Mã đơn hàng : {{ item.bill.bill_details[0].name }}</p>
                             <p
-                              style="font-size : 13px; padding : 0px;background:white;color: red;"
-                            >{{ item.sum }}</p>
+                              style="font-size : 13px; padding-left : 0px;background:white;color: red;"
+                            >Tổng:{{ formatPrice(item.sum) }}</p>
+                            <p style="font-size : 13px; margin : 10px 0px;background:white;color: red;" v-if="item.bill.status == 0">Chờ xác nhận</p>
+                            <p style="font-size : 13px; margin : 10px 0px;background:white;color: red;" v-if="item.bill.status == 1">Đã xác nhận</p>
+                            <p style="font-size : 13px; margin : 10px 0px;background:white;color: red;" v-if="item.bill.status == 2">Đang vận chuyển</p>
+                            <p style="font-size : 13px; margin : 10px 0px;background:white;color: red;" v-if="item.bill.status == 3">Đã nhận được hàng</p>
+                            <p style="font-size : 13px; margin : 10px 0px;background:white;color: red;" v-if="item.bill.status == 4">Đã hủy</p>
                           </div>
                         </div>
                       </nuxt-link>
@@ -419,7 +429,7 @@ export default {
       showPopListBill: false,
       listBill: [],
       closePopZoomImage: false,
-      imageZoomChat: {}
+      imageZoomChat: {},
     };
   },
   computed: {
@@ -483,6 +493,10 @@ export default {
           this.chatUser(this.rooms[0]);
         });
       this.$store.commit("TOGGLE_CHAT");
+    },
+    formatPrice(value) {
+      let val = (value / 1).toFixed(0).replace(".", ",");
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     },
     sendBill(item) {
       this.bill.sum = item.sum;

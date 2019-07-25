@@ -98,6 +98,9 @@ export default {
     store.commit("LIST_CART", data.data.sumQty);
     return { products: data.data.products, cates: data.data.cates };
   },
+  head: {
+    title: 'PhamQuyShop',
+  },
   data() {
     return {
       local: []

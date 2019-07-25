@@ -140,7 +140,7 @@
           ></i>
         </button>
       </div>
-      <div class="product-content">
+      <div class="product-content" v-if="listProduct.length > 0 ">
         <div class="product" v-for="item in listProduct" :key="item.id">
           <div class="product-div" @click="submit(item)" :title="item.name">
             <nuxt-link :to="`/${item.id}`">
@@ -172,6 +172,9 @@
         </div>
         <div style=" clear:both;"></div>
       </div>
+      <div v-else>
+        <h4 style="text-align:center;">Không tìm thấy sản phẩm nào phù hợp</h4>
+      </div>
     </div>
   </div>
 </template>
@@ -190,6 +193,11 @@ export default {
       user: data.data.user,
       follows: data.data.follows
     };
+  },
+  head () {
+    return {
+      title: `shop | PhamQuyShop.com`,
+    }
   },
   computed: {
     listProduct() {

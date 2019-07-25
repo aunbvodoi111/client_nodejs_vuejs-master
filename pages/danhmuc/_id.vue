@@ -135,6 +135,11 @@ export default {
     console.log(data.data.cates);
     return { products: data.data.cates };
   },
+  head () {
+    return {
+      title: `danh mục  | PhamQuyShop.com`,
+    }
+  },
   computed: {
     listProduct() {
       if (

@@ -29,7 +29,8 @@
           </div>
         </div>
         <div v-else>
-          <p>Bạn chưa chọn sản phẩm nào để mua</p>
+          <p v-if="sumMoneyCart == 0 && !notEnough">Bạn chưa chọn sản phẩm nào để mua</p>
+          <p v-if="notEnough">Kho hàng của sản phẩm không đủ.</p>
           <button
             @click="nofiCartBlank"
             style="width : 100%;    background: #ee4d2d; height : 30px; color : white; margin-top : 30%; border :none;  "
@@ -65,7 +66,7 @@
         </div>
         <div class="cart-main" v-for=" prod in item.cart_details " :key="prod.id">
           <div class="pr-cart">
-            <label class="container">
+            <label class="container" v-if="prod.HomeTeam.qty > 0">
               <i class="fas fa-close"></i>
               <input
                 type="checkbox"
@@ -76,30 +77,36 @@
               <input type="checkbox" v-else @click="changeStatus(prod)" />
               <span class="checkmark"></span>
             </label>
+            <p v-if="prod.HomeTeam.qty == 0" class="hethang">Hết hàng</p>
+
             <div class="img">
               <img width="42%" :src="prod.HomeTeam.image" alt />
             </div>
             <div class="name">
               <p>{{ prod.HomeTeam.name }}</p>
               <div v-if=" prod.classifies != null ">
-                <p>phân loại hàng :</p>
-                <p>{{ prod.classifies.name }}</p>
+                <span>phân loại hàng :</span>
+                <span>{{ prod.classifies.name }}</span>
               </div>
-              <div class="pop-classify">
+              <span @click="prod.is_tab = true" v-if=" prod.classifies != null">Đổi loại hàng</span>
+              <div class="pop-classify" v-if=" prod.is_tab">
                 <button
-                v-for="item in prod.HomeTeam.classifies "
-                :key="item.id"
-                :class="{ activeClassify:item.id == prod.classifies.id} "
-                v-if=" prod.classifies != null && item.qty == 0"
-                class="button disabled"
-              >{{ item.name }}</button>
-              <button
-                v-for="item in prod.HomeTeam.classifies"
-                :key="item.id"
-                :class="{ activeClassify:item.id == prod.classifies.id} "
-                v-if=" prod.classifies != null && item.qty != 0 "
-              >{{ item.name }}</button>
-              <button>Xác nhận</button>
+                  v-for="item in prod.HomeTeam.classifies "
+                  :key="item.id"
+                  :class="{ activeClassify:item.id == prod.classifies.id} "
+                  v-if=" prod.classifies != null && item.qty == 0"
+                  class="button disabled"
+                >{{ item.name }}</button>
+                <p v-if="item.qty == 0" class="hethang">Hết hàng</p>
+                <button
+                  v-for="item in prod.HomeTeam.classifies"
+                  :key="item.id"
+                  :class="{ activeClassify:item.id == selected} "
+                  v-if=" prod.classifies != null && item.qty != 0 && prod.is_tab"
+                  @click="selectClassify(item)"
+                >{{ item.name }}</button>
+                
+                <button @click="comfirmChangeClassify(prod)">Xác nhận</button>
               </div>
             </div>
           </div>
@@ -112,11 +119,11 @@
           <div class="price" v-if=" prod.classifies == null ">
             <div class="qty-action">
               <div class="btn-txt">
-                <button @click="reduction(prod)">
+                <button @click="reduction(prod,item)">
                   <i class="fas fa-minus"></i>
                 </button>
                 <input type="text" class="txt-qty" :value=" prod.qty " />
-                <button @click="increment(prod)">
+                <button @click="increment(prod,item)">
                   <i class="fas fa-plus"></i>
                 </button>
               </div>
@@ -125,11 +132,11 @@
           <div class="price" v-else>
             <div class="qty-action">
               <div class="btn-txt">
-                <button @click="reduction(prod)">
+                <button @click="reduction(prod,item)">
                   <i class="fas fa-minus"></i>
                 </button>
                 <input type="text" class="txt-qty" :value=" prod.qty " />
-                <button @click="increment(prod)">
+                <button @click="increment(prod,item)">
                   <i class="fas fa-plus"></i>
                 </button>
               </div>
@@ -186,25 +193,55 @@
   </div>
 </template>
 <script>
+import Vue from "vue";
 export default {
   async asyncData({ $axios, store }) {
     var data = await $axios.get("/api/cart/");
     console.log(data.data);
     // var carts = data.data.filter(data => data.users.length !== 0);
     // store.commit("LIST_CART", carts);
+    data.data.forEach(item => {
+      item.cart_details.forEach(prod => {
+        Vue.set(prod, "is_tab", false);
+      });
+    });  
+
     return { carts: data.data };
+  },
+  head: {
+    title: 'Giỏ Hàng',
   },
   data() {
     return {
       cart: {},
       toggleComfirmCart: false,
       item: "",
-      addCartNofi: false
+      addCartNofi: false,
+      selected: "",
+      notEnough : false
     };
   },
   methods: {
+    comfirmChangeClassify(item) {
+      console.log(item)
+      this.$axios
+        .post("/api/cart/changeClassify", {
+          id: this.selected,
+          ProductId: item.HomeTeam.id
+        })
+        .then(response => {
+          console.log(response);
+          item.is_tab = false
+          item.classifies = response.data;
+        });
+    },
+    selectClassify(item) {
+      this.selected = item.id;
+    },
     nofiCartBlank() {
       this.toggleComfirmCart = !this.toggleComfirmCart;
+      this.notEnough = false
+      this.addCartNofi = false
     },
     changeStatus(prod) {
       if (prod.checkBuy == 1) {
@@ -223,7 +260,9 @@ export default {
     },
     reduction(prod) {
       if (prod.qty == 1) {
-        prod.qty = 1;
+        this.cart = prod;
+        this.toggleComfirmCart = true;
+        this.addCartNofi = true;
       } else {
         prod.qty = prod.qty - 1;
         this.$axios
@@ -251,6 +290,8 @@ export default {
               this.$store.commit("ADD_CART");
             });
         } else {
+          this.toggleComfirmCart = true;
+          this.notEnough = true;
           item.qty = item.HomeTeam.qty;
         }
       } else {
@@ -267,6 +308,8 @@ export default {
               this.$store.commit("ADD_CART");
             });
         } else {
+          this.toggleComfirmCart = true;
+          this.notEnough = true;
           item.qty = item.classifies.qty;
         }
       }
@@ -353,6 +396,13 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.hethang {
+  width: 50px;
+  margin-right: 10px;
+  padding: 5px 10px;
+  color: white;
+  background: black;
+}
 .activeClassify {
   border: 1px solid red !important ;
   color: red !important ;
@@ -573,18 +623,18 @@ button {
             p {
               font-weight: bold;
             }
-            .pop-classify{
+            .pop-classify {
               width: 300px;
               height: 200px;
               position: absolute;
               z-index: 99;
-              box-shadow: 0 1px 1px 0 rgba(0,0,0,.05);
+              box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.05);
               padding: 20px;
               background: white;
             }
             button {
-              margin:  4px;
-              width:  30%;
+              margin: 4px;
+              width: 30%;
               cursor: pointer;
               display: inline-block;
               min-width: 5rem;

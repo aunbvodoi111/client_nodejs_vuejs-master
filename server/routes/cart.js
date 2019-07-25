@@ -264,6 +264,25 @@ router.post('/changeCheckBuy', async (req, res) => {
         cart.save()
     }
     return res.status(200).json('ok')
+}) 
+
+router.post('/changeClassify', async (req, res) => {
+    var { id , ProductId } = req.body
+    console.log(req.body)
+    var classify = await models.classifies.findOne({ 
+        where: { id: id },
+     })
+
+     var cart_detail = await models.cart_details.findOne({ 
+        where: { ProductId: ProductId , UserIdBuyer : req.user.id },
+     })
+
+    if (cart_detail) {
+        cart_detail.update({
+            ClassifyId : id
+        })
+    }
+    return res.status(200).json(classify)
 })
 
 router.post('/deleteCart', async (req, res) => {
@@ -349,8 +368,7 @@ router.get('/checkout', async (req, res) => {
             where: { UserIdBuyer: req.user.id },
             attributes: ['UserIdSaler', 'UserIdBuyer'],
         }).then(function (projects) {
-
-            anhquy = projects
+           anhquy = projects
         })
 
         carts = await models.carts.findAll({
@@ -365,13 +383,27 @@ router.get('/checkout', async (req, res) => {
                 include: [{
                     model: models.products,
                     as: 'HomeTeam',
+                    where: { qty: { [Op.gt]: 0 } },
                     include: [{
                         model: models.classifies,
                         as: 'classifies',
+                        // where: { qty: { [Op.gt]: 0 } },
                     }]
                 }, {
                     model: models.classifies,
                     as: 'classifies',
+                    [Op.or]: [
+                        {
+                          ProductId: {
+                            [Op.eq]: 0
+                          }
+                        },
+                        {
+                            qty: {
+                            [Op.gt]: 0
+                          }
+                        }
+                      ]
                 }]
             }, {
                 model: models.users,

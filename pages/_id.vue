@@ -298,6 +298,12 @@ export default {
     saler,
     Quesiton
   },
+  head () {
+    let product = this.product;
+    return {
+      title: `${product.name} `,
+    }
+  },
   data() {
     return {
       total: 0,

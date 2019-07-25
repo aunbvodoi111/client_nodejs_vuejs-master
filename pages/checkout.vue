@@ -65,6 +65,7 @@
           v-for="item in addresss"
           @click="changeAddressDefault(item)"
           v-show="showListAddress"
+          :key="item.id"
         >
           <p>
             <strong>{{ item.name }} (+84) {{ item.phone }}</strong>
@@ -83,11 +84,30 @@
           <span>{{ item.user.name }}</span>
           <span @click="showDivChat(item)">Chat ngay</span>
         </p>
-        <div class="product" v-for=" prod in item.cart_details" :key="prod.id">
-          <div class="name">
-            <div class="name-shop">
+        <div class="name-shop">
+          <div class="number">
+            <div class="infor">
               <h4>Sản phẩm</h4>
             </div>
+          </div>
+          <div class="title">
+            <div class="infor">
+              <p>Đơn giá</p>
+            </div>
+          </div>
+          <div class="title">
+            <div class="infor">
+              <p>Số lượng</p>
+            </div>
+          </div>
+          <div class="title">
+            <div class="infor">
+              <p>Thành tiền</p>
+            </div>
+          </div>
+        </div>
+        <div class="product" v-for=" prod in item.cart_details" :key="prod.id">
+          <div class="name">
             <div class="img-name-pr">
               <div class="img">
                 <img :src="prod.HomeTeam.image" alt />
@@ -96,36 +116,31 @@
                 <a>{{ prod.HomeTeam.name }}</a>
               </div>
               <div class="name-pr" v-if=" prod.classifies != null ">
-                <a>Loại : {{ prod.classifies.name }}</a>
+                <a style="color:grey;font-size:14px;">(Loại : {{ prod.classifies.name }})</a>
               </div>
             </div>
           </div>
           <div class="price" v-if=" prod.classifies == null ">
-            <p>Đơn giá</p>
             <div class="infor">
               <p>₫{{ formatPrice(prod.HomeTeam.discount) }}</p>
             </div>
           </div>
           <div class="price" v-else>
-            <p>Đơn giá</p>
             <div class="infor">
               <p>₫{{ formatPrice(prod.classifies.price) }}</p>
             </div>
           </div>
           <div class="qty">
-            <p>Số lượng</p>
             <div class="infor">
               <p>{{ prod.qty }}</p>
             </div>
           </div>
           <div class="total-money" v-if=" prod.classifies == null ">
-            <p>Thành tiền</p>
             <div class="infor">
               <p>₫{{ formatPrice(prod.qty * prod.HomeTeam.discount) }}</p>
             </div>
           </div>
           <div class="total-money" v-else>
-            <p>Thành tiền</p>
             <div class="infor">
               <p>₫{{ formatPrice(prod.qty * prod.classifies.price) }}</p>
             </div>
@@ -135,14 +150,12 @@
           <span>Lời nhắn:</span>
           <input type="text" v-model="item.note" />
         </div>
-        <!-- <div class="total-money-product">
+        <div class="total-money-product">
           <p>
             Tổng số tiền ({{ sumQtyCart }} sản phẩm):
-            <span
-              style="color :red "
-            >₫{{ formatPrice(item.qty * item.discount) }}</span>
+            <span style="color :red ">₫{{ formatPrice(sumMoney(item)) }}</span>
           </p>
-        </div>-->
+        </div>
       </div>
       <div class="check-out">
         <div class="title">
@@ -233,7 +246,11 @@ export default {
       addresss: data.data.addresss
     };
   },
-  
+  head() {
+    return {
+      title: `Thanh toán | PhamQuyShop.com`
+    };
+  },
   computed: {
     addresseDefault() {
       if (this.addresses.length > 0) {
@@ -285,6 +302,30 @@ export default {
     }
   },
   methods: {
+    sumMoney(item) {
+      console.log( item )
+      var sum = 0;
+      for (var j = 0; j < item.cart_details.length; j++) {
+        if (
+          item.cart_details[j].checkBuy == 1 &&
+          item.cart_details[j].classifies == null
+        ) {
+          var sum =
+            sum +
+            item.cart_details[j].HomeTeam.discount *
+              item.cart_details[j].qty;
+        } else if (
+          item.cart_details[j].checkBuy == 1 &&
+          item.cart_details[j].classifies != null
+        ) {
+          var sum =
+            sum +
+            item.cart_details[j].classifies.price *
+              item.cart_details[j].qty;
+        }
+      }
+      return sum;
+    },
     chooseAddress() {
       this.showListAddress = true;
     },
@@ -358,9 +399,9 @@ export default {
         })
         .then(response => {
           console.log("listUser");
-          this.$store.dispatch('EMIT_NOFI_PRODUCT',response.data.listUser)
+          this.$store.dispatch("EMIT_NOFI_PRODUCT", response.data.listUser);
           console.log(response.data.listUser);
-            
+
           this.$router.push("/user/order/history");
         });
     }
@@ -369,6 +410,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.name-shop {
+  display: flex;
+  .number {
+    width: 50%;
+    margin: 10px 0px;
+  }
+  .title {
+    width: 22%;
+    margin: 10px 0px;
+  }
+}
 .container-radio {
   display: block;
   position: relative;
@@ -525,7 +577,7 @@ button {
         .img-name-pr {
           display: flex;
           .img {
-            width: 30%;
+            width: 20%;
             img {
               width: 100%;
             }
@@ -539,21 +591,21 @@ button {
         width: 20%;
         padding-left: 25px;
         .infor {
-          margin-top: 80px;
+          margin-top: 50px;
         }
       }
       .qty {
         width: 20%;
         padding-left: 25px;
         .infor {
-          margin-top: 80px;
+          margin-top: 50px;
         }
       }
       .total-money {
         padding-left: 25px;
         width: 20%;
         .infor {
-          margin-top: 80px;
+          margin-top: 50px;
         }
       }
     }
