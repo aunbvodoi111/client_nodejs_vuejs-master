@@ -14,10 +14,10 @@
           </div>
           <p
             style="color : grey ;font-size : 14px;font-weight : normal;"
-          >Tiki trả lời vào 26/06/2019</p>
+          >Người đã trả lời  </p>
         </div>
-        <div class="user-question">
-          <p @click="n.is_comments = !n.is_comments">Trả lời</p>
+        <div class="user-question" v-if="$store.state.authUser">
+          <p v-if="product.user.id == $store.state.authUser.id" @click="n.is_comments = !n.is_comments">Trả lời</p>
         </div>
         <div class="textarea" v-show="n.is_comments">
           <textarea name id cols="30" rows="7" class="txt-textarea" v-model="n.comment"></textarea>
@@ -37,8 +37,10 @@
             v-model="content"
             placeholder="Hãy đặt câu hỏi liên quan về sản phẩm"
           />
+
           <button class="btn-button" @click="sendQuestion">Gửi câu hỏi</button>
         </div>
+        <p v-if="showError" style="margin: 5px 0px; color:red;">Vui lòng nhập nội dung</p>
       </div>
     </div>
   </div>
@@ -53,55 +55,66 @@ export default {
     return {
       content: "",
       image: "",
-      moment : moment
+      moment: moment,
+      showError: false
     };
   },
 
   computed: {},
   methods: {
     sendRepQuestion(item) {
-      if (!this.$store.state.authUser) {
-        this.$store.commit("OPEN_REGISTER");
+      if (this.content == "") {
+        this.showError = true;
       } else {
-        var comment = this.product.comments.find(
-          comment => comment.id === item.id
-        );
-        comment.req_comments.push({
-          content: item.comment
-        });
-        this.$axios
-          .post("/api/comment/add_repcomment", {
-            content: item.comment,
-            image: "",
-            CommentId: item.id
-          })
-          .then(response => {
-            item.is_comments = false
-            item.comment = ''
+        this.showError = false;
+        if (!this.$store.state.authUser) {
+          this.$store.commit("OPEN_REGISTER");
+        } else {
+          var comment = this.product.comments.find(
+            comment => comment.id === item.id
+          );
+          comment.req_comments.push({
+            content: item.comment
           });
+          this.$axios
+            .post("/api/comment/add_repcomment", {
+              content: item.comment,
+              image: "",
+              CommentId: item.id
+            })
+            .then(response => {
+              item.is_comments = false;
+              item.comment = "";
+            });
+        }
       }
     },
     sendQuestion() {
-      if (!this.$store.state.authUser) {
-        this.$store.commit("OPEN_REGISTER");
+      if (this.content == "") {
+        this.showError = true;
       } else {
-        this.$axios
-          .post("/api/comment/add", {
-            content: this.content,
-            image: this.image,
-            ProductId: this.product.id
-          })
-          .then(response => {
-            this.product.comments.unshift({
-              id: response.data.id,
-              content: response.data.content,
-              req_comments: []
+        this.showError = false;
+        if (!this.$store.state.authUser) {
+          this.$store.commit("OPEN_REGISTER");
+        } else {
+          this.$axios
+            .post("/api/comment/add", {
+              content: this.content,
+              image: this.image,
+              ProductId: this.product.id
+            })
+            .then(response => {
+              this.product.comments.unshift({
+                id: response.data.id,
+                content: response.data.content,
+                req_comments: []
+              });
+              this.product.comments.forEach(item => {
+                Vue.set(item, "is_comments", false);
+                Vue.set(item, "comment", "");
+              });
             });
-            this.product.comments.forEach(item => {
-              Vue.set(item, "is_comments", false);
-              Vue.set(item, "comment", "");
-            });
-          });
+        }
       }
     }
   }

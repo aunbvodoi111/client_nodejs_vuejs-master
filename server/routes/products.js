@@ -405,7 +405,7 @@ router.get('/detailPr/:id', async (req, res) => {
                 model: models.rep_ratings,
                 as: 'rep_ratings',
                 include: [{
-                    model: models.users,
+                    model: models.users, 
                 }]
             },
             { model: models.users },
@@ -427,6 +427,7 @@ router.get('/detailPr/:id', async (req, res) => {
         {
             model: models.mulimages,
             as: 'mulimages',
+            take: 4,
         }, {
             model: models.classifies,
             as: 'classifies',

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="btn-chat" v-if="!toggleChat" @click="showDivChat">
-      <button>Chat ngay nhe {{ sumCountMessager()}}</button>
+      <button>Chat Với Shop {{ sumCountMessager()}}</button>
     </div>
     <div class="popup-image-zoom-chat" v-if="closePopZoomImage">
       <div class="img">
@@ -14,23 +14,30 @@
         <div class="content-pop">
           <p @click="showPopLisrProduct = false" style="margin-left:95%;cursor:pointer;">X</p>
           <div class="form-search">
-            <input type="text" class="txt-search" v-model="keyword" placeholder="Tìm kiếm sản phẩm "/>
+            <input
+              type="text"
+              class="txt-search"
+              v-model="keyword"
+              placeholder="Tìm kiếm sản phẩm "
+            />
           </div>
-          <div class="title"> 
+          <div class="title">
             <div>
               <p :class="{ activeTitLePopup:1 == selectedShop }" @click="productYou">Shop của tôi</p>
             </div>
             <div>
-              <p :class="{ activeTitLePopup:2 == selectedShop }" @click="showDivShop">Shop Pham quý</p>
+              <p
+                :class="{ activeTitLePopup:2 == selectedShop }"
+                @click="showDivShop"
+              >Shop {{ idUserSend.name }}</p>
             </div>
           </div>
-          <div class="content-product" v-if='filteredList.length > 0'>
+          <div class="content-product" v-if="filteredList.length > 0">
             <div
               class="product-pop"
               v-for="item in filteredList"
               @click="sendProduct(item)"
               :key="item.id"
-              
             >
               <div class="img">
                 <img :src="item.image" alt />
@@ -42,8 +49,8 @@
             </div>
           </div>
           <div v-else>
-              <p style="text-align:center;">(Không tìm kiếm thấy sản phẩm)</p>
-            </div>
+            <p style="text-align:center;">(Không tìm kiếm thấy sản phẩm)</p>
+          </div>
         </div>
       </div>
       <div class="pop-up-Product" v-show="showPopListBill">
@@ -53,14 +60,18 @@
             <input type="text" class="txt-search" />
           </div>-->
           <div class="title-bill">
-            <div class="buy">Mua hàng</div>
-            <div class="saler">Bán hàng</div>
+            <div class="buy" @click="showPopBill" :class="{activeBill:1 == selectedBill}">Mua hàng</div>
+            <div
+              class="saler"
+              @click="showBuyerBill"
+              :class="{activeBill:2 == selectedBill}"
+            >Bán hàng</div>
           </div>
           <div class="content-product">
             <div class="bill-pop" v-for="item in listBill" :key=" item.id ">
               <div class="user">
                 <div class="img">
-                  <img src="http://localhost:3000/img/76c6106b64c5228d864432d939224434.jpg" alt />
+                  <img :src="item.user.avatar" alt />
                 </div>
                 <div class="name">{{ item.name }}</div>
                 <div class="status" v-if="item.status == 0">Chờ xác nhận</div>
@@ -76,12 +87,12 @@
                   </div>
                   <div class="content-right">
                     <div class="name">{{ prod.product.name }}</div>
-                    <div class="price">₫{{ prod.product.price }}</div>
+                    <div class="price">₫{{ formatPrice(prod.product.price) }}</div>
                   </div>
                 </div>
               </div>
               <div class="sum-bill">
-                <div class="qty">3 sản phẩm</div>
+                <div class="qty">{{ sumQty(item) }} sản phẩm</div>
                 <div class="sum-money">
                   <p>
                     Tổng thanh toán :
@@ -91,7 +102,7 @@
               </div>
               <div class="btn-action">
                 <div class="btn-send-link">
-                  <nuxt-link :to="`http://localhost:8000/${item.id}`">
+                  <nuxt-link :to="`/user/order/${item.id}`">
                     <button>Xem đơn hàng</button>
                   </nuxt-link>
                 </div>
@@ -220,7 +231,10 @@
                         </div>
                       </nuxt-link>
                     </p>
-                    <p v-if="item.status == 2" style="background:white;box-shadow: 2px 2px 2px 2px rgba(0,0,0,.1); padding : 10px 0px;">
+                    <p
+                      v-if="item.status == 2"
+                      style="background:white;box-shadow: 2px 2px 2px 2px rgba(0,0,0,.1); padding : 10px 0px;"
+                    >
                       <nuxt-link :to="`/user/order/${item.BillId}`">
                         <div style="display:flex;">
                           <img
@@ -238,11 +252,26 @@
                             <span
                               style="font-size : 13px; margin : 10px 0px;background:white;color: red;"
                             >Tổng:{{ formatPrice(item.sum) }}</span>
-                            <p style="font-size : 13px; margin : 10px 0px;background:white;color: red;" v-if="item.bill.status == 0">Chờ xác nhận</p>
-                            <p style="font-size : 13px; margin : 10px 0px;background:white;color: red;" v-if="item.bill.status == 1">Đã xác nhận</p>
-                            <p style="font-size : 13px; margin : 10px 0px;background:white;color: red;" v-if="item.bill.status == 2">Đang vận chuyển</p>
-                            <p style="font-size : 13px; margin : 10px 0px;background:white;color: red;" v-if="item.bill.status == 3">Đã nhận được hàng</p>
-                            <p style="font-size : 13px; margin : 10px 0px;background:white;color: red;" v-if="item.bill.status == 4">Đã hủy</p>
+                            <p
+                              style="font-size : 13px; margin : 10px 0px;background:white;color: red;"
+                              v-if="item.bill.status == 0"
+                            >Chờ xác nhận</p>
+                            <p
+                              style="font-size : 13px; margin : 10px 0px;background:white;color: red;"
+                              v-if="item.bill.status == 1"
+                            >Đã xác nhận</p>
+                            <p
+                              style="font-size : 13px; margin : 10px 0px;background:white;color: red;"
+                              v-if="item.bill.status == 2"
+                            >Đang vận chuyển</p>
+                            <p
+                              style="font-size : 13px; margin : 10px 0px;background:white;color: red;"
+                              v-if="item.bill.status == 3"
+                            >Đã nhận được hàng</p>
+                            <p
+                              style="font-size : 13px; margin : 10px 0px;background:white;color: red;"
+                              v-if="item.bill.status == 4"
+                            >Đã hủy</p>
                           </div>
                         </div>
                       </nuxt-link>
@@ -296,7 +325,10 @@
                         </div>
                       </nuxt-link>
                     </p>
-                    <p v-if="item.status == 2" style="background:white;box-shadow: 2px 2px 2px 2px rgba(0,0,0,.1); padding : 10px 0px;">
+                    <p
+                      v-if="item.status == 2"
+                      style="background:white;box-shadow: 2px 2px 2px 2px rgba(0,0,0,.1); padding : 10px 0px;"
+                    >
                       <nuxt-link :to="`/user/order/${item.BillId}`">
                         <div style="display:flex;">
                           <img
@@ -314,11 +346,26 @@
                             <p
                               style="font-size : 13px; padding-left : 0px;background:white;color: red;"
                             >Tổng:{{ formatPrice(item.sum) }}</p>
-                            <p style="font-size : 13px; margin : 10px 0px;background:white;color: red;" v-if="item.bill.status == 0">Chờ xác nhận</p>
-                            <p style="font-size : 13px; margin : 10px 0px;background:white;color: red;" v-if="item.bill.status == 1">Đã xác nhận</p>
-                            <p style="font-size : 13px; margin : 10px 0px;background:white;color: red;" v-if="item.bill.status == 2">Đang vận chuyển</p>
-                            <p style="font-size : 13px; margin : 10px 0px;background:white;color: red;" v-if="item.bill.status == 3">Đã nhận được hàng</p>
-                            <p style="font-size : 13px; margin : 10px 0px;background:white;color: red;" v-if="item.bill.status == 4">Đã hủy</p>
+                            <p
+                              style="font-size : 13px; margin : 10px 0px;background:white;color: red;"
+                              v-if="item.bill.status == 0"
+                            >Chờ xác nhận</p>
+                            <p
+                              style="font-size : 13px; margin : 10px 0px;background:white;color: red;"
+                              v-if="item.bill.status == 1"
+                            >Đã xác nhận</p>
+                            <p
+                              style="font-size : 13px; margin : 10px 0px;background:white;color: red;"
+                              v-if="item.bill.status == 2"
+                            >Đang vận chuyển</p>
+                            <p
+                              style="font-size : 13px; margin : 10px 0px;background:white;color: red;"
+                              v-if="item.bill.status == 3"
+                            >Đã nhận được hàng</p>
+                            <p
+                              style="font-size : 13px; margin : 10px 0px;background:white;color: red;"
+                              v-if="item.bill.status == 4"
+                            >Đã hủy</p>
                           </div>
                         </div>
                       </nuxt-link>
@@ -407,6 +454,7 @@ export default {
       idUserSend: "",
       messages: [],
       typing: "",
+      selectedBill: 1,
       room: {},
       count: {
         idroom: -1,
@@ -422,9 +470,11 @@ export default {
         price: 0
       },
       bill: {
+        id: "",
         sum: "",
         BillId: "",
-        image: ""
+        image: "",
+        status: ""
       },
       idroom: "",
       roomidnew: 0,
@@ -438,15 +488,14 @@ export default {
       listBill: [],
       closePopZoomImage: false,
       imageZoomChat: {},
-      keyword:''
+      keyword: ""
     };
   },
   computed: {
     filteredList() {
-      
       return this.listProductPopup.filter(post => {
-        return post.name.toLowerCase().includes(this.keyword.toLowerCase())
-      })
+        return post.name.toLowerCase().includes(this.keyword.toLowerCase());
+      });
     },
     toggleChat() {
       return this.$store.state.toggleChat;
@@ -492,6 +541,14 @@ export default {
     });
   },
   methods: {
+    sumQty(item) {
+      console.log(item);
+      var sum = 0;
+      for (var j = 0; j < item.bill_details.length; j++) {
+        var sum = sum + item.bill_details[j].qty;
+      }
+      return sum;
+    },
     clickZoomIamge(item) {
       this.closePopZoomImage = true;
       this.imageZoomChat = item.image;
@@ -515,18 +572,34 @@ export default {
     },
     sendBill(item) {
       this.bill.sum = item.sum;
+      this.bill.status = item.status;
+      this.bill.id = item.id;
       this.bill.BillId = item.id;
       this.bill.image = item.bill_details[0].product.image;
       this.sendMessages();
       this.showPopListBill = false;
     },
     showPopBill() {
+      this.selectedBill = 1;
       this.$axios.get("/api/bill/").then(response => {
         console.log("sadsdaasd");
         console.log(response);
         this.listBill = response.data;
         this.showPopListBill = true;
       });
+    },
+    showBuyerBill() {
+      this.selectedBill = 2;
+      this.$axios
+        .post("/api/bill/buyerPopChat", {
+          id: this.idUserSend.id
+        })
+        .then(response => {
+          console.log("sadsdaasd");
+          console.log(response);
+          this.listBill = response.data;
+          this.showPopListBill = true;
+        });
     },
     productYou() {
       this.selectedShop = 1;
@@ -731,6 +804,8 @@ export default {
         imageProduct: this.product.image,
         imageBill: this.bill.image,
         bill: {
+          status: this.bill.status,
+          id: this.bill.id,
           bill_details: [
             {
               image: this.bill.image
@@ -783,6 +858,9 @@ export default {
 <style lang="scss" scoped>
 * {
   box-sizing: border-box;
+}
+.activeBill {
+  color: red !important;
 }
 .activeTitLePopup {
   color: red !important;
@@ -904,10 +982,12 @@ a {
         .buy {
           width: 50%;
           text-align: center;
+          cursor: pointer;
         }
         .saler {
           width: 50%;
           text-align: center;
+          cursor: pointer;
         }
       }
       .content-product {
@@ -1059,6 +1139,7 @@ a {
       width: 100%;
       display: flex;
       justify-content: center;
+      cursor: pointer;
       align-items: center;
       text-align: center;
       border-bottom: 1px solid #efefef;

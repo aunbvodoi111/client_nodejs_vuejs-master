@@ -47,6 +47,52 @@ router.get('/', async (req, res) => {
     return res.json(bills) ; 
 })
 
+
+
+router.post('/buyerPopChat', async (req, res) => {
+    var { id } = req.body
+    var carts
+    var anhquy
+    var bills
+    if (req.user) {
+        await models.bills.findOne({
+            where: { UserIdSaler: id },
+            attributes: ['UserIdSaler', 'UserIdBuyer'],
+        }).then(function (projects) {
+            anhquy = projects
+        })
+        if (anhquy) {
+            bills = await models.bills.findAll({
+                where: { UserIdSaler: anhquy.UserIdSaler },
+                order: [
+                    ['id', 'DESC'],
+                ],
+                include: [{
+                    model: models.bill_details,
+                    as: 'bill_details',
+                    where: { UserIdSaler: anhquy.UserIdSaler },
+                    include: [{
+                        model: models.products,
+                        as: 'product'
+                    },{
+                        model: models.classifies,
+                        as: 'classifies',
+                    }]
+                }, {
+                    model: models.users,
+                }]
+            })
+            // return res.json(anhquy)
+        }else{
+            bills = []
+        }
+
+    } else {
+            bills = []
+    }
+    return res.json(bills) ; 
+})
+
 router.get('/detail/:id', async (req, res) => {
     var { id } = req.params
     if (req.user) {

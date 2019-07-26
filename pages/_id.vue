@@ -8,15 +8,8 @@
             <div class="img">
               <img :src="product.image" alt />
             </div>
-
             <div class="infor-product-cart">
               <p>{{ product.name }}</p>
-              <!-- <div class="qty">
-                số lượng sp trong giỏ hàng :
-                <span
-                  style="color : red ; font-weight : bold;"
-                >{{ pr}}</span>
-              </div>-->
               <div class="qty">
                 <!-- thành tiền : -->
                 <span style="color : red ; font-weight : bold;">{{ product.discount }}</span>
@@ -53,7 +46,8 @@
                 @mouseover="hoverImage(item)"
               />
             </div>
-            <button @click="showPopDetailImg = false">Đóng</button>
+            <button @click="closePopUpdetaiImage" 
+            style="width:200px;height:40px;background-color: #2b3278;color:white;border:none;margin-top:20px;margin-top:80%;">Đóng</button>
           </div>
         </div>
         <div class></div>
@@ -72,7 +66,7 @@
               class="nofj-out-of-stock"
               v-if="product.qty == 0 && product.classifies.length == 0"
             >
-              <p>Hết hàng</p>
+              <p >Hết hàng</p>
             </div>
             <div class="nofj-out-of-stock" v-if="sumQty == 0 && product.classifies.length">
               <p>Hết hàng</p>
@@ -183,7 +177,7 @@
               <span v-if="product.classifies.length > 0">
                 <span v-if="sumQty == 0">{{ sumQtynew() }}</span>
                 <span v-if="sumQty > 0">{{ sumQty }}</span>
-              </span>sản phẩm có sẵn
+              </span> sản phẩm có sẵn
             </span>
           </div>
           <p
@@ -192,7 +186,7 @@
           >Vui lòng chọn Phân loại hàng</p>
           <div
             class="btn-action-detail"
-            v-if=" $store.state.authUser && $store.state.authUser.id != product.user.id"
+            v-if=" $store.state.authUser && $store.state.authUser.id != product.user.id && product.qty > 0"
           >
             <div class="btn-add-to-cart">
               <button @click="addCart">
@@ -204,7 +198,7 @@
               <button @click="buyProduct">Mua ngay</button>
             </div>
           </div>
-          <div class="btn-action-detail" v-if=" $store.state.authUser == null ">
+          <div class="btn-action-detail" v-if=" $store.state.authUser == null && product.qty > 0">
             <div class="btn-add-to-cart">
               <button @click="addCart">
                 <i class="fas fa-shopping-cart"></i>
@@ -213,6 +207,28 @@
             </div>
             <div class="btn-add-to-buy">
               <button @click="buyProduct">Mua ngay</button>
+            </div>
+          </div>
+          <div class="btn-action-detail btn-disable" v-if=" $store.state.authUser == null && product.qty == 0 ">
+            <div class="btn-add-to-cart">
+              <button class="disable-btn disabled" disabled>
+                <i class="fas fa-shopping-cart "></i>
+                Thêm Vào Giỏ Hàng
+              </button>
+            </div>
+            <div class="btn-add-to-buy disable-btn disabled" disabled>
+              <button>Mua ngay</button>
+            </div>
+          </div>
+          <div class="btn-action-detail btn-disable" v-if=" $store.state.authUser != null && product.qty == 0 ">
+            <div class="btn-add-to-cart">
+              <button class="disable-btn disabled" disabled>
+                <i class="fas fa-shopping-cart "></i>
+                Thêm Vào Giỏ Hàng
+              </button>
+            </div>
+            <div class="btn-add-to-buy " disabled>
+              <button class="disable-btn disabled">Mua ngay</button>
             </div>
           </div>
         </div>
@@ -324,9 +340,17 @@ export default {
   },
   created() {},
   methods: {
+    closePopUpdetaiImage(){
+      this.showPopDetailImg = false;
+      var index = this.product.mulimages.indexOf(this.product.image)
+      this.product.mulimages.splice(index,1)
+    },
     showPopDetail() {
       this.showPopDetailImg = true;
-      // this.product.mulimages.push(this.product.image)
+      var image = {
+        image : this.product.image
+      }
+      this.product.mulimages.unshift(image)
     },
     sumQtynew() {
       var anhquy = this.product.classifies;
@@ -604,6 +628,7 @@ export default {
       return highest;
     },
     ImageHover() {
+      console.log(this.idImage)
       if (this.idImage) {
         return this.product.mulimages.find(item => item.id === this.idImage);
       } else if (this.anhquyhi > -1 && this.idImage == "") {
@@ -650,6 +675,10 @@ a {
 }
 a:hover {
   text-decoration: none;
+}
+.disable-btn.disabled {
+  opacity: 0.65; 
+  cursor: not-allowed;
 }
 button {
   cursor: pointer;

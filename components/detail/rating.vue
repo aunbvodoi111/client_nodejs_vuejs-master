@@ -114,11 +114,11 @@
         </p>
         <p>2. Tiêu đề của nhận xét:</p>
         <div>
-          <input type="text" class="txt-content" v-model="rating.title" />
+          <input type="text" class="txt-content" v-model="rating.title" placeholder="Nhập tiêu đề"/>
         </div>
         <p>3. Viết nhận xét của bạn vào bên dưới:</p>
         <div>
-          <textarea name id cols="30" rows="8" class="txt-content-main" v-model="rating.content"></textarea>
+          <textarea name id cols="30" rows="8" class="txt-content-main" v-model="rating.content" placeholder="Nhập nội dung"></textarea>
         </div>
         <div>
           <span>Thêm hình sản phẩm nếu có :</span>
@@ -134,12 +134,12 @@
       </div>
       <div class="product-comment">
         <div class="img">
-          <img :src="product.image" alt />
+          <img :src="product.image" alt style="width : 65%"/>
         </div>
         <div class="name">
           <p>{{ product.name }}</p>
         </div>
-        <div class="price">Giá: {{ product.price }} ₫</div>
+        <div class="price">Giá: ₫{{ formatPrice(product.price) }} </div>
       </div>
     </div>
     <div class="box-customer-comment" v-if="product.ratings.length > 0">
@@ -431,6 +431,10 @@ export default {
             this.$emit("mediumstar", this.mediumstar);
           }
         });
+    },
+    formatPrice(value) {
+      let val = (value / 1).toFixed(0).replace(".", ",");
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     },
     sendRating() {
       var findUser;
